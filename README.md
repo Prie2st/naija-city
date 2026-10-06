@@ -6,6 +6,10 @@ A browser city-building game set in **Ilu Alafia**, a fictional Nigerian riverla
 
 Requires Node.js 20.19+ or 22.12+ and npm.
 
+## Milestone 8.1: save reliability and offline performance
+
+Saves are verified before they count. The city is validated, encoded losslessly into a compact columnar format (about 80–93% smaller than plain JSON), written, then read back. A last-known-good backup copy is kept, and legacy `naija-city-v*` keys are retired once two verified copies exist, so storage no longer fills up with old backups. A failed save never replaces the last good copy, and the game warns the player instead of failing silently. Unreadable saves fall back to the backup and the player is told. Missing derived fields get safe defaults; missing authoritative state is rejected by name. Long offline absences replay the first days exactly and the rest in progressively coarser steps, so a large city returns in seconds rather than minutes. City saves remain version 9. See [persistence and offline catch-up](docs/persistence.md), including the rule for schema changes.
+
 ## Milestone 8: metropolitan transit
 
 Formal buses and BRT share ordered stops, connected walking catchments, bounded transfers, real OD ridership, fleet/depot capacity, frequency, crowding and monthly finance. Danfo/Keke remain organic and can feed or compete with planned routes. Dedicated corridors trade general road capacity for reliable person throughput.

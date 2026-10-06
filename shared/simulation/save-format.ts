@@ -17,6 +17,7 @@ import { initializeInfrastructure } from './infrastructure';
 import { INFRASTRUCTURE } from './infrastructure-config';
 import { initializeLiving } from './living-city';
 import { validLivingSave } from './living-save';
+import { missingAuthoritative, repairDerivedState } from './save-repair';
 
 type RecordValue = Record<string, any>;
 const record = (v: unknown): v is RecordValue => typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -61,8 +62,38 @@ function versionTwoValid(c: RecordValue) {
       finite(business.profitability, 0, 100) && finite(business.occupancy, 0, 1) && business.employees <= business.employeeCapacity;
   });
 }
-export function decodeCity(value: unknown): City {
-  if (record(value) && (value.version === 5 || value.version === 6 || value.version === 7 || value.version === 8 || value.version === 9)) {
+export class SaveValidationError extends Error {
+  constructor(detail: string) { super(`This save is incompatible or damaged: ${detail}.`); this.name = 'SaveValidationError'; }
+}
+const CURRENT_VERSIONS = [5, 6, 7, 8, 9];
+/** First failing check for a v5+ save, or null. Subsystems added after the save's version are skipped (they are initialized). */
+function currentProblem(value: RecordValue): string | null {
+  const missing = missingAuthoritative({ ...value, ...(value.version < 6 ? { publicServices: {} } : {}), ...(value.version < 7 ? { governance: {} } : {}), ...(value.version < 8 ? { safety: {} } : {}), ...(value.version < 9 ? { transit: {} } : {}) });
+  if (missing) return `missing required state "${missing}"`;
+  if (!baseValid(value)) return 'core city state is invalid';
+  if (!versionTwoValid(value)) return 'economy or building state is invalid';
+  if (!versionThreeValid(value)) return 'infrastructure or weather state is invalid';
+  if (!validMobilitySave(value)) return 'mobility state is invalid';
+  if (!validLivingSave(value as City)) return 'living-city state is invalid';
+  if (value.version >= 6 && !validPublicServices(value as City)) return 'Public service state is invalid';
+  if (value.version >= 7 && !validGovernance(value as City)) return 'Governance state is invalid';
+  if (value.version >= 8 && !validSafety(value as City)) return 'Safety state is invalid';
+  if (value.version >= 9 && !validTransit(value as City)) return 'Transit state is invalid';
+  return null;
+}
+/** Pre-write check of an in-memory city: the same rules a load applies, without migration or repair. */
+export function validateCityState(city: City): string | null {
+  const value = city as unknown as RecordValue;
+  if (typeof value.version !== 'number' || !Number.isInteger(value.version)) return 'version information is malformed';
+  if (value.version !== 9) return `unexpected save version ${value.version}`;
+  return currentProblem(value);
+}
+export interface DecodedCity { city: City; repaired: string[] }
+export function decodeCity(value: unknown): City { return decodeCityWithReport(value).city; }
+export function decodeCityWithReport(value: unknown): DecodedCity {
+  if (record(value) && (typeof value.version !== 'number' || !Number.isInteger(value.version) || value.version < 1)) throw new SaveValidationError('version information is malformed');
+  if (record(value) && value.version > 9) throw new SaveValidationError(`save version ${value.version} is newer than this game supports`);
+  if (record(value) && CURRENT_VERSIONS.includes(value.version)) {
     if(value.version<9&&record(value.mobility)&&record(value.mobility.stats)&&record(value.mobility.stats.modes)){value.mobility.stats.modes.brt=0;for(const flow of Array.isArray(value.mobility.flows)?value.mobility.flows:[])if(record(flow)&&record(flow.modes))flow.modes.brt=0;}
     if(value.version<8){
       const p=value.publicServices;
@@ -70,22 +101,21 @@ export function decodeCity(value: unknown): City {
       if(Array.isArray(value.tiles))for(const t of value.tiles)if(record(t.publicServices))t.publicServices.police={access:0,served:0,quality:0,minutes:0,facilityId:null};
       if(record(value.governance)&&Array.isArray(value.governance.local))for(const l of value.governance.local)if(record(l.effects))Object.assign(l.effects,{lighting:0,prevention:0,commercialPatrol:0,hubSafety:0});
     }
-    if (!baseValid(value) || !versionTwoValid(value) || !versionThreeValid(value) || !validMobilitySave(value) || !validLivingSave(value as City)) throw new Error('This save is incompatible or damaged.');
-    if(value.version===6||value.version===7||value.version===8||value.version===9){if(!validPublicServices(value as City))throw new Error('Public service save is incompatible or damaged.');}
-    else {value.version=6;initializePublicServices(value as City);}
-    if(value.version===7||value.version===8||value.version===9){if(!validGovernance(value as City))throw new Error('Governance save is incompatible or damaged.');}
-    else {initializeGovernance(value as City);value.version=7;}
-    if(value.version>=8){if(!validSafety(value as City))throw new Error('Safety save is incompatible or damaged.');}
-    else {initializeSafety(value as City);value.version=8;}
-    if(value.version===9){if(!validTransit(value as City))throw new Error('Transit save is incompatible or damaged.');}
-    else {initializeTransit(value as City);value.version=9;}
-    return value as City;
+    let repaired: string[] = [];
+    let problem = currentProblem(value);
+    if (problem && !problem.startsWith('missing required')) { repaired = repairDerivedState(value).filled; problem = currentProblem(value); }
+    if (problem) throw new SaveValidationError(problem);
+    if (value.version < 6) { value.version = 6; initializePublicServices(value as City); }
+    if (value.version < 7) { initializeGovernance(value as City); value.version = 7; }
+    if (value.version < 8) { initializeSafety(value as City); value.version = 8; }
+    if (value.version < 9) { initializeTransit(value as City); value.version = 9; }
+    return { city: value as City, repaired };
   }
   const city = decodeLegacyCity(value);
   city.version = 9; initializeLiving(city); initializePublicServices(city); initializeGovernance(city); initializeSafety(city); initializeTransit(city);
   city.history.unshift('Living city enabled: stable neighborhoods, activity rhythms and sampled households. Existing roads, buildings and services retained.');
   city.history = city.history.slice(0, 60);
-  return city;
+  return { city, repaired: [] };
 }
 function decodeLegacyCity(value: unknown): City {
   if (!record(value) || !baseValid(value) || ![1, 2, 3, 4].includes(value.version)) throw new Error('This save is incompatible or damaged.');
