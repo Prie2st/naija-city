@@ -1,0 +1,36 @@
+{
+  "id": "bungalow",
+  "type": "building",
+  "footprint": [
+    14,
+    12
+  ],
+  "floors": 1,
+  "heightMetres": 3.15,
+  "sourceScale": 24.005524837387505,
+  "originPixels": [
+    324.1757923364639,
+    370.24492514133453
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      6.0
+    ],
+    "service": [
+      -7.0,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

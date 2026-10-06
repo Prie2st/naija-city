@@ -1,0 +1,36 @@
+{
+  "id": "bus-0",
+  "type": "vehicle",
+  "footprint": [
+    12,
+    2.55
+  ],
+  "floors": 0,
+  "heightMetres": 3.2199997901916504,
+  "sourceScale": 24.032513044995852,
+  "originPixels": [
+    219.9989640712738,
+    209.13023415207863
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      1.275
+    ],
+    "service": [
+      -6.0,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

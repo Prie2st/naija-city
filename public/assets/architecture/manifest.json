@@ -1,0 +1,906 @@
+{
+  "assets": [
+    {
+      "id": "bungalow-modest",
+      "type": "residential",
+      "level": 1,
+      "variant": 0,
+      "footprint": "articulated bungalow",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": -8,
+          "y": 8
+        },
+        "tank": {
+          "x": 5,
+          "y": 10
+        },
+        "pump": {
+          "x": 8,
+          "y": 12
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.4361088211046991
+      ],
+      "visualHeight": 20.56,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "bungalow-lshape",
+      "type": "residential",
+      "level": 1,
+      "variant": 1,
+      "footprint": "L-shaped wings",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": -8,
+          "y": 7
+        },
+        "tank": {
+          "x": 1,
+          "y": 12
+        },
+        "pump": {
+          "x": 4,
+          "y": 13
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.43047460449625313
+      ],
+      "visualHeight": 20.14,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "compound-house",
+      "type": "residential",
+      "level": 1,
+      "variant": 2,
+      "footprint": "long veranda and courtyard",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": 8,
+          "y": 9
+        },
+        "tank": {
+          "x": -4,
+          "y": 11
+        },
+        "pump": {
+          "x": -1,
+          "y": 13
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.4077922077922078
+      ],
+      "visualHeight": 18.53,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "house-unfinished",
+      "type": "residential",
+      "level": 1,
+      "variant": 3,
+      "footprint": "roofed wing and unfinished extension",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": -9,
+          "y": 9
+        },
+        "tank": {
+          "x": 5,
+          "y": 11
+        },
+        "pump": {
+          "x": 8,
+          "y": 12
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.4103448275862069
+      ],
+      "visualHeight": 18.7,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "bungalow-modern",
+      "type": "residential",
+      "level": 1,
+      "variant": 4,
+      "footprint": "stepped flat and pitched wings",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": 10,
+          "y": 4
+        },
+        "tank": {
+          "x": -10,
+          "y": 9
+        },
+        "pump": {
+          "x": -7,
+          "y": 11
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.39091718610863757
+      ],
+      "visualHeight": 17.4,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "house-weathered",
+      "type": "residential",
+      "level": 1,
+      "variant": 5,
+      "footprint": "narrow veranda and lean-to",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": 10,
+          "y": 8
+        },
+        "tank": {
+          "x": -8,
+          "y": 10
+        },
+        "pump": {
+          "x": -5,
+          "y": 12
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.42180896027049875
+      ],
+      "visualHeight": 19.51,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "duplex",
+      "type": "residential",
+      "level": 2,
+      "variant": 0,
+      "footprint": "two-storey offset wings",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": -10,
+          "y": 8
+        },
+        "tank": {
+          "x": 5,
+          "y": 11
+        },
+        "pump": {
+          "x": 8,
+          "y": 13
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.43703703703703706
+      ],
+      "visualHeight": 20.63,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "bungalow-large",
+      "type": "residential",
+      "level": 2,
+      "variant": 1,
+      "footprint": "U-shaped courtyard",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": -9,
+          "y": 8
+        },
+        "tank": {
+          "x": 3,
+          "y": 11
+        },
+        "pump": {
+          "x": 6,
+          "y": 12
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.39361702127659576
+      ],
+      "visualHeight": 17.58,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "small-flats",
+      "type": "residential",
+      "level": 2,
+      "variant": 2,
+      "footprint": "access gallery and external stairs",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": -10,
+          "y": 8
+        },
+        "tank": {
+          "x": 6,
+          "y": 10
+        },
+        "pump": {
+          "x": 9,
+          "y": 12
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.4247266610597141
+      ],
+      "visualHeight": 19.72,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "provision-shop",
+      "type": "commercial",
+      "level": 1,
+      "variant": 0,
+      "footprint": "open merchandise frontage",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": 10,
+          "y": 7
+        },
+        "tank": {
+          "x": -9,
+          "y": 11
+        },
+        "pump": {
+          "x": -6,
+          "y": 13
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.42952460383653046
+      ],
+      "visualHeight": 20.07,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "barber-shop",
+      "type": "commercial",
+      "level": 1,
+      "variant": 1,
+      "footprint": "stepped parapet and glazed frontage",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": 10,
+          "y": 7
+        },
+        "tank": {
+          "x": -9,
+          "y": 11
+        },
+        "pump": {
+          "x": -6,
+          "y": 13
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.4098360655737705
+      ],
+      "visualHeight": 18.67,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "food-shop",
+      "type": "commercial",
+      "level": 1,
+      "variant": 2,
+      "footprint": "long open veranda",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": 10,
+          "y": 7
+        },
+        "tank": {
+          "x": -9,
+          "y": 11
+        },
+        "pump": {
+          "x": -6,
+          "y": 13
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.44570502431118314
+      ],
+      "visualHeight": 21.3,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "phone-shop",
+      "type": "commercial",
+      "level": 1,
+      "variant": 3,
+      "footprint": "offset shop and cantilever canopy",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": 10,
+          "y": 7
+        },
+        "tank": {
+          "x": -9,
+          "y": 11
+        },
+        "pump": {
+          "x": -6,
+          "y": 13
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.44525547445255476
+      ],
+      "visualHeight": 21.26,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "workshop-yard",
+      "type": "industrial",
+      "level": 1,
+      "variant": 0,
+      "footprint": "open workshop and service yard",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": -10,
+          "y": 10
+        },
+        "tank": {
+          "x": 10,
+          "y": 6
+        },
+        "pump": {
+          "x": 8,
+          "y": 8
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.435177539223782
+      ],
+      "visualHeight": 20.49,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "warehouse-yard",
+      "type": "industrial",
+      "level": 1,
+      "variant": 1,
+      "footprint": "loading warehouse and yard",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": -10,
+          "y": 10
+        },
+        "tank": {
+          "x": 10,
+          "y": 6
+        },
+        "pump": {
+          "x": 8,
+          "y": 8
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.42424242424242425
+      ],
+      "visualHeight": 19.68,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "construction-foundation",
+      "type": "construction",
+      "level": 1,
+      "variant": 0,
+      "footprint": "L-shaped footings",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": -12,
+          "y": 18
+        },
+        "tank": {
+          "x": 12,
+          "y": 18
+        },
+        "pump": {
+          "x": 9,
+          "y": 20
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.44704931285367827
+      ],
+      "visualHeight": 21.4,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "construction-shell",
+      "type": "construction",
+      "level": 1,
+      "variant": 1,
+      "footprint": "block shell and partial roof",
+      "worldWidth": 44,
+      "sockets": {
+        "generator": {
+          "x": -12,
+          "y": 18
+        },
+        "tank": {
+          "x": 12,
+          "y": 18
+        },
+        "pump": {
+          "x": 9,
+          "y": 20
+        },
+        "driveway": {
+          "x": 2,
+          "y": 23
+        }
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.4138817480719794
+      ],
+      "visualHeight": 18.95,
+      "masterSize": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "id": "generator-open",
+      "type": "prop",
+      "level": 0,
+      "variant": 0,
+      "footprint": "portable equipment",
+      "worldWidth": 3,
+      "sockets": {},
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "visualHeight": 4.01,
+      "masterSize": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "id": "generator-enclosed",
+      "type": "prop",
+      "level": 0,
+      "variant": 1,
+      "footprint": "sheltered equipment",
+      "worldWidth": 4.5,
+      "sockets": {},
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "visualHeight": 5.17,
+      "masterSize": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "id": "tank-black",
+      "type": "prop",
+      "level": 0,
+      "variant": 0,
+      "footprint": "elevated tank stand",
+      "worldWidth": 3.8,
+      "sockets": {},
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "visualHeight": 5.96,
+      "masterSize": [
+        1295,
+        1214
+      ]
+    },
+    {
+      "id": "tank-blue",
+      "type": "prop",
+      "level": 0,
+      "variant": 1,
+      "footprint": "tank on plinth",
+      "worldWidth": 3.4,
+      "sockets": {},
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "visualHeight": 4.39,
+      "masterSize": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "id": "borehole-pump",
+      "type": "prop",
+      "level": 0,
+      "variant": 0,
+      "footprint": "wellhead and pressure pump",
+      "worldWidth": 2.7,
+      "sockets": {},
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        1.0
+      ],
+      "visualHeight": 3.7,
+      "masterSize": [
+        1536,
+        1024
+      ]
+    },
+    {
+      "id": "driveway-bridge-0",
+      "type": "prop",
+      "level": 0,
+      "variant": 0,
+      "footprint": "concrete driveway culvert",
+      "worldWidth": 7,
+      "groundFront": 2.5,
+      "sockets": {},
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.37575030012004795
+      ],
+      "visualHeight": 3.5,
+      "masterSize": [
+        240,
+        156
+      ]
+    },
+    {
+      "id": "driveway-bridge-1",
+      "type": "prop",
+      "level": 0,
+      "variant": 1,
+      "footprint": "concrete driveway culvert",
+      "worldWidth": 7,
+      "groundFront": 2.5,
+      "sockets": {},
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5,
+        0.37575030012004795
+      ],
+      "visualHeight": 3.5,
+      "masterSize": [
+        240,
+        156
+      ]
+    }
+  ],
+  "sheets": {
+    "2": [
+      {
+        "key": "benchmark-2-0",
+        "width": 512,
+        "height": 512
+      }
+    ],
+    "6": [
+      {
+        "key": "benchmark-6-0",
+        "width": 2048,
+        "height": 2048
+      }
+    ],
+    "9": [
+      {
+        "key": "benchmark-9-0",
+        "width": 2048,
+        "height": 2048
+      }
+    ],
+    "12": [
+      {
+        "key": "benchmark-12-0",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "key": "benchmark-12-1",
+        "width": 2048,
+        "height": 2048
+      }
+    ]
+  }
+}

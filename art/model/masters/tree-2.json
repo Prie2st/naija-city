@@ -1,0 +1,43 @@
+{
+  "id": "tree-2",
+  "type": "tree",
+  "level": 0,
+  "variant": 0,
+  "sourceScale": 24.03856231191787,
+  "originPixels": [
+    108.26667273044586,
+    313.71430003643036
+  ],
+  "tileTopOffset": 0,
+  "metresPerTile": 20,
+  "floorHeightMetres": 3.2,
+  "floors": 0,
+  "footprint": "tree-2",
+  "sockets": {
+    "generator": {
+      "x": -7,
+      "y": 18
+    },
+    "tank": {
+      "x": 9,
+      "y": 14
+    },
+    "pump": {
+      "x": 10,
+      "y": 17
+    }
+  },
+  "windowMaterial": "glass",
+  "lighting": "northwest warm daylight / ambient sky",
+  "camera": {
+    "projection": "orthographic",
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "palm",
+  "type": "tree",
+  "footprint": [
+    7,
+    7
+  ],
+  "floors": 0,
+  "heightMetres": 11.910961151123047,
+  "sourceScale": 24.040333743960783,
+  "originPixels": [
+    268.4293466806412,
+    560.1855384651572
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      3.5
+    ],
+    "service": [
+      -3.5,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

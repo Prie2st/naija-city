@@ -1,0 +1,36 @@
+{
+  "id": "sedan-0",
+  "type": "vehicle",
+  "footprint": [
+    4.6,
+    1.8
+  ],
+  "floors": 0,
+  "heightMetres": 1.4700000286102295,
+  "sourceScale": 24.036974376716664,
+  "originPixels": [
+    102.49923631548882,
+    91.46073132753372
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      0.9
+    ],
+    "service": [
+      -2.3,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

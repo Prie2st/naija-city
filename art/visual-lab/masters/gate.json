@@ -1,0 +1,36 @@
+{
+  "id": "gate",
+  "type": "prop",
+  "footprint": [
+    2,
+    1
+  ],
+  "floors": 0,
+  "heightMetres": 2.0,
+  "sourceScale": 24.138073550063,
+  "originPixels": [
+    86.99896287918091,
+    119.47651791572571
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      0.5
+    ],
+    "service": [
+      -1.0,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

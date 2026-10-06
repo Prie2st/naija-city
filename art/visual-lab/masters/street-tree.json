@@ -1,0 +1,36 @@
+{
+  "id": "street-tree",
+  "type": "tree",
+  "footprint": [
+    4,
+    4
+  ],
+  "floors": 0,
+  "heightMetres": 5.361963272094727,
+  "sourceScale": 24.03013178317736,
+  "originPixels": [
+    164.12106853723526,
+    276.47615940868855
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      2.0
+    ],
+    "service": [
+      -2.0,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

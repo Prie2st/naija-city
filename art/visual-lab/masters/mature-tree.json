@@ -1,0 +1,36 @@
+{
+  "id": "mature-tree",
+  "type": "tree",
+  "footprint": [
+    6,
+    6
+  ],
+  "floors": 0,
+  "heightMetres": 10.707704544067383,
+  "sourceScale": 24.01099307488043,
+  "originPixels": [
+    231.94697785377502,
+    482.59205996990204
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      3.0
+    ],
+    "service": [
+      -3.0,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

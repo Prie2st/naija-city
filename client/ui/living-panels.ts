@@ -1,0 +1,31 @@
+import type { City, Tile } from '../../shared/types/city';
+import type { CityActivity } from '../../shared/types/living';
+import { householdSamples } from '../../shared/simulation/living-city';
+import { sentimentFactors } from '../../shared/simulation/activity';
+import { compactMoney, escapeHtml } from './panels';
+const pct = (value: number) => `${Math.round(value)}%`;
+const row = (name: string, value: string | number) => `<div><dt>${name}</dt><dd>${value}</dd></div>`;
+export const activityTime = (hour: number) => `${String(Math.floor(hour)).padStart(2,'0')}:${String(Math.floor(hour % 1 * 60)).padStart(2,'0')}`;
+export function livingSummary(city: City, activity: CityActivity) {
+  const i = city.living.informal, businesses = city.tiles.flatMap(t => t.building?.business ? [t.building.business] : []);
+  return `<h3>Living city · ${activityTime(activity.hour)}</h3><p>${escapeHtml(activity.period)} · ${activity.weekend ? 'weekend' : 'weekday'} rhythm. Daily economics remain aggregate; representative street activity follows the hour.</p><dl>${row('Current commute estimate', `${activity.averageCommute.toFixed(1)} min`)}${row('Current road congestion', pct(activity.congestion))}${row('Transit ridership / day', Math.round(city.mobility.routes.reduce((s,r)=>s+r.ridership,0)).toLocaleString())}${row('Operating businesses', businesses.filter(b => b.closedAt === null).length)}${row('Closed business premises', businesses.filter(b => b.closedAt !== null).length)}${row('Neighborhoods', city.clusters.length)}${row('Organic markets', city.living.markets.length)}${row('Informal jobs / employed', `${i.jobs} / ${i.employed}`)}${row('Informal output / month', compactMoney(i.output))}${row('Housing pressure', pct(i.housingPressure))}</dl><button class="secondary" data-action="city-feed">City Feed & neighborhood stories ↗</button><details><summary>Why satisfaction is ${pct(city.satisfaction)}</summary><p>Base 26 plus these contributions. Final satisfaction is bounded between 15 and 92.</p><ul class="factors">${sentimentFactors(city).map(f => `<li class="${f.value < 0 ? 'negative' : 'positive'}"><span>${f.value >= 0 ? '+' : '−'}${Math.abs(f.value).toFixed(1)}</span>${f.label}</li>`).join('')}</ul></details>`;
+}
+export function livingInspector(city: City, t: Tile, activity: CityActivity) {
+  const id = t.y * city.size + t.x, a = activity.tiles[id], b = t.building;
+  const household = householdSamples(city).find(h => h.homeTile === id);
+  const cluster = city.clusters.find(c => c.tileIds.includes(id)), stop = city.mobility.stops.find(s => s.tileId === id), market = city.living.markets.find(m => m.tileId === id);
+  let html = `<h3>Local life · ${activityTime(activity.hour)}</h3><dl>${row('Street / pedestrian activity', pct(a.pedestrian * 100))}${row('Commercial activity now', pct(a.commercial * 100))}${row('Transit access', pct(a.transitAccess))}${row('Customer accessibility', pct(a.commercialAccess))}</dl>`;
+  if (b?.business) html += `<p><b>${escapeHtml(b.business.name)}</b> · ${escapeHtml(b.business.state)}${b.floodClosed ? ' · temporary flood closure' : ''}</p><dl>${row('Jobs available', b.business.closedAt !== null || b.floodClosed ? 0 : Math.max(0,b.maximumJobs-b.jobs))}${row('Business age', `${b.business.age} days`)}${row('Customers now', pct(a.commercial * 100))}${row('Reopening interest', pct(b.business.reopenProgress))}</dl>`;
+  if (b && b.tenure !== 'formal') html += `<p>${b.tenure === 'informal' ? 'Informal compound' : 'Integrating compound'} · ${pct(b.integrationProgress)} integrated. Sustained nearby power, water and drainage enables integration. Housing is included in city capacity; formal tax contribution is lower while integrating.</p>`;
+  if (household) html += `<details open><summary>${escapeHtml(household.surname)} household · sample</summary><dl>${row('Household', `${household.size} people · ${household.income} income`)}${row('Employed adults · estimate', household.employed)}${row('Commute', `${household.commute.toFixed(1)} min`)}${row('Satisfaction', pct(household.satisfaction))}</dl><p>Primary concern: ${escapeHtml(household.concern)}</p><p class="hint">A representative sample explains conditions; it does not add residents.</p></details>`;
+  if (stop) {
+    const load = stop.routes.reduce((s,id)=>s+(activity.transit[id]?.waiting??0),0);
+    html += `<h3>Transport stop</h3><dl>${row('Daily passenger activity', Math.round(stop.passengers))}${row('Waiting pressure now', Math.round(load))}${row('Serving routes', stop.routes.length)}</dl>`;
+  }
+  if (market) html += `<h3>${escapeHtml(market.name)}</h3><dl>${row('Stalls / jobs', `${market.stalls} / ${market.jobs}`)}${row('Local attraction', pct(market.attraction))}${row('Monthly output', compactMoney(market.output))}</dl>`;
+  if (cluster) html += `<details><summary>${escapeHtml(cluster.name)} · neighborhood</summary><dl>${row('Population / jobs', `${cluster.population.toLocaleString()} / ${cluster.jobs.toLocaleString()}`)}${row('Dominant use', cluster.dominantZone)}${row('Land value / satisfaction', `${Math.round(cluster.landValue)} / ${pct(cluster.satisfaction)}`)}${row('Quality of Life',`${Math.round(cluster.qualityOfLife??45)} / 100`)}${row('Power / water', `${pct(cluster.power)} / ${pct(cluster.water)}`)}${row('Traffic / flood risk', `${pct(cluster.traffic)} / ${pct(cluster.floodRisk)}`)}</dl></details>`;
+  return html;
+}
+export function feedHtml(city: City) {
+  return `<p>Reports of actual changes. Minor reports are limited to the latest 80 entries; city milestones stay in saved history.</p>${city.living.feed.map(e => `<button class="route-card" data-feed-tile="${e.tileId ?? ''}"><small>Day ${e.tick + 1} · ${activityTime(e.hour)} · ${e.severity}</small><span>${escapeHtml(e.text)}</span>${e.tileId !== null ? '<em>Find this place ↗</em>' : ''}</button>`).join('') || '<p>A quiet beginning. New businesses, markets and local changes will appear here.</p>'}<h3>Named neighborhoods</h3>${city.clusters.map(c => `<button class="route-card" data-feed-tile="${c.tileIds[0]}"><b>${escapeHtml(c.name)}</b><span>${c.population} residents · ${c.jobs} jobs · ${pct(c.satisfaction)} satisfaction</span></button>`).join('')}<h3>City milestones</h3><ul class="return-events">${city.history.slice(0,20).map(e=>`<li>${escapeHtml(e)}</li>`).join('')}</ul>`;
+}

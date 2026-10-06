@@ -1,0 +1,36 @@
+{
+  "id": "tower-10",
+  "type": "building",
+  "footprint": [
+    23,
+    25
+  ],
+  "floors": 10,
+  "heightMetres": 31.5,
+  "sourceScale": 24.013730512691215,
+  "originPixels": [
+    686.2237454652786,
+    1412.2385860681534
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      12.5
+    ],
+    "service": [
+      -11.5,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

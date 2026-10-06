@@ -1,0 +1,36 @@
+{
+  "id": "bench",
+  "type": "prop",
+  "footprint": [
+    2,
+    1
+  ],
+  "floors": 0,
+  "heightMetres": 1.0399999618530273,
+  "sourceScale": 24.093052567462657,
+  "originPixels": [
+    45.78207242488861,
+    65.03999322652817
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      0.5
+    ],
+    "service": [
+      -1.0,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

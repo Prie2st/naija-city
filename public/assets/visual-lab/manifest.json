@@ -1,0 +1,3788 @@
+{
+  "assets": [
+    {
+      "id": "bench",
+      "type": "prop",
+      "footprint": [
+        2,
+        1
+      ],
+      "floors": 0,
+      "heightMetres": 1.0399999618530273,
+      "sourceScale": 24.093052567462657,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.5
+        ],
+        "service": [
+          -1.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.497055032768765,
+        0.7892956792468756
+      ],
+      "worldWidth": 3.0714248347233513,
+      "worldHeight": 2.946907611694026,
+      "masterSize": [
+        92,
+        90
+      ]
+    },
+    {
+      "id": "bungalow",
+      "type": "building",
+      "footprint": [
+        14,
+        12
+      ],
+      "floors": 1,
+      "heightMetres": 3.15,
+      "sourceScale": 24.005524837387505,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          6.0
+        ],
+        "service": [
+          -7.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5369263923960204,
+        0.6657377205756267
+      ],
+      "worldWidth": 24.45270428271472,
+      "worldHeight": 18.91231302274699,
+      "masterSize": [
+        605,
+        532
+      ]
+    },
+    {
+      "id": "bungalow-shadow",
+      "type": "shadow",
+      "footprint": [
+        14,
+        12
+      ],
+      "floors": 1,
+      "heightMetres": 3.15,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          6.0
+        ],
+        "service": [
+          -7.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4841708542713568,
+        0.4720379146919432
+      ],
+      "worldWidth": 33.166666666666664,
+      "worldHeight": 17.583333333333332,
+      "masterSize": [
+        870,
+        494
+      ]
+    },
+    {
+      "id": "bus-0",
+      "type": "vehicle",
+      "footprint": [
+        12,
+        2.55
+      ],
+      "floors": 0,
+      "heightMetres": 3.2199997901916504,
+      "sourceScale": 24.032513044995852,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          1.275
+        ],
+        "service": [
+          -6.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49878093447998495,
+        0.6842963372923664
+      ],
+      "worldWidth": 17.101831973647055,
+      "worldHeight": 12.10859636090339,
+      "masterSize": [
+        440,
+        313
+      ]
+    },
+    {
+      "id": "bus-0-shadow",
+      "type": "shadow",
+      "footprint": [
+        12,
+        2.55
+      ],
+      "floors": 0,
+      "heightMetres": 3.2199997901916504,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          1.275
+        ],
+        "service": [
+          -6.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4720860215053763,
+        0.45218749999999996
+      ],
+      "worldWidth": 19.375,
+      "worldHeight": 10.666666666666666,
+      "masterSize": [
+        541,
+        330
+      ]
+    },
+    {
+      "id": "bus-1",
+      "type": "vehicle",
+      "footprint": [
+        2.55,
+        12
+      ],
+      "floors": 0,
+      "heightMetres": 3.2199997901916504,
+      "sourceScale": 24.032513044995852,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          6.0
+        ],
+        "service": [
+          -1.275,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5012140245043158,
+        0.6842963693477854
+      ],
+      "worldWidth": 17.101831973647055,
+      "worldHeight": 12.10859636090339,
+      "masterSize": [
+        440,
+        313
+      ]
+    },
+    {
+      "id": "bus-1-shadow",
+      "type": "shadow",
+      "footprint": [
+        2.55,
+        12
+      ],
+      "floors": 0,
+      "heightMetres": 3.2199997901916504,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          6.0
+        ],
+        "service": [
+          -1.275,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4720860215053763,
+        0.45218749999999996
+      ],
+      "worldWidth": 19.375,
+      "worldHeight": 10.666666666666666,
+      "masterSize": [
+        541,
+        330
+      ]
+    },
+    {
+      "id": "bus-2",
+      "type": "vehicle",
+      "footprint": [
+        12,
+        2.55
+      ],
+      "floors": 0,
+      "heightMetres": 3.2199997901916504,
+      "sourceScale": 24.032513044995852,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          1.275
+        ],
+        "service": [
+          -6.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5012140245043158,
+        0.6893576630091263
+      ],
+      "worldWidth": 17.101831973647055,
+      "worldHeight": 12.275037547994845,
+      "masterSize": [
+        440,
+        316
+      ]
+    },
+    {
+      "id": "bus-2-shadow",
+      "type": "shadow",
+      "footprint": [
+        12,
+        2.55
+      ],
+      "floors": 0,
+      "heightMetres": 3.2199997901916504,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          1.275
+        ],
+        "service": [
+          -6.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4720860215053763,
+        0.45218749999999996
+      ],
+      "worldWidth": 19.375,
+      "worldHeight": 10.666666666666666,
+      "masterSize": [
+        541,
+        330
+      ]
+    },
+    {
+      "id": "bus-3",
+      "type": "vehicle",
+      "footprint": [
+        2.55,
+        12
+      ],
+      "floors": 0,
+      "heightMetres": 3.2199997901916504,
+      "sourceScale": 24.032513044995852,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          6.0
+        ],
+        "service": [
+          -1.275,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49878093447998495,
+        0.6893576949329699
+      ],
+      "worldWidth": 17.101831973647055,
+      "worldHeight": 12.275037547994845,
+      "masterSize": [
+        440,
+        316
+      ]
+    },
+    {
+      "id": "bus-3-shadow",
+      "type": "shadow",
+      "footprint": [
+        2.55,
+        12
+      ],
+      "floors": 0,
+      "heightMetres": 3.2199997901916504,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          6.0
+        ],
+        "service": [
+          -1.275,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4720860215053763,
+        0.45218749999999996
+      ],
+      "worldWidth": 19.375,
+      "worldHeight": 10.666666666666666,
+      "masterSize": [
+        541,
+        330
+      ]
+    },
+    {
+      "id": "danfo-0",
+      "type": "vehicle",
+      "footprint": [
+        5.1,
+        1.9
+      ],
+      "floors": 0,
+      "heightMetres": 2.369999885559082,
+      "sourceScale": 24.00381634463837,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.95
+        ],
+        "service": [
+          -2.55,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999611809545635,
+        0.7675584167059214
+      ],
+      "worldWidth": 8.165368255859851,
+      "worldHeight": 6.790586865842632,
+      "masterSize": [
+        222,
+        186
+      ]
+    },
+    {
+      "id": "danfo-0-shadow",
+      "type": "shadow",
+      "footprint": [
+        5.1,
+        1.9
+      ],
+      "floors": 0,
+      "heightMetres": 2.369999885559082,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.95
+        ],
+        "service": [
+          -2.55,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.45975103734439837,
+        0.4394366197183098
+      ],
+      "worldWidth": 10.041666666666666,
+      "worldHeight": 5.916666666666667,
+      "masterSize": [
+        317,
+        215
+      ]
+    },
+    {
+      "id": "danfo-1",
+      "type": "vehicle",
+      "footprint": [
+        1.9,
+        5.1
+      ],
+      "floors": 0,
+      "heightMetres": 2.369999885559082,
+      "sourceScale": 24.00381634463837,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.55
+        ],
+        "service": [
+          -0.95,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999611809545635,
+        0.7675584167059214
+      ],
+      "worldWidth": 8.165368255859851,
+      "worldHeight": 6.790586865842632,
+      "masterSize": [
+        222,
+        186
+      ]
+    },
+    {
+      "id": "danfo-1-shadow",
+      "type": "shadow",
+      "footprint": [
+        1.9,
+        5.1
+      ],
+      "floors": 0,
+      "heightMetres": 2.369999885559082,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.55
+        ],
+        "service": [
+          -0.95,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.45975103734439837,
+        0.4394366197183098
+      ],
+      "worldWidth": 10.041666666666666,
+      "worldHeight": 5.916666666666667,
+      "masterSize": [
+        317,
+        215
+      ]
+    },
+    {
+      "id": "danfo-2",
+      "type": "vehicle",
+      "footprint": [
+        5.1,
+        1.9
+      ],
+      "floors": 0,
+      "heightMetres": 2.369999885559082,
+      "sourceScale": 24.00381634463837,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.95
+        ],
+        "service": [
+          -2.55,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999611809545635,
+        0.7731338897383356
+      ],
+      "worldWidth": 8.165368255859851,
+      "worldHeight": 6.915566992207833,
+      "masterSize": [
+        222,
+        189
+      ]
+    },
+    {
+      "id": "danfo-2-shadow",
+      "type": "shadow",
+      "footprint": [
+        5.1,
+        1.9
+      ],
+      "floors": 0,
+      "heightMetres": 2.369999885559082,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.95
+        ],
+        "service": [
+          -2.55,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.45975103734439837,
+        0.4394366197183098
+      ],
+      "worldWidth": 10.041666666666666,
+      "worldHeight": 5.916666666666667,
+      "masterSize": [
+        317,
+        215
+      ]
+    },
+    {
+      "id": "danfo-3",
+      "type": "vehicle",
+      "footprint": [
+        1.9,
+        5.1
+      ],
+      "floors": 0,
+      "heightMetres": 2.369999885559082,
+      "sourceScale": 24.00381634463837,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.55
+        ],
+        "service": [
+          -0.95,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999611809545635,
+        0.7731338897383356
+      ],
+      "worldWidth": 8.165368255859851,
+      "worldHeight": 6.915566992207833,
+      "masterSize": [
+        222,
+        189
+      ]
+    },
+    {
+      "id": "danfo-3-shadow",
+      "type": "shadow",
+      "footprint": [
+        1.9,
+        5.1
+      ],
+      "floors": 0,
+      "heightMetres": 2.369999885559082,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.55
+        ],
+        "service": [
+          -0.95,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.45975103734439837,
+        0.4394366197183098
+      ],
+      "worldWidth": 10.041666666666666,
+      "worldHeight": 5.916666666666667,
+      "masterSize": [
+        317,
+        215
+      ]
+    },
+    {
+      "id": "gate",
+      "type": "prop",
+      "footprint": [
+        2,
+        1
+      ],
+      "floors": 0,
+      "heightMetres": 2.0,
+      "sourceScale": 24.138073550063,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.5
+        ],
+        "service": [
+          -1.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999335178962123,
+        0.7397062021332819
+      ],
+      "worldWidth": 6.462818984972097,
+      "worldHeight": 6.131392370358144,
+      "masterSize": [
+        174,
+        168
+      ]
+    },
+    {
+      "id": "keke-0",
+      "type": "vehicle",
+      "footprint": [
+        2.7,
+        1.4
+      ],
+      "floors": 0,
+      "heightMetres": 1.9199999570846558,
+      "sourceScale": 24.096268336881664,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.7
+        ],
+        "service": [
+          -1.35,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999337196350097,
+        0.7923778723447751
+      ],
+      "worldWidth": 4.772523213645551,
+      "worldHeight": 4.855523617361125,
+      "masterSize": [
+        139,
+        138
+      ]
+    },
+    {
+      "id": "keke-0-shadow",
+      "type": "shadow",
+      "footprint": [
+        2.7,
+        1.4
+      ],
+      "floors": 0,
+      "heightMetres": 1.9199999570846558,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.7
+        ],
+        "service": [
+          -1.35,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.45187096774193536,
+        0.42804123711340186
+      ],
+      "worldWidth": 6.458333333333333,
+      "worldHeight": 4.041666666666667,
+      "masterSize": [
+        230,
+        170
+      ]
+    },
+    {
+      "id": "keke-1",
+      "type": "vehicle",
+      "footprint": [
+        1.4,
+        2.7
+      ],
+      "floors": 0,
+      "heightMetres": 1.9199999570846558,
+      "sourceScale": 24.096268336881664,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          1.35
+        ],
+        "service": [
+          -0.7,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999337196350097,
+        0.7923778723447751
+      ],
+      "worldWidth": 4.772523213645551,
+      "worldHeight": 4.855523617361125,
+      "masterSize": [
+        139,
+        138
+      ]
+    },
+    {
+      "id": "keke-1-shadow",
+      "type": "shadow",
+      "footprint": [
+        1.4,
+        2.7
+      ],
+      "floors": 0,
+      "heightMetres": 1.9199999570846558,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          1.35
+        ],
+        "service": [
+          -0.7,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.45187096774193536,
+        0.42804123711340186
+      ],
+      "worldWidth": 6.458333333333333,
+      "worldHeight": 4.041666666666667,
+      "masterSize": [
+        230,
+        170
+      ]
+    },
+    {
+      "id": "keke-2",
+      "type": "vehicle",
+      "footprint": [
+        2.7,
+        1.4
+      ],
+      "floors": 0,
+      "heightMetres": 1.9199999570846558,
+      "sourceScale": 24.096268336881664,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.7
+        ],
+        "service": [
+          -1.35,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999430853387583,
+        0.848467454052808
+      ],
+      "worldWidth": 4.772523213645551,
+      "worldHeight": 4.731023011787763,
+      "masterSize": [
+        139,
+        134
+      ]
+    },
+    {
+      "id": "keke-2-shadow",
+      "type": "shadow",
+      "footprint": [
+        2.7,
+        1.4
+      ],
+      "floors": 0,
+      "heightMetres": 1.9199999570846558,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.7
+        ],
+        "service": [
+          -1.35,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.45187096774193536,
+        0.42804123711340186
+      ],
+      "worldWidth": 6.458333333333333,
+      "worldHeight": 4.041666666666667,
+      "masterSize": [
+        230,
+        170
+      ]
+    },
+    {
+      "id": "keke-3",
+      "type": "vehicle",
+      "footprint": [
+        1.4,
+        2.7
+      ],
+      "floors": 0,
+      "heightMetres": 1.9199999570846558,
+      "sourceScale": 24.096268336881664,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          1.35
+        ],
+        "service": [
+          -0.7,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999430853387583,
+        0.848467471568208
+      ],
+      "worldWidth": 4.772523213645551,
+      "worldHeight": 4.731023011787763,
+      "masterSize": [
+        139,
+        134
+      ]
+    },
+    {
+      "id": "keke-3-shadow",
+      "type": "shadow",
+      "footprint": [
+        1.4,
+        2.7
+      ],
+      "floors": 0,
+      "heightMetres": 1.9199999570846558,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          1.35
+        ],
+        "service": [
+          -0.7,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.45187096774193536,
+        0.42804123711340186
+      ],
+      "worldWidth": 6.458333333333333,
+      "worldHeight": 4.041666666666667,
+      "masterSize": [
+        230,
+        170
+      ]
+    },
+    {
+      "id": "l-block-8",
+      "type": "building",
+      "footprint": [
+        34,
+        34
+      ],
+      "floors": 8,
+      "heightMetres": 25.2,
+      "sourceScale": 24.00834245957758,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          17.0
+        ],
+        "service": [
+          -17.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.6385092630579665,
+        0.9315378466653259
+      ],
+      "worldWidth": 80.13881021729861,
+      "worldHeight": 65.01906587796421,
+      "masterSize": [
+        1942,
+        1579
+      ]
+    },
+    {
+      "id": "l-block-8-shadow",
+      "type": "shadow",
+      "footprint": [
+        34,
+        34
+      ],
+      "floors": 8,
+      "heightMetres": 25.2,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          17.0
+        ],
+        "service": [
+          -17.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4548461185117133,
+        0.4218671152228763
+      ],
+      "worldWidth": 90.70833333333333,
+      "worldHeight": 49.541666666666664,
+      "masterSize": [
+        2251,
+        1261
+      ]
+    },
+    {
+      "id": "lamp",
+      "type": "prop",
+      "footprint": [
+        2,
+        1
+      ],
+      "floors": 0,
+      "heightMetres": 7.259999752044678,
+      "sourceScale": 24.030028233638923,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.5
+        ],
+        "service": [
+          -1.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.11439650858703412,
+        0.9833421533795323
+      ],
+      "worldWidth": 2.372032169325852,
+      "worldHeight": 10.57010826331169,
+      "masterSize": [
+        79,
+        273
+      ]
+    },
+    {
+      "id": "linear-6",
+      "type": "building",
+      "footprint": [
+        33,
+        16
+      ],
+      "floors": 6,
+      "heightMetres": 18.9,
+      "sourceScale": 24.004768125844866,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          8.0
+        ],
+        "service": [
+          -16.5,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999942627247207,
+        0.751098152981604
+      ],
+      "worldWidth": 56.738727608603526,
+      "worldHeight": 55.155708776645426,
+      "masterSize": [
+        1380,
+        1343
+      ]
+    },
+    {
+      "id": "linear-6-shadow",
+      "type": "shadow",
+      "footprint": [
+        33,
+        16
+      ],
+      "floors": 6,
+      "heightMetres": 18.9,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          8.0
+        ],
+        "service": [
+          -16.5,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.45325743200506,
+        0.41979286536248556
+      ],
+      "worldWidth": 65.875,
+      "worldHeight": 36.208333333333336,
+      "masterSize": [
+        1655,
+        941
+      ]
+    },
+    {
+      "id": "mature-tree",
+      "type": "tree",
+      "footprint": [
+        6,
+        6
+      ],
+      "floors": 0,
+      "heightMetres": 10.707704544067383,
+      "sourceScale": 24.01099307488043,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          3.0
+        ],
+        "service": [
+          -3.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.45751403715916933,
+        0.9865474128604528
+      ],
+      "worldWidth": 13.285581275425383,
+      "worldHeight": 16.74233126244829,
+      "masterSize": [
+        461,
+        498
+      ]
+    },
+    {
+      "id": "mature-tree-shadow",
+      "type": "shadow",
+      "footprint": [
+        6,
+        6
+      ],
+      "floors": 0,
+      "heightMetres": 10.707704544067383,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          3.0
+        ],
+        "service": [
+          -3.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.26200942884030703,
+        0.05832043582096706
+      ],
+      "worldWidth": 13.75,
+      "worldHeight": 7.708333333333333,
+      "masterSize": [
+        484,
+        333
+      ]
+    },
+    {
+      "id": "mixed-6",
+      "type": "building",
+      "footprint": [
+        34,
+        20
+      ],
+      "floors": 6,
+      "heightMetres": 18.9,
+      "sourceScale": 24.01244429624178,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          10.0
+        ],
+        "service": [
+          -17.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.47959224913512005,
+        0.7555623789839556
+      ],
+      "worldWidth": 58.80284333323759,
+      "worldHeight": 56.803879820492966,
+      "masterSize": [
+        1430,
+        1383
+      ]
+    },
+    {
+      "id": "mixed-6-shadow",
+      "type": "shadow",
+      "footprint": [
+        34,
+        20
+      ],
+      "floors": 6,
+      "heightMetres": 18.9,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          10.0
+        ],
+        "service": [
+          -17.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.457159420289855,
+        0.42592986184909665
+      ],
+      "worldWidth": 71.875,
+      "worldHeight": 39.208333333333336,
+      "masterSize": [
+        1799,
+        1013
+      ]
+    },
+    {
+      "id": "okada-0",
+      "type": "vehicle",
+      "footprint": [
+        2.1,
+        0.8
+      ],
+      "floors": 0,
+      "heightMetres": 1.1673924922943115,
+      "sourceScale": 24.04875895166167,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.4
+        ],
+        "service": [
+          -1.05,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4954002797603607,
+        0.8162228364278289
+      ],
+      "worldWidth": 2.6196778023610636,
+      "worldHeight": 2.827588739056386,
+      "masterSize": [
+        81,
+        91
+      ]
+    },
+    {
+      "id": "okada-0-shadow",
+      "type": "shadow",
+      "footprint": [
+        2.1,
+        0.8
+      ],
+      "floors": 0,
+      "heightMetres": 1.1673924922943115,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.4
+        ],
+        "service": [
+          -1.05,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4580530973451328,
+        0.4443243243243243
+      ],
+      "worldWidth": 4.708333333333333,
+      "worldHeight": 3.0833333333333335,
+      "masterSize": [
+        189,
+        147
+      ]
+    },
+    {
+      "id": "okada-1",
+      "type": "vehicle",
+      "footprint": [
+        0.8,
+        2.1
+      ],
+      "floors": 0,
+      "heightMetres": 1.1673924922943115,
+      "sourceScale": 24.04876037411781,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          1.05
+        ],
+        "service": [
+          -0.4,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5045712505068097,
+        0.8162228364278289
+      ],
+      "worldWidth": 2.619677647410176,
+      "worldHeight": 2.8275885718078086,
+      "masterSize": [
+        81,
+        91
+      ]
+    },
+    {
+      "id": "okada-1-shadow",
+      "type": "shadow",
+      "footprint": [
+        0.8,
+        2.1
+      ],
+      "floors": 0,
+      "heightMetres": 1.1673924922943115,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          1.05
+        ],
+        "service": [
+          -0.4,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4580530973451328,
+        0.4443243243243243
+      ],
+      "worldWidth": 4.708333333333333,
+      "worldHeight": 3.0833333333333335,
+      "masterSize": [
+        189,
+        147
+      ]
+    },
+    {
+      "id": "okada-2",
+      "type": "vehicle",
+      "footprint": [
+        2.1,
+        0.8
+      ],
+      "floors": 0,
+      "heightMetres": 1.1673924922943115,
+      "sourceScale": 24.046106070965717,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.4
+        ],
+        "service": [
+          -1.05,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5045604450362069,
+        0.7882397882640362
+      ],
+      "worldWidth": 2.6199668176657034,
+      "worldHeight": 2.3288593934806254,
+      "masterSize": [
+        81,
+        79
+      ]
+    },
+    {
+      "id": "okada-2-shadow",
+      "type": "shadow",
+      "footprint": [
+        2.1,
+        0.8
+      ],
+      "floors": 0,
+      "heightMetres": 1.1673924922943115,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.4
+        ],
+        "service": [
+          -1.05,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4580530973451328,
+        0.4443243243243243
+      ],
+      "worldWidth": 4.708333333333333,
+      "worldHeight": 3.0833333333333335,
+      "masterSize": [
+        189,
+        147
+      ]
+    },
+    {
+      "id": "okada-3",
+      "type": "vehicle",
+      "footprint": [
+        0.8,
+        2.1
+      ],
+      "floors": 0,
+      "heightMetres": 1.1673924922943115,
+      "sourceScale": 24.046114605702538,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          1.05
+        ],
+        "service": [
+          -0.4,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49540683201381136,
+        0.7882398303065982
+      ],
+      "worldWidth": 2.619965887755502,
+      "worldHeight": 2.32885856689378,
+      "masterSize": [
+        81,
+        79
+      ]
+    },
+    {
+      "id": "okada-3-shadow",
+      "type": "shadow",
+      "footprint": [
+        0.8,
+        2.1
+      ],
+      "floors": 0,
+      "heightMetres": 1.1673924922943115,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          1.05
+        ],
+        "service": [
+          -0.4,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4580530973451328,
+        0.4443243243243243
+      ],
+      "worldWidth": 4.708333333333333,
+      "worldHeight": 3.0833333333333335,
+      "masterSize": [
+        189,
+        147
+      ]
+    },
+    {
+      "id": "palm",
+      "type": "tree",
+      "footprint": [
+        7,
+        7
+      ],
+      "floors": 0,
+      "heightMetres": 11.910961151123047,
+      "sourceScale": 24.040333743960783,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          3.5
+        ],
+        "service": [
+          -3.5,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.503863099136868,
+        0.9898214343872245
+      ],
+      "worldWidth": 15.390801306697682,
+      "worldHeight": 19.67526761640001,
+      "masterSize": [
+        540,
+        575
+      ]
+    },
+    {
+      "id": "palm-shadow",
+      "type": "shadow",
+      "footprint": [
+        7,
+        7
+      ],
+      "floors": 0,
+      "heightMetres": 11.910961151123047,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          3.5
+        ],
+        "service": [
+          -3.5,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.27379025465838147,
+        0.0675552641296622
+      ],
+      "worldWidth": 15.833333333333334,
+      "worldHeight": 8.791666666666666,
+      "masterSize": [
+        544,
+        368
+      ]
+    },
+    {
+      "id": "sedan-0",
+      "type": "vehicle",
+      "footprint": [
+        4.6,
+        1.8
+      ],
+      "floors": 0,
+      "heightMetres": 1.4700000286102295,
+      "sourceScale": 24.036974376716664,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.9
+        ],
+        "service": [
+          -2.3,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999957336060828,
+        0.6988197570129976
+      ],
+      "worldWidth": 7.446860706952692,
+      "worldHeight": 4.909103706259317,
+      "masterSize": [
+        205,
+        139
+      ]
+    },
+    {
+      "id": "sedan-0-shadow",
+      "type": "shadow",
+      "footprint": [
+        4.6,
+        1.8
+      ],
+      "floors": 0,
+      "heightMetres": 1.4700000286102295,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.9
+        ],
+        "service": [
+          -2.3,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.472962962962963,
+        0.45664
+      ],
+      "worldWidth": 9.0,
+      "worldHeight": 5.208333333333333,
+      "masterSize": [
+        292,
+        199
+      ]
+    },
+    {
+      "id": "sedan-1",
+      "type": "vehicle",
+      "footprint": [
+        1.8,
+        4.6
+      ],
+      "floors": 0,
+      "heightMetres": 1.4700000286102295,
+      "sourceScale": 24.036974376716664,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.3
+        ],
+        "service": [
+          -0.9,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999957336060828,
+        0.6988197570129976
+      ],
+      "worldWidth": 7.446860706952692,
+      "worldHeight": 4.909103706259317,
+      "masterSize": [
+        205,
+        139
+      ]
+    },
+    {
+      "id": "sedan-1-shadow",
+      "type": "shadow",
+      "footprint": [
+        1.8,
+        4.6
+      ],
+      "floors": 0,
+      "heightMetres": 1.4700000286102295,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.3
+        ],
+        "service": [
+          -0.9,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.472962962962963,
+        0.45664
+      ],
+      "worldWidth": 9.0,
+      "worldHeight": 5.208333333333333,
+      "masterSize": [
+        292,
+        199
+      ]
+    },
+    {
+      "id": "sedan-2",
+      "type": "vehicle",
+      "footprint": [
+        4.6,
+        1.8
+      ],
+      "floors": 0,
+      "heightMetres": 1.4700000286102295,
+      "sourceScale": 24.036974376716664,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.9
+        ],
+        "service": [
+          -2.3,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999957336060828,
+        0.7099240293105443
+      ],
+      "worldWidth": 7.446860706952692,
+      "worldHeight": 4.992308853823034,
+      "masterSize": [
+        205,
+        143
+      ]
+    },
+    {
+      "id": "sedan-2-shadow",
+      "type": "shadow",
+      "footprint": [
+        4.6,
+        1.8
+      ],
+      "floors": 0,
+      "heightMetres": 1.4700000286102295,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.9
+        ],
+        "service": [
+          -2.3,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.472962962962963,
+        0.45664
+      ],
+      "worldWidth": 9.0,
+      "worldHeight": 5.208333333333333,
+      "masterSize": [
+        292,
+        199
+      ]
+    },
+    {
+      "id": "sedan-3",
+      "type": "vehicle",
+      "footprint": [
+        1.8,
+        4.6
+      ],
+      "floors": 0,
+      "heightMetres": 1.4700000286102295,
+      "sourceScale": 24.036974376716664,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.3
+        ],
+        "service": [
+          -0.9,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999957336060828,
+        0.7099240293105443
+      ],
+      "worldWidth": 7.446860706952692,
+      "worldHeight": 4.992308853823034,
+      "masterSize": [
+        205,
+        143
+      ]
+    },
+    {
+      "id": "sedan-3-shadow",
+      "type": "shadow",
+      "footprint": [
+        1.8,
+        4.6
+      ],
+      "floors": 0,
+      "heightMetres": 1.4700000286102295,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.3
+        ],
+        "service": [
+          -0.9,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.472962962962963,
+        0.45664
+      ],
+      "worldWidth": 9.0,
+      "worldHeight": 5.208333333333333,
+      "masterSize": [
+        292,
+        199
+      ]
+    },
+    {
+      "id": "setback-12",
+      "type": "building",
+      "footprint": [
+        26,
+        19
+      ],
+      "floors": 12,
+      "heightMetres": 37.8,
+      "sourceScale": 24.009145444847647,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          9.5
+        ],
+        "service": [
+          -13.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.499999365518833,
+        0.8339771537574643
+      ],
+      "worldWidth": 54.35428774413345,
+      "worldHeight": 79.01155850622311,
+      "masterSize": [
+        1323,
+        1916
+      ]
+    },
+    {
+      "id": "setback-12-shadow",
+      "type": "shadow",
+      "footprint": [
+        26,
+        19
+      ],
+      "floors": 12,
+      "heightMetres": 37.8,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          9.5
+        ],
+        "service": [
+          -13.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4088089330024814,
+        0.35368421052631577
+      ],
+      "worldWidth": 67.16666666666667,
+      "worldHeight": 39.583333333333336,
+      "masterSize": [
+        1686,
+        1022
+      ]
+    },
+    {
+      "id": "shade-tree",
+      "type": "tree",
+      "footprint": [
+        5,
+        5
+      ],
+      "floors": 0,
+      "heightMetres": 7.980968475341797,
+      "sourceScale": 24.02850507287552,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.5
+        ],
+        "service": [
+          -2.5,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.43263178066475183,
+        0.9862535547964112
+      ],
+      "worldWidth": 10.570778299758933,
+      "worldHeight": 13.359133205600855,
+      "masterSize": [
+        419,
+        405
+      ]
+    },
+    {
+      "id": "shade-tree-shadow",
+      "type": "shadow",
+      "footprint": [
+        5,
+        5
+      ],
+      "floors": 0,
+      "heightMetres": 7.980968475341797,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.5
+        ],
+        "service": [
+          -2.5,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.2899137142093827,
+        0.11597721849619685
+      ],
+      "worldWidth": 11.625,
+      "worldHeight": 6.583333333333333,
+      "masterSize": [
+        412,
+        286
+      ]
+    },
+    {
+      "id": "street-tree",
+      "type": "tree",
+      "footprint": [
+        4,
+        4
+      ],
+      "floors": 0,
+      "heightMetres": 5.361963272094727,
+      "sourceScale": 24.03013178317736,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.0
+        ],
+        "service": [
+          -2.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5212952467153699,
+        0.9839825427667661
+      ],
+      "worldWidth": 9.030329169976254,
+      "worldHeight": 9.155172430390671,
+      "masterSize": [
+        339,
+        292
+      ]
+    },
+    {
+      "id": "street-tree-shadow",
+      "type": "shadow",
+      "footprint": [
+        4,
+        4
+      ],
+      "floors": 0,
+      "heightMetres": 5.361963272094727,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.0
+        ],
+        "service": [
+          -2.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.3288591310547347,
+        0.18832970013575195
+      ],
+      "worldWidth": 9.541666666666666,
+      "worldHeight": 5.5,
+      "masterSize": [
+        341,
+        241
+      ]
+    },
+    {
+      "id": "substation",
+      "type": "infrastructure",
+      "footprint": [
+        14,
+        9
+      ],
+      "floors": 0,
+      "heightMetres": 5.000000476837158,
+      "sourceScale": 24.000655366122427,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          4.5
+        ],
+        "service": [
+          -7.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999846553518656,
+        0.6719011973451685
+      ],
+      "worldWidth": 27.999235427068637,
+      "worldHeight": 21.37441633048543,
+      "masterSize": [
+        692,
+        533
+      ]
+    },
+    {
+      "id": "substation-shadow",
+      "type": "shadow",
+      "footprint": [
+        14,
+        9
+      ],
+      "floors": 0,
+      "heightMetres": 5.000000476837158,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          4.5
+        ],
+        "service": [
+          -7.0,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.47257617728531853,
+        0.45421994884910477
+      ],
+      "worldWidth": 30.083333333333332,
+      "worldHeight": 16.291666666666668,
+      "masterSize": [
+        798,
+        464
+      ]
+    },
+    {
+      "id": "suv-0",
+      "type": "vehicle",
+      "footprint": [
+        4.8,
+        1.98
+      ],
+      "floors": 0,
+      "heightMetres": 1.8200000524520874,
+      "sourceScale": 24.041329463256854,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.99
+        ],
+        "service": [
+          -2.4,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999945214454164,
+        0.7226881541703877
+      ],
+      "worldWidth": 7.819867045511211,
+      "worldHeight": 5.53213998432442,
+      "masterSize": [
+        216,
+        156
+      ]
+    },
+    {
+      "id": "suv-0-shadow",
+      "type": "shadow",
+      "footprint": [
+        4.8,
+        1.98
+      ],
+      "floors": 0,
+      "heightMetres": 1.8200000524520874,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.99
+        ],
+        "service": [
+          -2.4,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.46796521739130437,
+        0.44974436090225567
+      ],
+      "worldWidth": 9.583333333333334,
+      "worldHeight": 5.541666666666667,
+      "masterSize": [
+        306,
+        207
+      ]
+    },
+    {
+      "id": "suv-1",
+      "type": "vehicle",
+      "footprint": [
+        1.98,
+        4.8
+      ],
+      "floors": 0,
+      "heightMetres": 1.8200000524520874,
+      "sourceScale": 24.041329463256854,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.4
+        ],
+        "service": [
+          -0.99,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999945214454164,
+        0.7226881541703877
+      ],
+      "worldWidth": 7.819867045511211,
+      "worldHeight": 5.53213998432442,
+      "masterSize": [
+        216,
+        156
+      ]
+    },
+    {
+      "id": "suv-1-shadow",
+      "type": "shadow",
+      "footprint": [
+        1.98,
+        4.8
+      ],
+      "floors": 0,
+      "heightMetres": 1.8200000524520874,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.4
+        ],
+        "service": [
+          -0.99,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.46796521739130437,
+        0.44974436090225567
+      ],
+      "worldWidth": 9.583333333333334,
+      "worldHeight": 5.541666666666667,
+      "masterSize": [
+        306,
+        207
+      ]
+    },
+    {
+      "id": "suv-2",
+      "type": "vehicle",
+      "footprint": [
+        4.8,
+        1.98
+      ],
+      "floors": 0,
+      "heightMetres": 1.8200000524520874,
+      "sourceScale": 24.041329463256854,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.99
+        ],
+        "service": [
+          -2.4,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999945214454164,
+        0.7251710060739169
+      ],
+      "worldWidth": 7.819867045511211,
+      "worldHeight": 5.6985201342289145,
+      "masterSize": [
+        216,
+        159
+      ]
+    },
+    {
+      "id": "suv-2-shadow",
+      "type": "shadow",
+      "footprint": [
+        4.8,
+        1.98
+      ],
+      "floors": 0,
+      "heightMetres": 1.8200000524520874,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          0.99
+        ],
+        "service": [
+          -2.4,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.46796521739130437,
+        0.44974436090225567
+      ],
+      "worldWidth": 9.583333333333334,
+      "worldHeight": 5.541666666666667,
+      "masterSize": [
+        306,
+        207
+      ]
+    },
+    {
+      "id": "suv-3",
+      "type": "vehicle",
+      "footprint": [
+        1.98,
+        4.8
+      ],
+      "floors": 0,
+      "heightMetres": 1.8200000524520874,
+      "sourceScale": 24.041329463256854,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.4
+        ],
+        "service": [
+          -0.99,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999945214454164,
+        0.7251710060739169
+      ],
+      "worldWidth": 7.819867045511211,
+      "worldHeight": 5.6985201342289145,
+      "masterSize": [
+        216,
+        159
+      ]
+    },
+    {
+      "id": "suv-3-shadow",
+      "type": "shadow",
+      "footprint": [
+        1.98,
+        4.8
+      ],
+      "floors": 0,
+      "heightMetres": 1.8200000524520874,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          2.4
+        ],
+        "service": [
+          -0.99,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.46796521739130437,
+        0.44974436090225567
+      ],
+      "worldWidth": 9.583333333333334,
+      "worldHeight": 5.541666666666667,
+      "masterSize": [
+        306,
+        207
+      ]
+    },
+    {
+      "id": "terrace-2",
+      "type": "building",
+      "footprint": [
+        27,
+        12
+      ],
+      "floors": 2,
+      "heightMetres": 6.3,
+      "sourceScale": 24.01525153977041,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          6.0
+        ],
+        "service": [
+          -13.5,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999906113278875,
+        0.6548088713224142
+      ],
+      "worldWidth": 46.17898747233368,
+      "worldHeight": 32.10459814352504,
+      "masterSize": [
+        1127,
+        834
+      ]
+    },
+    {
+      "id": "terrace-2-shadow",
+      "type": "shadow",
+      "footprint": [
+        27,
+        12
+      ],
+      "floors": 2,
+      "heightMetres": 6.3,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          6.0
+        ],
+        "service": [
+          -13.5,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4791631799163179,
+        0.46329113924050624
+      ],
+      "worldWidth": 49.791666666666664,
+      "worldHeight": 26.333333333333332,
+      "masterSize": [
+        1269,
+        704
+      ]
+    },
+    {
+      "id": "tower-10",
+      "type": "building",
+      "footprint": [
+        23,
+        25
+      ],
+      "floors": 10,
+      "heightMetres": 31.5,
+      "sourceScale": 24.013730512691215,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          12.5
+        ],
+        "service": [
+          -11.5,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5340881273385478,
+        0.856155330120899
+      ],
+      "worldWidth": 52.8031244179185,
+      "worldHeight": 68.25261902284576,
+      "masterSize": [
+        1286,
+        1658
+      ]
+    },
+    {
+      "id": "tower-10-shadow",
+      "type": "shadow",
+      "footprint": [
+        23,
+        25
+      ],
+      "floors": 10,
+      "heightMetres": 31.5,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          12.5
+        ],
+        "service": [
+          -11.5,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.42557575757575755,
+        0.3776135163674762
+      ],
+      "worldWidth": 68.75,
+      "worldHeight": 39.458333333333336,
+      "masterSize": [
+        1724,
+        1019
+      ]
+    },
+    {
+      "id": "u-block-8",
+      "type": "building",
+      "footprint": [
+        37,
+        34
+      ],
+      "floors": 8,
+      "heightMetres": 25.2,
+      "sourceScale": 24.003420058895244,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          17.0
+        ],
+        "service": [
+          -18.5,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5222936842832772,
+        0.7536323698828629
+      ],
+      "worldWidth": 80.73849456639456,
+      "worldHeight": 76.40577865571085,
+      "masterSize": [
+        1956,
+        1853
+      ]
+    },
+    {
+      "id": "u-block-8-shadow",
+      "type": "shadow",
+      "footprint": [
+        37,
+        34
+      ],
+      "floors": 8,
+      "heightMetres": 25.2,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          17.0
+        ],
+        "service": [
+          -18.5,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4566504639858595,
+        0.4246753246753247
+      ],
+      "worldWidth": 94.29166666666667,
+      "worldHeight": 51.333333333333336,
+      "masterSize": [
+        2337,
+        1304
+      ]
+    },
+    {
+      "id": "water-tower",
+      "type": "infrastructure",
+      "footprint": [
+        7,
+        7
+      ],
+      "floors": 0,
+      "heightMetres": 16.0,
+      "sourceScale": 24.001762704322303,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          3.5
+        ],
+        "service": [
+          -3.5,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5751313210660965,
+        0.8718216373107495
+      ],
+      "worldWidth": 17.62370560908116,
+      "worldHeight": 29.08119743531596,
+      "masterSize": [
+        470,
+        744
+      ]
+    },
+    {
+      "id": "water-tower-shadow",
+      "type": "shadow",
+      "footprint": [
+        7,
+        7
+      ],
+      "floors": 0,
+      "heightMetres": 16.0,
+      "sourceScale": 24,
+      "camera": {
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "sockets": {
+        "entrance": [
+          0,
+          3.5
+        ],
+        "service": [
+          -3.5,
+          0
+        ]
+      },
+      "lighting": "neutral warm northwest daylight",
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.38613138686131393,
+        0.3269005847953217
+      ],
+      "worldWidth": 22.833333333333332,
+      "worldHeight": 14.25,
+      "masterSize": [
+        624,
+        416
+      ]
+    }
+  ],
+  "sheets": {
+    "2": [
+      {
+        "key": "lab-prop-2-0",
+        "width": 64,
+        "height": 64
+      },
+      {
+        "key": "lab-building-2-0",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "key": "lab-shadow-2-0",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "key": "lab-vehicle-2-0",
+        "width": 512,
+        "height": 64
+      },
+      {
+        "key": "lab-tree-2-0",
+        "width": 128,
+        "height": 64
+      },
+      {
+        "key": "lab-infrastructure-2-0",
+        "width": 128,
+        "height": 64
+      }
+    ],
+    "6": [
+      {
+        "key": "lab-prop-6-0",
+        "width": 128,
+        "height": 128
+      },
+      {
+        "key": "lab-building-6-0",
+        "width": 2048,
+        "height": 1024
+      },
+      {
+        "key": "lab-shadow-6-0",
+        "width": 2048,
+        "height": 1024
+      },
+      {
+        "key": "lab-vehicle-6-0",
+        "width": 2048,
+        "height": 128
+      },
+      {
+        "key": "lab-tree-6-0",
+        "width": 512,
+        "height": 128
+      },
+      {
+        "key": "lab-infrastructure-6-0",
+        "width": 512,
+        "height": 256
+      }
+    ],
+    "9": [
+      {
+        "key": "lab-prop-9-0",
+        "width": 128,
+        "height": 128
+      },
+      {
+        "key": "lab-building-9-0",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "key": "lab-shadow-9-0",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "key": "lab-vehicle-9-0",
+        "width": 2048,
+        "height": 128
+      },
+      {
+        "key": "lab-tree-9-0",
+        "width": 512,
+        "height": 256
+      },
+      {
+        "key": "lab-infrastructure-9-0",
+        "width": 512,
+        "height": 512
+      }
+    ],
+    "12": [
+      {
+        "key": "lab-prop-12-0",
+        "width": 256,
+        "height": 256
+      },
+      {
+        "key": "lab-building-12-0",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "key": "lab-building-12-1",
+        "width": 2048,
+        "height": 1024
+      },
+      {
+        "key": "lab-shadow-12-0",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "key": "lab-shadow-12-1",
+        "width": 2048,
+        "height": 1024
+      },
+      {
+        "key": "lab-vehicle-12-0",
+        "width": 2048,
+        "height": 256
+      },
+      {
+        "key": "lab-tree-12-0",
+        "width": 1024,
+        "height": 256
+      },
+      {
+        "key": "lab-infrastructure-12-0",
+        "width": 1024,
+        "height": 512
+      }
+    ]
+  },
+  "locations": {
+    "2": {
+      "lamp": "lab-prop-2-0",
+      "gate": "lab-prop-2-0",
+      "bench": "lab-prop-2-0",
+      "setback-12": "lab-building-2-0",
+      "u-block-8": "lab-building-2-0",
+      "tower-10": "lab-building-2-0",
+      "l-block-8": "lab-building-2-0",
+      "mixed-6": "lab-building-2-0",
+      "linear-6": "lab-building-2-0",
+      "terrace-2": "lab-building-2-0",
+      "bungalow": "lab-building-2-0",
+      "u-block-8-shadow": "lab-shadow-2-0",
+      "l-block-8-shadow": "lab-shadow-2-0",
+      "setback-12-shadow": "lab-shadow-2-0",
+      "tower-10-shadow": "lab-shadow-2-0",
+      "mixed-6-shadow": "lab-shadow-2-0",
+      "linear-6-shadow": "lab-shadow-2-0",
+      "terrace-2-shadow": "lab-shadow-2-0",
+      "bungalow-shadow": "lab-shadow-2-0",
+      "substation-shadow": "lab-shadow-2-0",
+      "water-tower-shadow": "lab-shadow-2-0",
+      "bus-0-shadow": "lab-shadow-2-0",
+      "bus-1-shadow": "lab-shadow-2-0",
+      "bus-2-shadow": "lab-shadow-2-0",
+      "bus-3-shadow": "lab-shadow-2-0",
+      "palm-shadow": "lab-shadow-2-0",
+      "mature-tree-shadow": "lab-shadow-2-0",
+      "shade-tree-shadow": "lab-shadow-2-0",
+      "danfo-0-shadow": "lab-shadow-2-0",
+      "danfo-1-shadow": "lab-shadow-2-0",
+      "danfo-2-shadow": "lab-shadow-2-0",
+      "danfo-3-shadow": "lab-shadow-2-0",
+      "street-tree-shadow": "lab-shadow-2-0",
+      "suv-0-shadow": "lab-shadow-2-0",
+      "suv-1-shadow": "lab-shadow-2-0",
+      "suv-2-shadow": "lab-shadow-2-0",
+      "suv-3-shadow": "lab-shadow-2-0",
+      "sedan-0-shadow": "lab-shadow-2-0",
+      "sedan-1-shadow": "lab-shadow-2-0",
+      "sedan-2-shadow": "lab-shadow-2-0",
+      "sedan-3-shadow": "lab-shadow-2-0",
+      "keke-0-shadow": "lab-shadow-2-0",
+      "keke-1-shadow": "lab-shadow-2-0",
+      "keke-2-shadow": "lab-shadow-2-0",
+      "keke-3-shadow": "lab-shadow-2-0",
+      "okada-0-shadow": "lab-shadow-2-0",
+      "okada-1-shadow": "lab-shadow-2-0",
+      "okada-2-shadow": "lab-shadow-2-0",
+      "okada-3-shadow": "lab-shadow-2-0",
+      "bus-2": "lab-vehicle-2-0",
+      "bus-3": "lab-vehicle-2-0",
+      "bus-0": "lab-vehicle-2-0",
+      "bus-1": "lab-vehicle-2-0",
+      "danfo-0": "lab-vehicle-2-0",
+      "danfo-1": "lab-vehicle-2-0",
+      "danfo-2": "lab-vehicle-2-0",
+      "danfo-3": "lab-vehicle-2-0",
+      "suv-0": "lab-vehicle-2-0",
+      "suv-1": "lab-vehicle-2-0",
+      "suv-2": "lab-vehicle-2-0",
+      "suv-3": "lab-vehicle-2-0",
+      "keke-0": "lab-vehicle-2-0",
+      "keke-1": "lab-vehicle-2-0",
+      "sedan-0": "lab-vehicle-2-0",
+      "sedan-1": "lab-vehicle-2-0",
+      "sedan-2": "lab-vehicle-2-0",
+      "sedan-3": "lab-vehicle-2-0",
+      "keke-2": "lab-vehicle-2-0",
+      "keke-3": "lab-vehicle-2-0",
+      "okada-0": "lab-vehicle-2-0",
+      "okada-1": "lab-vehicle-2-0",
+      "okada-2": "lab-vehicle-2-0",
+      "okada-3": "lab-vehicle-2-0",
+      "palm": "lab-tree-2-0",
+      "mature-tree": "lab-tree-2-0",
+      "shade-tree": "lab-tree-2-0",
+      "street-tree": "lab-tree-2-0",
+      "water-tower": "lab-infrastructure-2-0",
+      "substation": "lab-infrastructure-2-0"
+    },
+    "6": {
+      "lamp": "lab-prop-6-0",
+      "gate": "lab-prop-6-0",
+      "bench": "lab-prop-6-0",
+      "setback-12": "lab-building-6-0",
+      "u-block-8": "lab-building-6-0",
+      "tower-10": "lab-building-6-0",
+      "l-block-8": "lab-building-6-0",
+      "mixed-6": "lab-building-6-0",
+      "linear-6": "lab-building-6-0",
+      "terrace-2": "lab-building-6-0",
+      "bungalow": "lab-building-6-0",
+      "u-block-8-shadow": "lab-shadow-6-0",
+      "l-block-8-shadow": "lab-shadow-6-0",
+      "setback-12-shadow": "lab-shadow-6-0",
+      "tower-10-shadow": "lab-shadow-6-0",
+      "mixed-6-shadow": "lab-shadow-6-0",
+      "linear-6-shadow": "lab-shadow-6-0",
+      "terrace-2-shadow": "lab-shadow-6-0",
+      "bungalow-shadow": "lab-shadow-6-0",
+      "substation-shadow": "lab-shadow-6-0",
+      "water-tower-shadow": "lab-shadow-6-0",
+      "bus-0-shadow": "lab-shadow-6-0",
+      "bus-1-shadow": "lab-shadow-6-0",
+      "bus-2-shadow": "lab-shadow-6-0",
+      "bus-3-shadow": "lab-shadow-6-0",
+      "palm-shadow": "lab-shadow-6-0",
+      "mature-tree-shadow": "lab-shadow-6-0",
+      "shade-tree-shadow": "lab-shadow-6-0",
+      "danfo-0-shadow": "lab-shadow-6-0",
+      "danfo-1-shadow": "lab-shadow-6-0",
+      "danfo-2-shadow": "lab-shadow-6-0",
+      "danfo-3-shadow": "lab-shadow-6-0",
+      "street-tree-shadow": "lab-shadow-6-0",
+      "suv-0-shadow": "lab-shadow-6-0",
+      "suv-1-shadow": "lab-shadow-6-0",
+      "suv-2-shadow": "lab-shadow-6-0",
+      "suv-3-shadow": "lab-shadow-6-0",
+      "sedan-0-shadow": "lab-shadow-6-0",
+      "sedan-1-shadow": "lab-shadow-6-0",
+      "sedan-2-shadow": "lab-shadow-6-0",
+      "sedan-3-shadow": "lab-shadow-6-0",
+      "keke-0-shadow": "lab-shadow-6-0",
+      "keke-1-shadow": "lab-shadow-6-0",
+      "keke-2-shadow": "lab-shadow-6-0",
+      "keke-3-shadow": "lab-shadow-6-0",
+      "okada-0-shadow": "lab-shadow-6-0",
+      "okada-1-shadow": "lab-shadow-6-0",
+      "okada-2-shadow": "lab-shadow-6-0",
+      "okada-3-shadow": "lab-shadow-6-0",
+      "bus-2": "lab-vehicle-6-0",
+      "bus-3": "lab-vehicle-6-0",
+      "bus-0": "lab-vehicle-6-0",
+      "bus-1": "lab-vehicle-6-0",
+      "danfo-0": "lab-vehicle-6-0",
+      "danfo-1": "lab-vehicle-6-0",
+      "danfo-2": "lab-vehicle-6-0",
+      "danfo-3": "lab-vehicle-6-0",
+      "suv-2": "lab-vehicle-6-0",
+      "suv-3": "lab-vehicle-6-0",
+      "suv-0": "lab-vehicle-6-0",
+      "suv-1": "lab-vehicle-6-0",
+      "sedan-2": "lab-vehicle-6-0",
+      "sedan-3": "lab-vehicle-6-0",
+      "keke-0": "lab-vehicle-6-0",
+      "keke-1": "lab-vehicle-6-0",
+      "sedan-0": "lab-vehicle-6-0",
+      "sedan-1": "lab-vehicle-6-0",
+      "keke-2": "lab-vehicle-6-0",
+      "keke-3": "lab-vehicle-6-0",
+      "okada-0": "lab-vehicle-6-0",
+      "okada-1": "lab-vehicle-6-0",
+      "okada-2": "lab-vehicle-6-0",
+      "okada-3": "lab-vehicle-6-0",
+      "palm": "lab-tree-6-0",
+      "mature-tree": "lab-tree-6-0",
+      "shade-tree": "lab-tree-6-0",
+      "street-tree": "lab-tree-6-0",
+      "water-tower": "lab-infrastructure-6-0",
+      "substation": "lab-infrastructure-6-0"
+    },
+    "9": {
+      "lamp": "lab-prop-9-0",
+      "gate": "lab-prop-9-0",
+      "bench": "lab-prop-9-0",
+      "setback-12": "lab-building-9-0",
+      "u-block-8": "lab-building-9-0",
+      "tower-10": "lab-building-9-0",
+      "l-block-8": "lab-building-9-0",
+      "mixed-6": "lab-building-9-0",
+      "linear-6": "lab-building-9-0",
+      "terrace-2": "lab-building-9-0",
+      "bungalow": "lab-building-9-0",
+      "u-block-8-shadow": "lab-shadow-9-0",
+      "l-block-8-shadow": "lab-shadow-9-0",
+      "setback-12-shadow": "lab-shadow-9-0",
+      "tower-10-shadow": "lab-shadow-9-0",
+      "mixed-6-shadow": "lab-shadow-9-0",
+      "linear-6-shadow": "lab-shadow-9-0",
+      "terrace-2-shadow": "lab-shadow-9-0",
+      "bungalow-shadow": "lab-shadow-9-0",
+      "substation-shadow": "lab-shadow-9-0",
+      "water-tower-shadow": "lab-shadow-9-0",
+      "bus-0-shadow": "lab-shadow-9-0",
+      "bus-1-shadow": "lab-shadow-9-0",
+      "bus-2-shadow": "lab-shadow-9-0",
+      "bus-3-shadow": "lab-shadow-9-0",
+      "palm-shadow": "lab-shadow-9-0",
+      "mature-tree-shadow": "lab-shadow-9-0",
+      "shade-tree-shadow": "lab-shadow-9-0",
+      "danfo-0-shadow": "lab-shadow-9-0",
+      "danfo-1-shadow": "lab-shadow-9-0",
+      "danfo-2-shadow": "lab-shadow-9-0",
+      "danfo-3-shadow": "lab-shadow-9-0",
+      "street-tree-shadow": "lab-shadow-9-0",
+      "suv-0-shadow": "lab-shadow-9-0",
+      "suv-1-shadow": "lab-shadow-9-0",
+      "suv-2-shadow": "lab-shadow-9-0",
+      "suv-3-shadow": "lab-shadow-9-0",
+      "sedan-0-shadow": "lab-shadow-9-0",
+      "sedan-1-shadow": "lab-shadow-9-0",
+      "sedan-2-shadow": "lab-shadow-9-0",
+      "sedan-3-shadow": "lab-shadow-9-0",
+      "keke-0-shadow": "lab-shadow-9-0",
+      "keke-1-shadow": "lab-shadow-9-0",
+      "keke-2-shadow": "lab-shadow-9-0",
+      "keke-3-shadow": "lab-shadow-9-0",
+      "okada-0-shadow": "lab-shadow-9-0",
+      "okada-1-shadow": "lab-shadow-9-0",
+      "okada-2-shadow": "lab-shadow-9-0",
+      "okada-3-shadow": "lab-shadow-9-0",
+      "bus-2": "lab-vehicle-9-0",
+      "bus-3": "lab-vehicle-9-0",
+      "bus-0": "lab-vehicle-9-0",
+      "bus-1": "lab-vehicle-9-0",
+      "danfo-2": "lab-vehicle-9-0",
+      "danfo-3": "lab-vehicle-9-0",
+      "danfo-0": "lab-vehicle-9-0",
+      "danfo-1": "lab-vehicle-9-0",
+      "suv-2": "lab-vehicle-9-0",
+      "suv-3": "lab-vehicle-9-0",
+      "suv-0": "lab-vehicle-9-0",
+      "suv-1": "lab-vehicle-9-0",
+      "sedan-2": "lab-vehicle-9-0",
+      "sedan-3": "lab-vehicle-9-0",
+      "keke-0": "lab-vehicle-9-0",
+      "keke-1": "lab-vehicle-9-0",
+      "sedan-0": "lab-vehicle-9-0",
+      "sedan-1": "lab-vehicle-9-0",
+      "keke-2": "lab-vehicle-9-0",
+      "keke-3": "lab-vehicle-9-0",
+      "okada-0": "lab-vehicle-9-0",
+      "okada-1": "lab-vehicle-9-0",
+      "okada-2": "lab-vehicle-9-0",
+      "okada-3": "lab-vehicle-9-0",
+      "palm": "lab-tree-9-0",
+      "mature-tree": "lab-tree-9-0",
+      "shade-tree": "lab-tree-9-0",
+      "street-tree": "lab-tree-9-0",
+      "water-tower": "lab-infrastructure-9-0",
+      "substation": "lab-infrastructure-9-0"
+    },
+    "12": {
+      "lamp": "lab-prop-12-0",
+      "gate": "lab-prop-12-0",
+      "bench": "lab-prop-12-0",
+      "setback-12": "lab-building-12-0",
+      "u-block-8": "lab-building-12-0",
+      "tower-10": "lab-building-12-0",
+      "l-block-8": "lab-building-12-0",
+      "bungalow": "lab-building-12-0",
+      "mixed-6": "lab-building-12-1",
+      "linear-6": "lab-building-12-1",
+      "terrace-2": "lab-building-12-1",
+      "u-block-8-shadow": "lab-shadow-12-0",
+      "l-block-8-shadow": "lab-shadow-12-0",
+      "setback-12-shadow": "lab-shadow-12-0",
+      "tower-10-shadow": "lab-shadow-12-0",
+      "mixed-6-shadow": "lab-shadow-12-0",
+      "terrace-2-shadow": "lab-shadow-12-0",
+      "bungalow-shadow": "lab-shadow-12-0",
+      "substation-shadow": "lab-shadow-12-0",
+      "water-tower-shadow": "lab-shadow-12-0",
+      "bus-0-shadow": "lab-shadow-12-0",
+      "shade-tree-shadow": "lab-shadow-12-0",
+      "linear-6-shadow": "lab-shadow-12-1",
+      "bus-1-shadow": "lab-shadow-12-1",
+      "bus-2-shadow": "lab-shadow-12-1",
+      "bus-3-shadow": "lab-shadow-12-1",
+      "palm-shadow": "lab-shadow-12-1",
+      "mature-tree-shadow": "lab-shadow-12-1",
+      "danfo-0-shadow": "lab-shadow-12-1",
+      "danfo-1-shadow": "lab-shadow-12-1",
+      "danfo-2-shadow": "lab-shadow-12-1",
+      "danfo-3-shadow": "lab-shadow-12-1",
+      "street-tree-shadow": "lab-shadow-12-1",
+      "suv-0-shadow": "lab-shadow-12-1",
+      "suv-1-shadow": "lab-shadow-12-1",
+      "suv-2-shadow": "lab-shadow-12-1",
+      "suv-3-shadow": "lab-shadow-12-1",
+      "sedan-0-shadow": "lab-shadow-12-1",
+      "sedan-1-shadow": "lab-shadow-12-1",
+      "sedan-2-shadow": "lab-shadow-12-1",
+      "sedan-3-shadow": "lab-shadow-12-1",
+      "keke-0-shadow": "lab-shadow-12-1",
+      "keke-1-shadow": "lab-shadow-12-1",
+      "keke-2-shadow": "lab-shadow-12-1",
+      "keke-3-shadow": "lab-shadow-12-1",
+      "okada-0-shadow": "lab-shadow-12-1",
+      "okada-1-shadow": "lab-shadow-12-1",
+      "okada-2-shadow": "lab-shadow-12-1",
+      "okada-3-shadow": "lab-shadow-12-1",
+      "bus-2": "lab-vehicle-12-0",
+      "bus-3": "lab-vehicle-12-0",
+      "bus-0": "lab-vehicle-12-0",
+      "bus-1": "lab-vehicle-12-0",
+      "danfo-2": "lab-vehicle-12-0",
+      "danfo-3": "lab-vehicle-12-0",
+      "danfo-0": "lab-vehicle-12-0",
+      "danfo-1": "lab-vehicle-12-0",
+      "suv-2": "lab-vehicle-12-0",
+      "suv-3": "lab-vehicle-12-0",
+      "suv-0": "lab-vehicle-12-0",
+      "suv-1": "lab-vehicle-12-0",
+      "sedan-2": "lab-vehicle-12-0",
+      "sedan-3": "lab-vehicle-12-0",
+      "sedan-0": "lab-vehicle-12-0",
+      "sedan-1": "lab-vehicle-12-0",
+      "keke-0": "lab-vehicle-12-0",
+      "keke-1": "lab-vehicle-12-0",
+      "keke-2": "lab-vehicle-12-0",
+      "keke-3": "lab-vehicle-12-0",
+      "okada-0": "lab-vehicle-12-0",
+      "okada-1": "lab-vehicle-12-0",
+      "okada-2": "lab-vehicle-12-0",
+      "okada-3": "lab-vehicle-12-0",
+      "palm": "lab-tree-12-0",
+      "mature-tree": "lab-tree-12-0",
+      "shade-tree": "lab-tree-12-0",
+      "street-tree": "lab-tree-12-0",
+      "water-tower": "lab-infrastructure-12-0",
+      "substation": "lab-infrastructure-12-0"
+    }
+  }
+}

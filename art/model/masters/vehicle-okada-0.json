@@ -1,0 +1,43 @@
+{
+  "id": "vehicle-okada-0",
+  "type": "vehicle",
+  "level": 0,
+  "variant": 0,
+  "sourceScale": 24.27098042314491,
+  "originPixels": [
+    43.499286979436874,
+    54.00960111618042
+  ],
+  "tileTopOffset": 0,
+  "metresPerTile": 20,
+  "floorHeightMetres": 3.2,
+  "floors": 0,
+  "footprint": "vehicle-okada-0",
+  "sockets": {
+    "generator": {
+      "x": -7,
+      "y": 18
+    },
+    "tank": {
+      "x": 9,
+      "y": 14
+    },
+    "pump": {
+      "x": 10,
+      "y": 17
+    }
+  },
+  "windowMaterial": "glass",
+  "lighting": "northwest warm daylight / ambient sky",
+  "camera": {
+    "projection": "orthographic",
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

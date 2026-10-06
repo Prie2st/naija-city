@@ -1,0 +1,43 @@
+{
+  "id": "courtyard-apartment",
+  "type": "residential",
+  "level": 3,
+  "variant": 0,
+  "sourceScale": 24.013004199563063,
+  "originPixels": [
+    586.4995455443859,
+    698.332601070404
+  ],
+  "tileTopOffset": 12,
+  "metresPerTile": 20,
+  "floorHeightMetres": 3.2,
+  "floors": 4,
+  "footprint": "courtyard-apartment",
+  "sockets": {
+    "generator": {
+      "x": -7,
+      "y": 18
+    },
+    "tank": {
+      "x": 9,
+      "y": 14
+    },
+    "pump": {
+      "x": 10,
+      "y": 17
+    }
+  },
+  "windowMaterial": "glass",
+  "lighting": "northwest warm daylight / ambient sky",
+  "camera": {
+    "projection": "orthographic",
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

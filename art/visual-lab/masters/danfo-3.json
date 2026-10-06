@@ -1,0 +1,36 @@
+{
+  "id": "danfo-3",
+  "type": "vehicle",
+  "footprint": [
+    1.9,
+    5.1
+  ],
+  "floors": 0,
+  "heightMetres": 2.369999885559082,
+  "sourceScale": 24.00381634463837,
+  "originPixels": [
+    110.99923914670944,
+    138.34022569656372
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      2.55
+    ],
+    "service": [
+      -0.95,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

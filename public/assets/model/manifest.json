@@ -1,0 +1,5101 @@
+{
+  "assets": [
+    {
+      "id": "apartment-14",
+      "type": "residential",
+      "level": 5,
+      "variant": 0,
+      "sourceScale": 24.007051009894457,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 14,
+      "footprint": "apartment-14",
+      "sockets": {
+        "generator": {
+          "x": -17.4,
+          "y": 10.5
+        },
+        "tank": {
+          "x": 18.24,
+          "y": 13.08
+        },
+        "pump": {
+          "x": 1.8,
+          "y": 20.7
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999927359742,
+        0.7246127412923965
+      ],
+      "worldWidth": 48.11086540883214,
+      "visualHeight": 63.41517618419132,
+      "masterSize": [
+        1173,
+        2120
+      ]
+    },
+    {
+      "id": "apartment-4",
+      "type": "residential",
+      "level": 3,
+      "variant": 0,
+      "sourceScale": 24.013004199563063,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 4,
+      "footprint": "apartment-4",
+      "sockets": {
+        "generator": {
+          "x": -17.4,
+          "y": 10.5
+        },
+        "tank": {
+          "x": 18.24,
+          "y": 13.08
+        },
+        "pump": {
+          "x": 1.8,
+          "y": 20.7
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999993643977425,
+        0.40469200549303996
+      ],
+      "worldWidth": 48.09893799214911,
+      "visualHeight": 16.381150233022172,
+      "masterSize": [
+        1173,
+        991
+      ]
+    },
+    {
+      "id": "apartment-8",
+      "type": "residential",
+      "level": 4,
+      "variant": 0,
+      "sourceScale": 24.014260755167854,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 8,
+      "footprint": "apartment-8",
+      "sockets": {
+        "generator": {
+          "x": -17.4,
+          "y": 10.5
+        },
+        "tank": {
+          "x": 18.24,
+          "y": 13.08
+        },
+        "pump": {
+          "x": 1.8,
+          "y": 20.7
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999957626516167,
+        0.5935638462188166
+      ],
+      "worldWidth": 48.096421196369526,
+      "visualHeight": 35.19720742741168,
+      "masterSize": [
+        1173,
+        1443
+      ]
+    },
+    {
+      "id": "bungalow",
+      "type": "residential",
+      "level": 1,
+      "variant": 0,
+      "sourceScale": 24.012983600290852,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 1,
+      "footprint": "bungalow",
+      "sockets": {
+        "generator": {
+          "x": -17.4,
+          "y": 10.5
+        },
+        "tank": {
+          "x": 18.24,
+          "y": 13.08
+        },
+        "pump": {
+          "x": 1.8,
+          "y": 20.7
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999993946645167,
+        0.047928638462325514
+      ],
+      "worldWidth": 48.09897925329072,
+      "visualHeight": 1.2135356717913617,
+      "masterSize": [
+        1173,
+        675
+      ]
+    },
+    {
+      "id": "commercial-modern",
+      "type": "commercial",
+      "level": 3,
+      "variant": 0,
+      "sourceScale": 24.013004199563063,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.8,
+      "floors": 4,
+      "footprint": "commercial-modern",
+      "sockets": {
+        "generator": {
+          "x": -17.4,
+          "y": 10.5
+        },
+        "tank": {
+          "x": 18.24,
+          "y": 13.08
+        },
+        "pump": {
+          "x": 1.8,
+          "y": 20.7
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999942493129085,
+        0.4433533021933918
+      ],
+      "worldWidth": 48.09893799214911,
+      "visualHeight": 19.2015722168373,
+      "masterSize": [
+        1173,
+        1059
+      ]
+    },
+    {
+      "id": "construction-foundation",
+      "type": "construction",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.01302479883527,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "construction-foundation",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999933413096836,
+        0.0021152052015075886
+      ],
+      "worldWidth": 48.0988967310783,
+      "visualHeight": 0.051089732641008516,
+      "masterSize": [
+        1173,
+        598
+      ]
+    },
+    {
+      "id": "construction-shell",
+      "type": "construction",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.012983600290852,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "construction-shell",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999993946645167,
+        0.1800508985439671
+      ],
+      "worldWidth": 48.09897925329072,
+      "visualHeight": 5.293633497942385,
+      "masterSize": [
+        1173,
+        725
+      ]
+    },
+    {
+      "id": "courtyard-apartment",
+      "type": "residential",
+      "level": 3,
+      "variant": 0,
+      "sourceScale": 24.013004199563063,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 4,
+      "footprint": "courtyard-apartment",
+      "sockets": {
+        "generator": {
+          "x": -17.4,
+          "y": 10.5
+        },
+        "tank": {
+          "x": 18.24,
+          "y": 13.08
+        },
+        "pump": {
+          "x": 1.8,
+          "y": 20.7
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999960653193587,
+        0.40876052162987464
+      ],
+      "worldWidth": 48.09893799214911,
+      "visualHeight": 16.66499315745461,
+      "masterSize": [
+        1173,
+        998
+      ]
+    },
+    {
+      "id": "drain-channel-0",
+      "type": "drain",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.00448637416257,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "drain-channel-0",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.8135880476579325,
+        -0.6473878462194304
+      ],
+      "worldWidth": 26.786659375978083,
+      "visualHeight": 0,
+      "masterSize": [
+        661,
+        352
+      ]
+    },
+    {
+      "id": "drain-channel-1",
+      "type": "drain",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.004474766218042,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "drain-channel-1",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.18640977714332416,
+        -0.6473869266325619
+      ],
+      "worldWidth": 26.78667232931529,
+      "visualHeight": 0,
+      "masterSize": [
+        661,
+        352
+      ]
+    },
+    {
+      "id": "drain-engineered-drain-0",
+      "type": "drain",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.035070656252987,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "drain-engineered-drain-0",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.8282829107307806,
+        -0.6991118646604229
+      ],
+      "worldWidth": 25.58760940609097,
+      "visualHeight": 0,
+      "masterSize": [
+        633,
+        338
+      ]
+    },
+    {
+      "id": "drain-engineered-drain-1",
+      "type": "drain",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.03505954002169,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "drain-engineered-drain-1",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.17171480401260097,
+        -0.6991110070999069
+      ],
+      "worldWidth": 25.58762124037763,
+      "visualHeight": 0,
+      "masterSize": [
+        633,
+        338
+      ]
+    },
+    {
+      "id": "drain-open-drain-0",
+      "type": "drain",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.034247387812073,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "drain-open-drain-0",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.8353606842681023,
+        -0.7219830777753513
+      ],
+      "worldWidth": 25.0475910598007,
+      "visualHeight": 0,
+      "masterSize": [
+        620,
+        332
+      ]
+    },
+    {
+      "id": "drain-open-drain-1",
+      "type": "drain",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.03424194384414,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "drain-open-drain-1",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.16463698303184637,
+        -0.7219823655538491
+      ],
+      "worldWidth": 25.04759673330115,
+      "visualHeight": 0,
+      "masterSize": [
+        620,
+        332
+      ]
+    },
+    {
+      "id": "driveway-bridge-0",
+      "type": "prop",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.092767584521976,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "driveway-bridge-0",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999951829715651,
+        0.5616934608264141
+      ],
+      "worldWidth": 6.101416098598729,
+      "visualHeight": 1.935043663416362,
+      "masterSize": [
+        165,
+        103
+      ]
+    },
+    {
+      "id": "driveway-bridge-1",
+      "type": "prop",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.092767584521976,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "driveway-bridge-1",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999951829715651,
+        0.5616934608264141
+      ],
+      "worldWidth": 6.101416098598729,
+      "visualHeight": 1.935043663416362,
+      "masterSize": [
+        165,
+        103
+      ]
+    },
+    {
+      "id": "duplex",
+      "type": "residential",
+      "level": 2,
+      "variant": 0,
+      "sourceScale": 24.01302479883527,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 2,
+      "footprint": "duplex",
+      "sockets": {
+        "generator": {
+          "x": -17.4,
+          "y": 10.5
+        },
+        "tank": {
+          "x": 18.24,
+          "y": 13.08
+        },
+        "pump": {
+          "x": 1.8,
+          "y": 20.7
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999933413096836,
+        0.1862787005048772
+      ],
+      "worldWidth": 48.0988967310783,
+      "visualHeight": 5.515513233692731,
+      "masterSize": [
+        1173,
+        791
+      ]
+    },
+    {
+      "id": "generator-enclosed",
+      "type": "prop",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.069344649073916,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "generator-enclosed",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999318537967546,
+        0.8238838232796768
+      ],
+      "worldWidth": 4.65322183187523,
+      "visualHeight": 3.9706325574643198,
+      "masterSize": [
+        130,
+        136
+      ]
+    },
+    {
+      "id": "generator-open",
+      "type": "prop",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.010801868677685,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "generator-open",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999139948589044,
+        0.7547525382903685
+      ],
+      "worldWidth": 3.4151295924427147,
+      "visualHeight": 2.6090116032243333,
+      "masterSize": [
+        102,
+        103
+      ]
+    },
+    {
+      "id": "public-realm",
+      "type": "landscape",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.012983600290852,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "public-realm",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999993946645167,
+        0.058168844990461634
+      ],
+      "worldWidth": 48.09897925329072,
+      "visualHeight": 1.487348320335789,
+      "masterSize": [
+        1173,
+        648
+      ]
+    },
+    {
+      "id": "pump",
+      "type": "prop",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.190328687986508,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "pump",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5064842917702415,
+        0.6301805634911244
+      ],
+      "worldWidth": 3.183090275174311,
+      "visualHeight": 1.3546483689497169,
+      "masterSize": [
+        96,
+        73
+      ]
+    },
+    {
+      "id": "road-avenue-0",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.006846615240367,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-0",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999991165029693,
+        -0.2095606306082331
+      ],
+      "worldWidth": 33.69871990961192,
+      "visualHeight": 0,
+      "masterSize": [
+        827,
+        424
+      ]
+    },
+    {
+      "id": "road-avenue-1",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.02195852582463,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-1",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.45174091894711765,
+        -0.19016192566971693
+      ],
+      "worldWidth": 37.299206850130965,
+      "visualHeight": 0,
+      "masterSize": [
+        914,
+        467
+      ]
+    },
+    {
+      "id": "road-avenue-10",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.010462516302425,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-10",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999927163366875,
+        -0.09379141948681256
+      ],
+      "worldWidth": 40.898837301999066,
+      "visualHeight": 0,
+      "masterSize": [
+        1000,
+        515
+      ]
+    },
+    {
+      "id": "road-avenue-11",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.000770075795124,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-11",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5003037627683867,
+        -0.08560019255840373
+      ],
+      "worldWidth": 40.873688506742646,
+      "visualHeight": 0,
+      "masterSize": [
+        1086,
+        558
+      ]
+    },
+    {
+      "id": "road-avenue-12",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.010462516302425,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-12",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999927163366875,
+        -0.08561992484754079
+      ],
+      "worldWidth": 40.898837301999066,
+      "visualHeight": 0,
+      "masterSize": [
+        1000,
+        510
+      ]
+    },
+    {
+      "id": "road-avenue-13",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.000770075795124,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-13",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5003037627683867,
+        -0.08678081913725355
+      ],
+      "worldWidth": 40.873688506742646,
+      "visualHeight": 0,
+      "masterSize": [
+        1086,
+        554
+      ]
+    },
+    {
+      "id": "road-avenue-14",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.000808218693024,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-14",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49969478557598335,
+        -0.08560112287298659
+      ],
+      "worldWidth": 40.87362354889151,
+      "visualHeight": 0,
+      "masterSize": [
+        1086,
+        558
+      ]
+    },
+    {
+      "id": "road-avenue-15",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.01302479883527,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-15",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999992872961435,
+        -0.08610093186068711
+      ],
+      "worldWidth": 40.85282917159118,
+      "visualHeight": 0,
+      "masterSize": [
+        1173,
+        601
+      ]
+    },
+    {
+      "id": "road-avenue-2",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.021942474899824,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-2",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.548257743407573,
+        -0.09385942678563412
+      ],
+      "worldWidth": 37.29923177262693,
+      "visualHeight": 0,
+      "masterSize": [
+        914,
+        467
+      ]
+    },
+    {
+      "id": "road-avenue-3",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.010462516302425,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-3",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999927163366875,
+        -0.08561992484754079
+      ],
+      "worldWidth": 40.898837301999066,
+      "visualHeight": 0,
+      "masterSize": [
+        1000,
+        510
+      ]
+    },
+    {
+      "id": "road-avenue-4",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.021942474899824,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-4",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.548257500199335,
+        -0.19016149669177115
+      ],
+      "worldWidth": 37.29923177262693,
+      "visualHeight": 0,
+      "masterSize": [
+        914,
+        467
+      ]
+    },
+    {
+      "id": "road-avenue-5",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.010444955115545,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-5",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999993019822659,
+        -0.1900748605474605
+      ],
+      "worldWidth": 40.898867215319136,
+      "visualHeight": 0,
+      "masterSize": [
+        1000,
+        510
+      ]
+    },
+    {
+      "id": "road-avenue-6",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.010427393928666,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-6",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5479743536624162,
+        -0.0856190373116271
+      ],
+      "worldWidth": 37.27547141565301,
+      "visualHeight": 0,
+      "masterSize": [
+        1000,
+        510
+      ]
+    },
+    {
+      "id": "road-avenue-7",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.000808218693024,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-7",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49969478557598335,
+        -0.0867817513465708
+      ],
+      "worldWidth": 40.87362354889151,
+      "visualHeight": 0,
+      "masterSize": [
+        1086,
+        554
+      ]
+    },
+    {
+      "id": "road-avenue-8",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.02195852582463,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-8",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4517405541347606,
+        -0.09385988676065017
+      ],
+      "worldWidth": 37.299206850130965,
+      "visualHeight": 0,
+      "masterSize": [
+        914,
+        467
+      ]
+    },
+    {
+      "id": "road-avenue-9",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.010444955115545,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-avenue-9",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4520241145981091,
+        -0.08561949652590957
+      ],
+      "worldWidth": 37.27544415245482,
+      "visualHeight": 0,
+      "masterSize": [
+        1000,
+        510
+      ]
+    },
+    {
+      "id": "road-local-0",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.02557728936015,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-0",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999987708472217,
+        -0.49074355648544593
+      ],
+      "worldWidth": 24.099316866630012,
+      "visualHeight": 0,
+      "masterSize": [
+        597,
+        309
+      ]
+    },
+    {
+      "id": "road-local-1",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.020595584549724,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-1",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.40032821238288246,
+        -0.3933264250019109
+      ],
+      "worldWidth": 30.099170416283954,
+      "visualHeight": 0,
+      "masterSize": [
+        741,
+        381
+      ]
+    },
+    {
+      "id": "road-local-10",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.017242802750683,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-10",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999994828420527,
+        -0.19712749036542668
+      ],
+      "worldWidth": 36.09906462288431,
+      "visualHeight": 0,
+      "masterSize": [
+        885,
+        457
+      ]
+    },
+    {
+      "id": "road-local-11",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.014829895673433,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-11",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.499947933177222,
+        -0.1644260835064787
+      ],
+      "worldWidth": 36.102691702022035,
+      "visualHeight": 0,
+      "masterSize": [
+        1029,
+        529
+      ]
+    },
+    {
+      "id": "road-local-12",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.017242802750683,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-12",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999917863149546,
+        -0.1625433565849988
+      ],
+      "worldWidth": 36.09906462288431,
+      "visualHeight": 0,
+      "masterSize": [
+        885,
+        453
+      ]
+    },
+    {
+      "id": "road-local-13",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.014829895673433,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-13",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49994765020984266,
+        -0.1625279420210915
+      ],
+      "worldWidth": 36.102691702022035,
+      "visualHeight": 0,
+      "masterSize": [
+        1029,
+        525
+      ]
+    },
+    {
+      "id": "road-local-14",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.014811825212135,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-14",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5000504397603467,
+        -0.16442554753651525
+      ],
+      "worldWidth": 36.10271886826835,
+      "visualHeight": 0,
+      "masterSize": [
+        1029,
+        529
+      ]
+    },
+    {
+      "id": "road-local-15",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.01302479883527,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-15",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5005765598585644,
+        -0.16442778450566373
+      ],
+      "worldWidth": 36.063761531700266,
+      "visualHeight": 0,
+      "masterSize": [
+        1173,
+        601
+      ]
+    },
+    {
+      "id": "road-local-2",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.020608597389202,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-2",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5996694357068707,
+        -0.19480952204723143
+      ],
+      "worldWidth": 30.09915411046591,
+      "visualHeight": 0,
+      "masterSize": [
+        741,
+        381
+      ]
+    },
+    {
+      "id": "road-local-3",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.017242802750683,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-3",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999917863149546,
+        -0.1625433565849988
+      ],
+      "worldWidth": 36.09906462288431,
+      "visualHeight": 0,
+      "masterSize": [
+        885,
+        453
+      ]
+    },
+    {
+      "id": "road-local-4",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.020582571710246,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-4",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5996698633269155,
+        -0.39332599482539915
+      ],
+      "worldWidth": 30.09918672211966,
+      "visualHeight": 0,
+      "masterSize": [
+        741,
+        381
+      ]
+    },
+    {
+      "id": "road-local-5",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.01722726110029,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-5",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999992090525512,
+        -0.3932724067604601
+      ],
+      "worldWidth": 36.099087982743285,
+      "visualHeight": 0,
+      "masterSize": [
+        885,
+        453
+      ]
+    },
+    {
+      "id": "road-local-6",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.01722726110029,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-6",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5997274003582871,
+        -0.1625428968142937
+      ],
+      "worldWidth": 30.103391708792845,
+      "visualHeight": 0,
+      "masterSize": [
+        885,
+        453
+      ]
+    },
+    {
+      "id": "road-local-7",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.01484796613473,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-7",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5000507227277261,
+        -0.1625284405165755
+      ],
+      "worldWidth": 36.10266453581661,
+      "visualHeight": 0,
+      "masterSize": [
+        1029,
+        525
+      ]
+    },
+    {
+      "id": "road-local-8",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.020595584549724,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-8",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.40032857891434953,
+        -0.1948091231508432
+      ],
+      "worldWidth": 30.099170416283954,
+      "visualHeight": 0,
+      "masterSize": [
+        741,
+        381
+      ]
+    },
+    {
+      "id": "road-local-9",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.017242802750683,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-local-9",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.40027103100080214,
+        -0.16254338762052073
+      ],
+      "worldWidth": 30.103372228772038,
+      "visualHeight": 0,
+      "masterSize": [
+        885,
+        453
+      ]
+    },
+    {
+      "id": "road-major-0",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.018953350158682,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-0",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999993330011001,
+        -0.05321860661140904
+      ],
+      "worldWidth": 43.29913901069837,
+      "visualHeight": 0,
+      "masterSize": [
+        1058,
+        539
+      ]
+    },
+    {
+      "id": "road-major-1",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.000789147244074,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-1",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4865158734361777,
+        -0.05282615100904745
+      ],
+      "worldWidth": 44.49853683759539,
+      "visualHeight": 0,
+      "masterSize": [
+        1086,
+        554
+      ]
+    },
+    {
+      "id": "road-major-10",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.00504655846284,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-10",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999936388206134,
+        -0.025961856819343553
+      ],
+      "worldWidth": 45.698724113211895,
+      "visualHeight": 0,
+      "masterSize": [
+        1115,
+        573
+      ]
+    },
+    {
+      "id": "road-major-11",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.00913446910585,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-11",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5000853918852758,
+        -0.023841115131682706
+      ],
+      "worldWidth": 45.690943228777485,
+      "visualHeight": 0,
+      "masterSize": [
+        1144,
+        587
+      ]
+    },
+    {
+      "id": "road-major-12",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.00504655846284,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-12",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999936388206134,
+        -0.023745485480986147
+      ],
+      "worldWidth": 45.698724113211895,
+      "visualHeight": 0,
+      "masterSize": [
+        1115,
+        568
+      ]
+    },
+    {
+      "id": "road-major-13",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.00913446910585,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-13",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5000856405186892,
+        -0.024203259244269682
+      ],
+      "worldWidth": 45.690943228777485,
+      "visualHeight": 0,
+      "masterSize": [
+        1144,
+        582
+      ]
+    },
+    {
+      "id": "road-major-14",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.00915455910364,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-14",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999133338684805,
+        -0.02384152165170132
+      ],
+      "worldWidth": 45.690904996238054,
+      "visualHeight": 0,
+      "masterSize": [
+        1144,
+        587
+      ]
+    },
+    {
+      "id": "road-major-15",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.01302479883527,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-15",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999936265954126,
+        -0.02429392450083283
+      ],
+      "worldWidth": 45.683540877915924,
+      "visualHeight": 0,
+      "masterSize": [
+        1173,
+        601
+      ]
+    },
+    {
+      "id": "road-major-2",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.000770075795124,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-2",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5134828234656473,
+        -0.02585853248225331
+      ],
+      "worldWidth": 44.498572196943066,
+      "visualHeight": 0,
+      "masterSize": [
+        1086,
+        554
+      ]
+    },
+    {
+      "id": "road-major-3",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.00504655846284,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-3",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999936388206134,
+        -0.023745485480986147
+      ],
+      "worldWidth": 45.698724113211895,
+      "visualHeight": 0,
+      "masterSize": [
+        1115,
+        568
+      ]
+    },
+    {
+      "id": "road-major-4",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.000770075795124,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-4",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5134830659025171,
+        -0.05282572243716102
+      ],
+      "worldWidth": 44.498572196943066,
+      "visualHeight": 0,
+      "masterSize": [
+        1086,
+        554
+      ]
+    },
+    {
+      "id": "road-major-5",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.00504655846284,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-5",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999936388206134,
+        -0.051332395145453326
+      ],
+      "worldWidth": 45.698724113211895,
+      "visualHeight": 0,
+      "masterSize": [
+        1115,
+        568
+      ]
+    },
+    {
+      "id": "road-major-6",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.005066139186212,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-6",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5133945710873336,
+        -0.023745881919097656
+      ],
+      "worldWidth": 44.49060851603244,
+      "visualHeight": 0,
+      "masterSize": [
+        1115,
+        568
+      ]
+    },
+    {
+      "id": "road-major-7",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.00915455910364,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-7",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999133338684805,
+        -0.024203697571494185
+      ],
+      "worldWidth": 45.690904996238054,
+      "visualHeight": 0,
+      "masterSize": [
+        1144,
+        582
+      ]
+    },
+    {
+      "id": "road-major-8",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.000789147244074,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-8",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4865158734361777,
+        -0.025858961054139745
+      ],
+      "worldWidth": 44.49853683759539,
+      "visualHeight": 0,
+      "masterSize": [
+        1086,
+        554
+      ]
+    },
+    {
+      "id": "road-major-9",
+      "type": "road",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.005066139186212,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "road-major-9",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.48660412213105836,
+        -0.023745912696768776
+      ],
+      "worldWidth": 44.49060851603244,
+      "visualHeight": 0,
+      "masterSize": [
+        1115,
+        568
+      ]
+    },
+    {
+      "id": "shop-row",
+      "type": "commercial",
+      "level": 1,
+      "variant": 0,
+      "sourceScale": 24.012983600290852,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.6,
+      "floors": 1,
+      "footprint": "shop-row",
+      "sockets": {
+        "generator": {
+          "x": -17.4,
+          "y": 10.5
+        },
+        "tank": {
+          "x": 18.24,
+          "y": 13.08
+        },
+        "pump": {
+          "x": 1.8,
+          "y": 20.7
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999993946645167,
+        0.08535356789041589
+      ],
+      "worldWidth": 48.09897925329072,
+      "visualHeight": 2.2499831496981844,
+      "masterSize": [
+        1173,
+        652
+      ]
+    },
+    {
+      "id": "tank",
+      "type": "prop",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.1015448940198,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "tank",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999953561707547,
+        0.8703480793994928
+      ],
+      "worldWidth": 3.9416560397990046,
+      "visualHeight": 5.741762415356878,
+      "masterSize": [
+        113,
+        184
+      ]
+    },
+    {
+      "id": "terrain-land",
+      "type": "terrain",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.01302479883527,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "terrain-land",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999993946645167,
+        0.002321682151221393
+      ],
+      "worldWidth": 48.0988967310783,
+      "visualHeight": 0.055980201445608314,
+      "masterSize": [
+        1173,
+        597
+      ]
+    },
+    {
+      "id": "tree-0",
+      "type": "tree",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.028024159772823,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "tree-0",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4893731257450656,
+        0.9852414818147124
+      ],
+      "worldWidth": 6.617273186623236,
+      "visualHeight": 9.389881491516793,
+      "masterSize": [
+        206,
+        269
+      ]
+    },
+    {
+      "id": "tree-1",
+      "type": "tree",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.047324536356165,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "tree-1",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.5081230744238823,
+        0.9853969908995773
+      ],
+      "worldWidth": 6.445623494025784,
+      "visualHeight": 10.777057889112626,
+      "masterSize": [
+        201,
+        297
+      ]
+    },
+    {
+      "id": "tree-2",
+      "type": "tree",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.03856231191787,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "tree-2",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4320132313388409,
+        0.9850672475136947
+      ],
+      "worldWidth": 8.403164772456137,
+      "visualHeight": 11.760865577899635,
+      "masterSize": [
+        252,
+        328
+      ]
+    },
+    {
+      "id": "vehicle-bus-0",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.007058736816685,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-bus-0",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999810553885793,
+        0.6091703799101386
+      ],
+      "worldWidth": 15.412133741838867,
+      "visualHeight": 5.125676497518523,
+      "masterSize": [
+        392,
+        226
+      ]
+    },
+    {
+      "id": "vehicle-bus-1",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.007058736816685,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-bus-1",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999810553885793,
+        0.609170413253331
+      ],
+      "worldWidth": 15.412133741838867,
+      "visualHeight": 5.125676778074544,
+      "masterSize": [
+        392,
+        226
+      ]
+    },
+    {
+      "id": "vehicle-bus-2",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.007058736816685,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-bus-2",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999810553885793,
+        0.609170413253331
+      ],
+      "worldWidth": 15.412133741838867,
+      "visualHeight": 5.125676778074544,
+      "masterSize": [
+        392,
+        226
+      ]
+    },
+    {
+      "id": "vehicle-bus-3",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.007058736816685,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-bus-3",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999810553885793,
+        0.609170413253331
+      ],
+      "worldWidth": 15.412133741838867,
+      "visualHeight": 5.125676778074544,
+      "masterSize": [
+        392,
+        226
+      ]
+    },
+    {
+      "id": "vehicle-car-0",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.023227497188547,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-car-0",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999960869550705,
+        0.6785442948341369
+      ],
+      "worldWidth": 7.492748425292376,
+      "visualHeight": 3.813121272457204,
+      "masterSize": [
+        202,
+        158
+      ]
+    },
+    {
+      "id": "vehicle-car-1",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.023227497188547,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-car-1",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.4999960869550705,
+        0.678544329713892
+      ],
+      "worldWidth": 7.492748425292376,
+      "visualHeight": 3.813121468466127,
+      "masterSize": [
+        202,
+        158
+      ]
+    },
+    {
+      "id": "vehicle-car-2",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.023231044548297,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-car-2",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999759197235105,
+        0.6569782467115493
+      ],
+      "worldWidth": 7.492747318885244,
+      "visualHeight": 3.4458003976297222,
+      "masterSize": [
+        202,
+        149
+      ]
+    },
+    {
+      "id": "vehicle-car-3",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.023231044548297,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-car-3",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999759197235105,
+        0.6569782467115493
+      ],
+      "worldWidth": 7.492747318885244,
+      "visualHeight": 3.4458003976297222,
+      "masterSize": [
+        202,
+        149
+      ]
+    },
+    {
+      "id": "vehicle-danfo-0",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.016579516722242,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-danfo-0",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999653162627383,
+        0.6684832369357767
+      ],
+      "worldWidth": 8.452494238767654,
+      "visualHeight": 3.9524620722441455,
+      "masterSize": [
+        225,
+        165
+      ]
+    },
+    {
+      "id": "vehicle-danfo-1",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.016579516722242,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-danfo-1",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999653162627383,
+        0.6684832369357767
+      ],
+      "worldWidth": 8.452494238767654,
+      "visualHeight": 3.9524620722441455,
+      "masterSize": [
+        225,
+        165
+      ]
+    },
+    {
+      "id": "vehicle-danfo-2",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.016579516722242,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-danfo-2",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999785291150284,
+        0.6473803941468547
+      ],
+      "worldWidth": 8.452494238767654,
+      "visualHeight": 3.585089723604518,
+      "masterSize": [
+        225,
+        156
+      ]
+    },
+    {
+      "id": "vehicle-danfo-3",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.016579516722242,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-danfo-3",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999785291150284,
+        0.6473803941468547
+      ],
+      "worldWidth": 8.452494238767654,
+      "visualHeight": 3.585089723604518,
+      "masterSize": [
+        225,
+        156
+      ]
+    },
+    {
+      "id": "vehicle-keke-0",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.077071817157528,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-keke-0",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999377811164186,
+        0.7705569675990513
+      ],
+      "worldWidth": 4.734795030962304,
+      "visualHeight": 3.3603954090565247,
+      "masterSize": [
+        136,
+        128
+      ]
+    },
+    {
+      "id": "vehicle-keke-1",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.077071817157528,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-keke-1",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999377811164186,
+        0.7705569675990513
+      ],
+      "worldWidth": 4.734795030962304,
+      "visualHeight": 3.3603954090565247,
+      "masterSize": [
+        136,
+        128
+      ]
+    },
+    {
+      "id": "vehicle-keke-2",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.077071817157528,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-keke-2",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999377811164186,
+        0.7028795799005378
+      ],
+      "worldWidth": 4.734795030962304,
+      "visualHeight": 3.006868828549366,
+      "masterSize": [
+        136,
+        126
+      ]
+    },
+    {
+      "id": "vehicle-keke-3",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.077071817157528,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-keke-3",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999377811164186,
+        0.7028795799005378
+      ],
+      "worldWidth": 4.734795030962304,
+      "visualHeight": 3.006868828549366,
+      "masterSize": [
+        136,
+        126
+      ]
+    },
+    {
+      "id": "vehicle-okada-0",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.27098042314491,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-okada-0",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49998966636865033,
+        0.682692081209213
+      ],
+      "worldWidth": 2.842901225951355,
+      "visualHeight": 1.7720586629111317,
+      "masterSize": [
+        87,
+        86
+      ]
+    },
+    {
+      "id": "vehicle-okada-1",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.27098042314491,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-okada-1",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49998966636865033,
+        0.6876500174403191
+      ],
+      "worldWidth": 2.842901225951355,
+      "visualHeight": 1.8132601299539048,
+      "masterSize": [
+        87,
+        86
+      ]
+    },
+    {
+      "id": "vehicle-okada-2",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.206197661337146,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-okada-2",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49998891483182495,
+        0.7199620240264468
+      ],
+      "worldWidth": 2.8505096490312827,
+      "visualHeight": 2.1414873353984127,
+      "masterSize": [
+        87,
+        95
+      ]
+    },
+    {
+      "id": "vehicle-okada-3",
+      "type": "vehicle",
+      "level": 0,
+      "variant": 0,
+      "sourceScale": 24.206197661337146,
+      "metresPerTile": 20,
+      "floorHeightMetres": 3.2,
+      "floors": 0,
+      "footprint": "vehicle-okada-3",
+      "sockets": {
+        "generator": {
+          "x": -7,
+          "y": 18
+        },
+        "tank": {
+          "x": 9,
+          "y": 14
+        },
+        "pump": {
+          "x": 10,
+          "y": 17
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49998891483182495,
+        0.7199620240264468
+      ],
+      "worldWidth": 2.8505096490312827,
+      "visualHeight": 2.1414873353984127,
+      "masterSize": [
+        87,
+        95
+      ]
+    },
+    {
+      "id": "warehouse",
+      "type": "industrial",
+      "level": 1,
+      "variant": 0,
+      "sourceScale": 24.01302479883527,
+      "metresPerTile": 20,
+      "floorHeightMetres": 5.2,
+      "floors": 1,
+      "footprint": "warehouse",
+      "sockets": {
+        "generator": {
+          "x": -17.4,
+          "y": 10.5
+        },
+        "tank": {
+          "x": 18.24,
+          "y": 13.08
+        },
+        "pump": {
+          "x": 1.8,
+          "y": 20.7
+        }
+      },
+      "windowMaterial": "glass",
+      "lighting": "northwest warm daylight / ambient sky",
+      "camera": {
+        "projection": "orthographic",
+        "azimuth": 45,
+        "elevation": 30
+      },
+      "lod": [
+        2,
+        6,
+        9,
+        12
+      ],
+      "anchor": [
+        0.49999933413096836,
+        0.1793701916839222
+      ],
+      "worldWidth": 48.0988967310783,
+      "visualHeight": 5.266141446008034,
+      "masterSize": [
+        1173,
+        767
+      ]
+    }
+  ],
+  "sheets": {
+    "2": [
+      {
+        "key": "model-architecture-2-0",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "key": "model-avenue-2-0",
+        "width": 512,
+        "height": 256
+      },
+      {
+        "key": "model-local-2-0",
+        "width": 512,
+        "height": 128
+      },
+      {
+        "key": "model-major-2-0",
+        "width": 512,
+        "height": 256
+      }
+    ],
+    "6": [
+      {
+        "key": "model-architecture-6-0",
+        "width": 2048,
+        "height": 1024
+      },
+      {
+        "key": "model-avenue-6-0",
+        "width": 2048,
+        "height": 256
+      },
+      {
+        "key": "model-local-6-0",
+        "width": 2048,
+        "height": 256
+      },
+      {
+        "key": "model-major-6-0",
+        "width": 2048,
+        "height": 512
+      }
+    ],
+    "9": [
+      {
+        "key": "model-architecture-9-0",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "key": "model-avenue-9-0",
+        "width": 2048,
+        "height": 1024
+      },
+      {
+        "key": "model-local-9-0",
+        "width": 2048,
+        "height": 512
+      },
+      {
+        "key": "model-major-9-0",
+        "width": 2048,
+        "height": 1024
+      }
+    ],
+    "12": [
+      {
+        "key": "model-architecture-12-0",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "key": "model-architecture-12-1",
+        "width": 2048,
+        "height": 1024
+      },
+      {
+        "key": "model-avenue-12-0",
+        "width": 2048,
+        "height": 1024
+      },
+      {
+        "key": "model-local-12-0",
+        "width": 2048,
+        "height": 1024
+      },
+      {
+        "key": "model-major-12-0",
+        "width": 2048,
+        "height": 2048
+      }
+    ]
+  },
+  "locations": {
+    "2": {
+      "model-apartment-14": "model-architecture-2-0",
+      "model-apartment-8": "model-architecture-2-0",
+      "model-commercial-modern": "model-architecture-2-0",
+      "model-courtyard-apartment": "model-architecture-2-0",
+      "model-apartment-4": "model-architecture-2-0",
+      "model-construction-shell": "model-architecture-2-0",
+      "model-duplex": "model-architecture-2-0",
+      "model-warehouse": "model-architecture-2-0",
+      "model-shop-row": "model-architecture-2-0",
+      "model-bungalow": "model-architecture-2-0",
+      "model-public-realm": "model-architecture-2-0",
+      "model-construction-foundation": "model-architecture-2-0",
+      "model-terrain-land": "model-architecture-2-0",
+      "model-drain-channel-0": "model-architecture-2-0",
+      "model-drain-channel-1": "model-architecture-2-0",
+      "model-drain-engineered-drain-0": "model-architecture-2-0",
+      "model-drain-engineered-drain-1": "model-architecture-2-0",
+      "model-drain-open-drain-0": "model-architecture-2-0",
+      "model-drain-open-drain-1": "model-architecture-2-0",
+      "model-tree-2": "model-architecture-2-0",
+      "model-tree-1": "model-architecture-2-0",
+      "model-tree-0": "model-architecture-2-0",
+      "model-vehicle-bus-0": "model-architecture-2-0",
+      "model-vehicle-bus-1": "model-architecture-2-0",
+      "model-vehicle-bus-2": "model-architecture-2-0",
+      "model-vehicle-bus-3": "model-architecture-2-0",
+      "model-tank": "model-architecture-2-0",
+      "model-vehicle-danfo-0": "model-architecture-2-0",
+      "model-vehicle-danfo-1": "model-architecture-2-0",
+      "model-vehicle-car-0": "model-architecture-2-0",
+      "model-vehicle-car-1": "model-architecture-2-0",
+      "model-vehicle-danfo-2": "model-architecture-2-0",
+      "model-vehicle-danfo-3": "model-architecture-2-0",
+      "model-generator-enclosed": "model-architecture-2-0",
+      "model-vehicle-car-2": "model-architecture-2-0",
+      "model-vehicle-car-3": "model-architecture-2-0",
+      "model-vehicle-keke-0": "model-architecture-2-0",
+      "model-vehicle-keke-1": "model-architecture-2-0",
+      "model-vehicle-keke-2": "model-architecture-2-0",
+      "model-vehicle-keke-3": "model-architecture-2-0",
+      "model-driveway-bridge-0": "model-architecture-2-0",
+      "model-driveway-bridge-1": "model-architecture-2-0",
+      "model-generator-open": "model-architecture-2-0",
+      "model-vehicle-okada-2": "model-architecture-2-0",
+      "model-vehicle-okada-3": "model-architecture-2-0",
+      "model-vehicle-okada-0": "model-architecture-2-0",
+      "model-vehicle-okada-1": "model-architecture-2-0",
+      "model-pump": "model-architecture-2-0",
+      "model-road-avenue-11": "model-avenue-2-0",
+      "model-road-avenue-12": "model-avenue-2-0",
+      "model-road-avenue-13": "model-avenue-2-0",
+      "model-road-avenue-14": "model-avenue-2-0",
+      "model-road-avenue-15": "model-avenue-2-0",
+      "model-road-avenue-3": "model-avenue-2-0",
+      "model-road-avenue-6": "model-avenue-2-0",
+      "model-road-avenue-7": "model-avenue-2-0",
+      "model-road-avenue-9": "model-avenue-2-0",
+      "model-road-avenue-1": "model-avenue-2-0",
+      "model-road-avenue-10": "model-avenue-2-0",
+      "model-road-avenue-2": "model-avenue-2-0",
+      "model-road-avenue-4": "model-avenue-2-0",
+      "model-road-avenue-5": "model-avenue-2-0",
+      "model-road-avenue-8": "model-avenue-2-0",
+      "model-road-avenue-0": "model-avenue-2-0",
+      "model-road-local-11": "model-local-2-0",
+      "model-road-local-12": "model-local-2-0",
+      "model-road-local-13": "model-local-2-0",
+      "model-road-local-14": "model-local-2-0",
+      "model-road-local-15": "model-local-2-0",
+      "model-road-local-3": "model-local-2-0",
+      "model-road-local-6": "model-local-2-0",
+      "model-road-local-7": "model-local-2-0",
+      "model-road-local-9": "model-local-2-0",
+      "model-road-local-1": "model-local-2-0",
+      "model-road-local-10": "model-local-2-0",
+      "model-road-local-2": "model-local-2-0",
+      "model-road-local-4": "model-local-2-0",
+      "model-road-local-5": "model-local-2-0",
+      "model-road-local-8": "model-local-2-0",
+      "model-road-local-0": "model-local-2-0",
+      "model-road-major-11": "model-major-2-0",
+      "model-road-major-12": "model-major-2-0",
+      "model-road-major-13": "model-major-2-0",
+      "model-road-major-14": "model-major-2-0",
+      "model-road-major-15": "model-major-2-0",
+      "model-road-major-3": "model-major-2-0",
+      "model-road-major-6": "model-major-2-0",
+      "model-road-major-7": "model-major-2-0",
+      "model-road-major-9": "model-major-2-0",
+      "model-road-major-5": "model-major-2-0",
+      "model-road-major-1": "model-major-2-0",
+      "model-road-major-10": "model-major-2-0",
+      "model-road-major-2": "model-major-2-0",
+      "model-road-major-4": "model-major-2-0",
+      "model-road-major-8": "model-major-2-0",
+      "model-road-major-0": "model-major-2-0"
+    },
+    "6": {
+      "model-apartment-14": "model-architecture-6-0",
+      "model-apartment-8": "model-architecture-6-0",
+      "model-commercial-modern": "model-architecture-6-0",
+      "model-courtyard-apartment": "model-architecture-6-0",
+      "model-apartment-4": "model-architecture-6-0",
+      "model-duplex": "model-architecture-6-0",
+      "model-construction-shell": "model-architecture-6-0",
+      "model-warehouse": "model-architecture-6-0",
+      "model-shop-row": "model-architecture-6-0",
+      "model-public-realm": "model-architecture-6-0",
+      "model-bungalow": "model-architecture-6-0",
+      "model-construction-foundation": "model-architecture-6-0",
+      "model-terrain-land": "model-architecture-6-0",
+      "model-drain-channel-0": "model-architecture-6-0",
+      "model-drain-channel-1": "model-architecture-6-0",
+      "model-drain-engineered-drain-0": "model-architecture-6-0",
+      "model-drain-engineered-drain-1": "model-architecture-6-0",
+      "model-drain-open-drain-0": "model-architecture-6-0",
+      "model-drain-open-drain-1": "model-architecture-6-0",
+      "model-tree-2": "model-architecture-6-0",
+      "model-tree-1": "model-architecture-6-0",
+      "model-tree-0": "model-architecture-6-0",
+      "model-vehicle-bus-0": "model-architecture-6-0",
+      "model-vehicle-bus-1": "model-architecture-6-0",
+      "model-vehicle-bus-2": "model-architecture-6-0",
+      "model-vehicle-bus-3": "model-architecture-6-0",
+      "model-tank": "model-architecture-6-0",
+      "model-vehicle-danfo-0": "model-architecture-6-0",
+      "model-vehicle-danfo-1": "model-architecture-6-0",
+      "model-vehicle-car-0": "model-architecture-6-0",
+      "model-vehicle-car-1": "model-architecture-6-0",
+      "model-vehicle-danfo-2": "model-architecture-6-0",
+      "model-vehicle-danfo-3": "model-architecture-6-0",
+      "model-vehicle-car-2": "model-architecture-6-0",
+      "model-vehicle-car-3": "model-architecture-6-0",
+      "model-generator-enclosed": "model-architecture-6-0",
+      "model-vehicle-keke-0": "model-architecture-6-0",
+      "model-vehicle-keke-1": "model-architecture-6-0",
+      "model-vehicle-keke-2": "model-architecture-6-0",
+      "model-vehicle-keke-3": "model-architecture-6-0",
+      "model-driveway-bridge-0": "model-architecture-6-0",
+      "model-driveway-bridge-1": "model-architecture-6-0",
+      "model-generator-open": "model-architecture-6-0",
+      "model-vehicle-okada-2": "model-architecture-6-0",
+      "model-vehicle-okada-3": "model-architecture-6-0",
+      "model-vehicle-okada-0": "model-architecture-6-0",
+      "model-vehicle-okada-1": "model-architecture-6-0",
+      "model-pump": "model-architecture-6-0",
+      "model-road-avenue-11": "model-avenue-6-0",
+      "model-road-avenue-12": "model-avenue-6-0",
+      "model-road-avenue-13": "model-avenue-6-0",
+      "model-road-avenue-14": "model-avenue-6-0",
+      "model-road-avenue-15": "model-avenue-6-0",
+      "model-road-avenue-3": "model-avenue-6-0",
+      "model-road-avenue-6": "model-avenue-6-0",
+      "model-road-avenue-7": "model-avenue-6-0",
+      "model-road-avenue-9": "model-avenue-6-0",
+      "model-road-avenue-1": "model-avenue-6-0",
+      "model-road-avenue-10": "model-avenue-6-0",
+      "model-road-avenue-2": "model-avenue-6-0",
+      "model-road-avenue-4": "model-avenue-6-0",
+      "model-road-avenue-5": "model-avenue-6-0",
+      "model-road-avenue-8": "model-avenue-6-0",
+      "model-road-avenue-0": "model-avenue-6-0",
+      "model-road-local-12": "model-local-6-0",
+      "model-road-local-13": "model-local-6-0",
+      "model-road-local-3": "model-local-6-0",
+      "model-road-local-6": "model-local-6-0",
+      "model-road-local-7": "model-local-6-0",
+      "model-road-local-9": "model-local-6-0",
+      "model-road-local-11": "model-local-6-0",
+      "model-road-local-14": "model-local-6-0",
+      "model-road-local-15": "model-local-6-0",
+      "model-road-local-1": "model-local-6-0",
+      "model-road-local-2": "model-local-6-0",
+      "model-road-local-4": "model-local-6-0",
+      "model-road-local-5": "model-local-6-0",
+      "model-road-local-8": "model-local-6-0",
+      "model-road-local-10": "model-local-6-0",
+      "model-road-local-0": "model-local-6-0",
+      "model-road-major-11": "model-major-6-0",
+      "model-road-major-12": "model-major-6-0",
+      "model-road-major-13": "model-major-6-0",
+      "model-road-major-14": "model-major-6-0",
+      "model-road-major-15": "model-major-6-0",
+      "model-road-major-3": "model-major-6-0",
+      "model-road-major-6": "model-major-6-0",
+      "model-road-major-7": "model-major-6-0",
+      "model-road-major-9": "model-major-6-0",
+      "model-road-major-5": "model-major-6-0",
+      "model-road-major-1": "model-major-6-0",
+      "model-road-major-10": "model-major-6-0",
+      "model-road-major-2": "model-major-6-0",
+      "model-road-major-4": "model-major-6-0",
+      "model-road-major-8": "model-major-6-0",
+      "model-road-major-0": "model-major-6-0"
+    },
+    "9": {
+      "model-apartment-14": "model-architecture-9-0",
+      "model-apartment-8": "model-architecture-9-0",
+      "model-commercial-modern": "model-architecture-9-0",
+      "model-courtyard-apartment": "model-architecture-9-0",
+      "model-apartment-4": "model-architecture-9-0",
+      "model-duplex": "model-architecture-9-0",
+      "model-construction-shell": "model-architecture-9-0",
+      "model-warehouse": "model-architecture-9-0",
+      "model-shop-row": "model-architecture-9-0",
+      "model-public-realm": "model-architecture-9-0",
+      "model-bungalow": "model-architecture-9-0",
+      "model-construction-foundation": "model-architecture-9-0",
+      "model-terrain-land": "model-architecture-9-0",
+      "model-drain-channel-0": "model-architecture-9-0",
+      "model-drain-channel-1": "model-architecture-9-0",
+      "model-drain-engineered-drain-0": "model-architecture-9-0",
+      "model-drain-engineered-drain-1": "model-architecture-9-0",
+      "model-drain-open-drain-0": "model-architecture-9-0",
+      "model-drain-open-drain-1": "model-architecture-9-0",
+      "model-tree-2": "model-architecture-9-0",
+      "model-tree-1": "model-architecture-9-0",
+      "model-tree-0": "model-architecture-9-0",
+      "model-vehicle-bus-0": "model-architecture-9-0",
+      "model-vehicle-bus-1": "model-architecture-9-0",
+      "model-vehicle-bus-2": "model-architecture-9-0",
+      "model-vehicle-bus-3": "model-architecture-9-0",
+      "model-tank": "model-architecture-9-0",
+      "model-vehicle-danfo-0": "model-architecture-9-0",
+      "model-vehicle-danfo-1": "model-architecture-9-0",
+      "model-vehicle-car-0": "model-architecture-9-0",
+      "model-vehicle-car-1": "model-architecture-9-0",
+      "model-vehicle-danfo-2": "model-architecture-9-0",
+      "model-vehicle-danfo-3": "model-architecture-9-0",
+      "model-vehicle-car-2": "model-architecture-9-0",
+      "model-vehicle-car-3": "model-architecture-9-0",
+      "model-generator-enclosed": "model-architecture-9-0",
+      "model-vehicle-keke-0": "model-architecture-9-0",
+      "model-vehicle-keke-1": "model-architecture-9-0",
+      "model-vehicle-keke-2": "model-architecture-9-0",
+      "model-vehicle-keke-3": "model-architecture-9-0",
+      "model-driveway-bridge-0": "model-architecture-9-0",
+      "model-driveway-bridge-1": "model-architecture-9-0",
+      "model-generator-open": "model-architecture-9-0",
+      "model-vehicle-okada-2": "model-architecture-9-0",
+      "model-vehicle-okada-3": "model-architecture-9-0",
+      "model-vehicle-okada-1": "model-architecture-9-0",
+      "model-vehicle-okada-0": "model-architecture-9-0",
+      "model-pump": "model-architecture-9-0",
+      "model-road-avenue-11": "model-avenue-9-0",
+      "model-road-avenue-12": "model-avenue-9-0",
+      "model-road-avenue-13": "model-avenue-9-0",
+      "model-road-avenue-14": "model-avenue-9-0",
+      "model-road-avenue-15": "model-avenue-9-0",
+      "model-road-avenue-3": "model-avenue-9-0",
+      "model-road-avenue-6": "model-avenue-9-0",
+      "model-road-avenue-7": "model-avenue-9-0",
+      "model-road-avenue-9": "model-avenue-9-0",
+      "model-road-avenue-1": "model-avenue-9-0",
+      "model-road-avenue-10": "model-avenue-9-0",
+      "model-road-avenue-2": "model-avenue-9-0",
+      "model-road-avenue-4": "model-avenue-9-0",
+      "model-road-avenue-5": "model-avenue-9-0",
+      "model-road-avenue-8": "model-avenue-9-0",
+      "model-road-avenue-0": "model-avenue-9-0",
+      "model-road-local-11": "model-local-9-0",
+      "model-road-local-12": "model-local-9-0",
+      "model-road-local-13": "model-local-9-0",
+      "model-road-local-14": "model-local-9-0",
+      "model-road-local-15": "model-local-9-0",
+      "model-road-local-3": "model-local-9-0",
+      "model-road-local-6": "model-local-9-0",
+      "model-road-local-7": "model-local-9-0",
+      "model-road-local-9": "model-local-9-0",
+      "model-road-local-1": "model-local-9-0",
+      "model-road-local-10": "model-local-9-0",
+      "model-road-local-2": "model-local-9-0",
+      "model-road-local-4": "model-local-9-0",
+      "model-road-local-5": "model-local-9-0",
+      "model-road-local-8": "model-local-9-0",
+      "model-road-local-0": "model-local-9-0",
+      "model-road-major-11": "model-major-9-0",
+      "model-road-major-12": "model-major-9-0",
+      "model-road-major-13": "model-major-9-0",
+      "model-road-major-14": "model-major-9-0",
+      "model-road-major-15": "model-major-9-0",
+      "model-road-major-3": "model-major-9-0",
+      "model-road-major-6": "model-major-9-0",
+      "model-road-major-7": "model-major-9-0",
+      "model-road-major-9": "model-major-9-0",
+      "model-road-major-5": "model-major-9-0",
+      "model-road-major-1": "model-major-9-0",
+      "model-road-major-10": "model-major-9-0",
+      "model-road-major-2": "model-major-9-0",
+      "model-road-major-4": "model-major-9-0",
+      "model-road-major-8": "model-major-9-0",
+      "model-road-major-0": "model-major-9-0"
+    },
+    "12": {
+      "model-apartment-14": "model-architecture-12-0",
+      "model-apartment-8": "model-architecture-12-0",
+      "model-commercial-modern": "model-architecture-12-0",
+      "model-courtyard-apartment": "model-architecture-12-0",
+      "model-apartment-4": "model-architecture-12-0",
+      "model-duplex": "model-architecture-12-0",
+      "model-construction-shell": "model-architecture-12-0",
+      "model-warehouse": "model-architecture-12-0",
+      "model-shop-row": "model-architecture-12-0",
+      "model-drain-open-drain-0": "model-architecture-12-0",
+      "model-tree-1": "model-architecture-12-0",
+      "model-tree-0": "model-architecture-12-0",
+      "model-vehicle-bus-0": "model-architecture-12-0",
+      "model-vehicle-bus-1": "model-architecture-12-0",
+      "model-vehicle-bus-2": "model-architecture-12-0",
+      "model-vehicle-bus-3": "model-architecture-12-0",
+      "model-tank": "model-architecture-12-0",
+      "model-vehicle-danfo-0": "model-architecture-12-0",
+      "model-vehicle-danfo-1": "model-architecture-12-0",
+      "model-vehicle-car-0": "model-architecture-12-0",
+      "model-vehicle-car-1": "model-architecture-12-0",
+      "model-vehicle-danfo-2": "model-architecture-12-0",
+      "model-vehicle-danfo-3": "model-architecture-12-0",
+      "model-vehicle-car-2": "model-architecture-12-0",
+      "model-vehicle-car-3": "model-architecture-12-0",
+      "model-generator-enclosed": "model-architecture-12-0",
+      "model-vehicle-keke-0": "model-architecture-12-0",
+      "model-vehicle-keke-1": "model-architecture-12-0",
+      "model-vehicle-keke-2": "model-architecture-12-0",
+      "model-vehicle-okada-2": "model-architecture-12-0",
+      "model-public-realm": "model-architecture-12-1",
+      "model-bungalow": "model-architecture-12-1",
+      "model-construction-foundation": "model-architecture-12-1",
+      "model-terrain-land": "model-architecture-12-1",
+      "model-drain-channel-0": "model-architecture-12-1",
+      "model-drain-channel-1": "model-architecture-12-1",
+      "model-drain-engineered-drain-0": "model-architecture-12-1",
+      "model-drain-engineered-drain-1": "model-architecture-12-1",
+      "model-drain-open-drain-1": "model-architecture-12-1",
+      "model-tree-2": "model-architecture-12-1",
+      "model-vehicle-keke-3": "model-architecture-12-1",
+      "model-driveway-bridge-0": "model-architecture-12-1",
+      "model-driveway-bridge-1": "model-architecture-12-1",
+      "model-generator-open": "model-architecture-12-1",
+      "model-vehicle-okada-3": "model-architecture-12-1",
+      "model-vehicle-okada-1": "model-architecture-12-1",
+      "model-vehicle-okada-0": "model-architecture-12-1",
+      "model-pump": "model-architecture-12-1",
+      "model-road-avenue-11": "model-avenue-12-0",
+      "model-road-avenue-12": "model-avenue-12-0",
+      "model-road-avenue-14": "model-avenue-12-0",
+      "model-road-avenue-15": "model-avenue-12-0",
+      "model-road-avenue-3": "model-avenue-12-0",
+      "model-road-avenue-6": "model-avenue-12-0",
+      "model-road-avenue-9": "model-avenue-12-0",
+      "model-road-avenue-13": "model-avenue-12-0",
+      "model-road-avenue-7": "model-avenue-12-0",
+      "model-road-avenue-1": "model-avenue-12-0",
+      "model-road-avenue-10": "model-avenue-12-0",
+      "model-road-avenue-2": "model-avenue-12-0",
+      "model-road-avenue-4": "model-avenue-12-0",
+      "model-road-avenue-5": "model-avenue-12-0",
+      "model-road-avenue-8": "model-avenue-12-0",
+      "model-road-avenue-0": "model-avenue-12-0",
+      "model-road-local-11": "model-local-12-0",
+      "model-road-local-12": "model-local-12-0",
+      "model-road-local-13": "model-local-12-0",
+      "model-road-local-14": "model-local-12-0",
+      "model-road-local-15": "model-local-12-0",
+      "model-road-local-3": "model-local-12-0",
+      "model-road-local-6": "model-local-12-0",
+      "model-road-local-7": "model-local-12-0",
+      "model-road-local-9": "model-local-12-0",
+      "model-road-local-1": "model-local-12-0",
+      "model-road-local-10": "model-local-12-0",
+      "model-road-local-2": "model-local-12-0",
+      "model-road-local-4": "model-local-12-0",
+      "model-road-local-5": "model-local-12-0",
+      "model-road-local-8": "model-local-12-0",
+      "model-road-local-0": "model-local-12-0",
+      "model-road-major-11": "model-major-12-0",
+      "model-road-major-12": "model-major-12-0",
+      "model-road-major-13": "model-major-12-0",
+      "model-road-major-14": "model-major-12-0",
+      "model-road-major-15": "model-major-12-0",
+      "model-road-major-3": "model-major-12-0",
+      "model-road-major-6": "model-major-12-0",
+      "model-road-major-7": "model-major-12-0",
+      "model-road-major-9": "model-major-12-0",
+      "model-road-major-1": "model-major-12-0",
+      "model-road-major-10": "model-major-12-0",
+      "model-road-major-2": "model-major-12-0",
+      "model-road-major-4": "model-major-12-0",
+      "model-road-major-5": "model-major-12-0",
+      "model-road-major-8": "model-major-12-0",
+      "model-road-major-0": "model-major-12-0"
+    }
+  }
+}
