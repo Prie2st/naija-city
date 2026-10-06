@@ -16,6 +16,8 @@ Dedicated lanes cost ₦1.8M per road segment and retain 72% of previous general
 
 Passenger demand comes exclusively from existing work, shopping and service OD flows. Ridership and boardings differ when transfers are used. Low-demand routes still cost money; capacity-constrained service leaves some passengers using alternatives. Fares/support change generalized cost and municipal finances. Danfo/Keke can feed the shared graph and compete; existing organic profitability and withdrawal remain authoritative. A planned journey only takes the share of bus demand it wins; people choosing an existing bus keep using it, and planned-network overflow tries existing buses before falling back to car, walking or Okada.
 
+Every mode is compared door to door. Car and Okada trips add three minutes for parking or hailing, and walking is the alternative for trips up to 1.2 km. A planned journey's price-based appeal is scaled by its door-to-door time against that alternative, between a tenth and double, so slow transit loses riders and a BRT that beats a congested road gains them. On a 30,000-resident corridor a BRT line cuts the average work commute from 13.1 to 9.9 minutes, and from 15.8 to 10.6 minutes under heavy traffic. Mixed-traffic buses on a jammed road lengthen commutes slightly because they share the jam. Where transit is slower than an uncongested road, as on the 10,000-resident test city, cheaper fares still win some riders and the average commute rises by about 1.3 minutes.
+
 ### Time of day
 
 `TRANSIT_PERIODS` splits the service day into rush hours (4 h), daytime (9 h) and evening (3 h). Each trip purpose spreads its riders differently: work trips concentrate in the rush, shopping and services in the daytime, and deliveries never use passenger services. Each period can only use its share of daily capacity, so a route that carries its daily demand comfortably can still turn riders away in the rush. Route and stop crowding is the busiest period's load. Evening demand falls by up to 25% when night safety at the stops used drops below 60, reaching the full loss at 20. Period loads are recomputed every evaluation and are not saved.
@@ -28,7 +30,7 @@ Mixed-traffic buses lose one reliability point per route kilometre and BRT 0.3, 
 
 Useful access is reported as Excellent (70+), Good (45+), Weak (20+) or Poor, and the accessibility overlay draws those four bands. City Feed and history record network boardings at 5,000, 20,000, 50,000 and 100,000; individual routes at 1,000 and 10,000; the best access band a district reaches; and the city reaching good access. Flooded routes are named as flood disruptions. Major corridor congestion (600+ daily trips at 80%+ congestion) and poor job accessibility (an origin with 120+ work trips where under half reach work within 45 minutes) are located urban challenges. Welcome Back reports farebox recovery before and after, the busiest hub's load and disrupted services.
 
-Useful station access contributes bounded, smoothed development support up to eight points. It cannot place buildings or bypass zoning, demand, construction, utilities, services or policy. Night safety and rainfall affect activity; flooded access disrupts routes or triggers real road detours.
+Useful station access contributes bounded, smoothed development support up to eight points. Beside a busy BRT station on the test corridor it reaches 7.6 points and adds about three points of land value, so station-area commercial parcels move up the development queue. It cannot place buildings or bypass zoning, demand, construction, utilities, services or policy. Night safety and rainfall affect activity; flooded access disrupts routes or triggers real road detours.
 
 ## Persistence and limits
 
@@ -40,7 +42,7 @@ Rail, metro, trams, ferries, airports, individual passengers, detailed timetable
 
 ## Validation
 
-`tests/transit.test.ts` covers useful/useless routes, fleet support, capacity relief, fares, rush-hour limits, night safety, transfers including walk → Danfo → BRT, BRT person capacity, station spacing, informal coexistence, station-area development, flood/safety effects, district mobility, challenges, milestones, Welcome Back, unique names, road consequences, migration and offline equivalence. `tests/transit-long-run.test.ts` runs a drained, populated city (`transitNetworkFixture`) for twenty years and checks 10/50/100/200-route networks and 100k/500k residents.
+`tests/transit.test.ts` covers useful/useless routes, fleet support, capacity relief, fares, rush-hour limits, night safety, transfers including walk → Danfo → BRT, BRT person capacity, shorter commutes on a relieved corridor, station spacing, informal coexistence, station-area development, flood/safety effects, district mobility, challenges, milestones, Welcome Back, unique names, road consequences, migration and offline equivalence. `tests/transit-long-run.test.ts` runs a drained, populated city (`transitNetworkFixture`) for twenty years and checks 10/50/100/200-route networks and 100k/500k residents.
 
 Measured on the development container (Node 22, one worker):
 

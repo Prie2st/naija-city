@@ -12,7 +12,7 @@ import { transitChallenges } from '../shared/simulation/transit-events';
 import { createDistrict } from '../shared/simulation/governance';
 import { roadPerformance, invalidateRoadGraph, ROADS } from '../shared/simulation/road-network';
 import { decodeCity } from '../shared/simulation/save-format';
-import { attractiveness, updateLandValues } from '../shared/simulation/development';
+import { attractiveness, developmentTick, updateLandValues } from '../shared/simulation/development';
 import { publicServiceFixture } from '../shared/simulation/public-service-fixtures';
 import { cityActivity } from '../shared/simulation/activity';
 import { vehiclePlan } from '../client/game/activity-policy';
@@ -192,6 +192,32 @@ describe('Milestone 8 completion behaviours', () => {
     expect(corridor.general).toBeLessThan(general.general); expect(corridor.total).toBeGreaterThan(general.total * 2);
     const bus = congested(); createTransitRoute(bus, 'bus', stops(bus, [162, 174, 186]), 8); updateMobility(bus, false, true); const ordinary = bus.transit.routes[0];
     expect(brt.minutes).toBeLessThan(ordinary.minutes); expect(brt.reliability).toBeGreaterThan(ordinary.reliability); expect(brt.capacity).toBeGreaterThan(ordinary.capacity);
+  });
+  it('shortens commutes when a BRT corridor relieves a congested road, even at heavy load', () => {
+    const evaluate = (c: ReturnType<typeof createCity>) => { for (let i = 0; i < 3; i++) { c.tick++; updateMobility(c, false, true); } return c.mobility.stats; };
+    for (const population of [20000, 30000]) for (const load of [1, 8]) {
+      const city = () => { const c = transitFixture(population); c.mobility.debug.loadMultiplier = load; c.mobility.debug.until = c.tick + 400; return c; };
+      const without = evaluate(city()), b = city(), ids = stops(b, [162, 174, 186], 'brt-station');
+      expect(buildBrtCorridor(b, [162, 186])).toBe(''); expect(createTransitRoute(b, 'brt', ids, 8)).toBe(''); const brt = evaluate(b);
+      expect(brt.averageCommute).toBeLessThan(without.averageCommute - 1);
+      expect(brt.modes.car + brt.modes.okada).toBeLessThan((without.modes.car + without.modes.okada) / 2);
+    }
+  });
+  it('moves commercial development toward useful stations', () => {
+    const parcels = [200, 202, 204, 208, 210, 212, 214, 218];
+    const grow = (transit: boolean) => {
+      const c = transitFixture(20000); for (const id of parcels) c.tiles[id].zone = 'commercial';
+      if (transit) { const ids = stops(c, [162, 174, 186], 'brt-station'); expect(buildBrtCorridor(c, [162, 186])).toBe(''); expect(createTransitRoute(c, 'brt', ids, 8)).toBe(''); }
+      refreshCity(c); for (let i = 0; i < 40; i++) { c.tick++; updateMobility(c, true, true); } updateLandValues(c);
+      const land = parcels.map(id => c.tiles[id].landValue), built: number[] = [];
+      for (let i = 0; i < 60; i++) { c.tick++; developmentTick(c); for (const id of parcels) if (c.tiles[id].building && !built.includes(id)) built.push(id); }
+      return { c, land, built };
+    };
+    const without = grow(false), brt = grow(true), served = parcels.filter(id => brt.c.transit.local[id].tod > 1);
+    expect(served.length).toBeGreaterThan(1);
+    for (const id of served) expect(brt.land[parcels.indexOf(id)]).toBeGreaterThan(without.land[parcels.indexOf(id)]);
+    const first = (built: number[]) => built.slice(0, 3).filter(id => served.includes(id)).length;
+    expect(first(brt.built)).toBeGreaterThan(first(without.built));
   });
   it('trades speed for walking coverage through station spacing', () => {
     const run = (tiles: number[]) => { const c = transitFixture(4000); createTransitRoute(c, 'bus', stops(c, tiles), 6); updateMobility(c, false, true); const covered = new Set(tiles.flatMap(id => [...walkingReach(c, id).keys()])); return { minutes: c.transit.routes[0].minutes, covered: covered.size }; };
