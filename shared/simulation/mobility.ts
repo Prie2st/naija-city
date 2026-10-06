@@ -76,7 +76,11 @@ export function chooseModes(city: City, flow: TravelFlow, wealth: number): Recor
   const transit = city.transit?.routes.some(r=>!r.legacy) ? transitChoice(city,flow.origin,flow.destination) : null;
   const plannedMode = transit?.legs.some(l=>l.mode==='brt') ? 'brt' : 'bus';
   const planned = transit ? TRANSIT.baseChoice * 35 / Math.max(8, transit.cost) * (transit.legs.every(l=>(city.transit.routes.find(r=>r.id===l.routeId)?.capacity??city.mobility.routes.find(r=>r.id===l.routeId)?.capacity??0)>0)?1:0) * (1+(policy?.transit??0)) : 0;
-  weights[plannedMode] += planned;
+  // Travellers compare door-to-door time: the road trip plus hailing or parking, or walking for short trips.
+  const privateMinutes = flow.minutes + Math.min(TRANSIT.carAccess, TRANSIT.okadaWait), walkMinutes = km / 4 * 60;
+  const alternative = km <= 1.2 ? Math.min(privateMinutes, walkMinutes) : privateMinutes;
+  const competitive = transit ? Math.min(TRANSIT.timeCeiling, Math.max(TRANSIT.timeFloor, (alternative / Math.max(1, transit.minutes)) ** TRANSIT.timeSensitivity)) : 0;
+  weights[plannedMode] += planned * competitive;
   const sum = Object.values(weights).reduce((s, w) => s + w, 0);
   let remaining = flow.trips;
   for (const mode of MODES.filter(m => m !== 'okada')) { counts[mode] = Math.floor(flow.trips * weights[mode] / sum); remaining -= counts[mode]; }
@@ -85,7 +89,7 @@ export function chooseModes(city: City, flow: TravelFlow, wealth: number): Recor
   if (transit) {
     // Only the planned-network share boards the planned journey. Riders who chose an
     // existing bus service keep it, and planned overflow tries those buses next.
-    boarded = boardTransit(city, flow.id, transit, Math.min(counts[plannedMode], Math.floor(flow.trips * planned / sum)), flow.purpose).riders;
+    boarded = boardTransit(city, flow.id, transit, Math.min(counts[plannedMode], Math.floor(flow.trips * planned * competitive / sum)), flow.purpose).riders;
     if (plannedMode === 'brt') { overflow = counts.brt - boarded; counts.brt = boarded; }
   }
   for (const mode of ['keke', 'danfo', 'bus'] as const) {
@@ -226,7 +230,7 @@ export function updateMobility(city: City, progress = true, force = false) {
     const plannedTrips=journey?.passengers??0;
     const plannedTime=journey?.minutes??f.minutes;
     const sharedWait = (f.modes.keke + f.modes.danfo + f.modes.bus + f.modes.brt - plannedTrips) * 4;
-    f.minutes = f.trips ? (f.modes.walk * walkingTime + (f.trips - f.modes.walk - plannedTrips) * f.minutes + plannedTrips * plannedTime + sharedWait) / f.trips : f.minutes;
+    f.minutes = f.trips ? (f.modes.walk * walkingTime + (f.trips - f.modes.walk - plannedTrips) * f.minutes + plannedTrips * plannedTime + sharedWait + f.modes.car * TRANSIT.carAccess + f.modes.okada * TRANSIT.okadaWait) / f.trips : f.minutes;
     trips += f.trips; if (f.purpose === 'work') { commute += f.minutes * f.trips; workTrips += f.trips; }
     const pce = (f.purpose === 'delivery' ? f.trips * 1.5 : f.modes.car / 1.4 + f.modes.okada * 0.25) * m.debug.loadMultiplier;
     for (const id of f.path) {

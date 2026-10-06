@@ -17,6 +17,10 @@ export const TRANSIT = {
   busLengthReliability: 1, brtLengthReliability: .3, lengthReliabilityMaximum: 10, layoverReliability: 4,
   // People carried per general-lane vehicle (cars, Okada, Keke and Danfo mixed).
   generalOccupancy: 1.5,
+  // Door-to-door minutes added to private trips: finding parking, or hailing and waiting for an Okada.
+  carAccess: 3, okadaWait: 3,
+  // How strongly planned-transit appeal follows its time against the private or walking alternative, and its bounds.
+  timeSensitivity: 1, timeFloor: .1, timeCeiling: 2,
   networkMilestones: [5000, 20000, 50000, 100000], routeMilestones: [1000, 10000],
   corridorCongestion: 80, corridorTrips: 600, jobAccessShare: .5, jobAccessTrips: 120,
 } as const;
