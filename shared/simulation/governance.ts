@@ -1,7 +1,9 @@
 import type { City, Tile, Zone, Overlay } from '../types/city';
-import type { District, DistrictMetrics, GovernanceState, LocalGovernance, ObjectiveId, PolicyId, Priority, UrbanChallenge } from '../types/governance';
+import type { District, DistrictMetrics, GovernanceState, LocalGovernance, ObjectiveId, PolicyBasis, PolicyId, Priority, UrbanChallenge } from '../types/governance';
 import { GOVERNANCE as G, emptyEffects, POLICIES } from './governance-config';
 import { clamp, isOperating, neighbourhoods } from './world';
+import { BALANCE } from './balance-config';
+import { isDrainage } from './infrastructure-config';
 
 const zones: Zone[] = ['residential','commercial','industrial'];
 const average = (values: number[], fallback = 50) => values.length ? values.reduce((a,b)=>a+b,0)/values.length : fallback;
@@ -20,6 +22,35 @@ export function initializeGovernance(city: City) {
 export function localGovernance(city: City, tile: Tile): LocalGovernance | undefined { return city.governance?.local[tile.y*city.size+tile.x]; }
 export function taxRate(city: City, zone: Zone) { return city.governance?.taxes.effective[zone] ?? G.taxes[zone].base; }
 export function taxPressure(city: City, zone: Zone) { return (taxRate(city,zone)-G.taxes[zone].base)/(G.taxes[zone].max-G.taxes[zone].min); }
+/** Share of assessed tax actually collected: avoidance and informality grow as rates rise above the base. */
+export function taxCompliance(city: City, zone: Zone) {
+  const t=G.taxes[zone], above=clamp((taxRate(city,zone)-t.base)/(t.max-t.base),0,1);
+  return 1-BALANCE.taxes.complianceLoss*Math.pow(above,BALANCE.taxes.complianceExponent);
+}
+export type FiscalStage = 'surplus' | 'balanced' | 'deficit' | 'stress' | 'severe';
+/** Municipal finance stage, from reserves or debt measured in months of spending and the monthly balance. */
+export function fiscalStage(city: City): FiscalStage {
+  const F=BALANCE.fiscal, monthly=Math.max(1,city.expenses), debt=Math.max(0,-city.treasury), balance=city.income-city.expenses;
+  if(debt>monthly*F.severeMonths)return 'severe';
+  if(debt>monthly*F.stressMonths)return 'stress';
+  if(debt>0||balance<-monthly*.02)return 'deficit';
+  return balance>monthly*.05?'surplus':'balanced';
+}
+/** Monthly interest on overdraft debt, capped as a share of revenue so a recovery path always remains. */
+export function debtService(city: City) {
+  if(city.treasury>=0)return 0;
+  return Math.min(-city.treasury*BALANCE.fiscal.interestRate,Math.max(0,city.income)*BALANCE.fiscal.interestRevenueCap);
+}
+/** Share of chosen service and maintenance funding the city can actually pay for at its fiscal stage. */
+export function fiscalFunding(city: City) {
+  const stage=fiscalStage(city),F=BALANCE.fiscal;
+  return stage==='severe'?F.severeFunding:stage==='stress'?F.stressFunding:1;
+}
+/** Satisfaction lost to delayed salaries and contractor payments. */
+export function fiscalSatisfaction(city: City) {
+  if(!city.governance)return 0;
+  const stage=fiscalStage(city);return stage==='severe'?BALANCE.fiscal.severeSatisfaction:stage==='stress'?BALANCE.fiscal.stressSatisfaction:0;
+}
 export function setTax(city: City, zone: Zone, rate: number): string {
   const g=city.governance, bounds=G.taxes[zone];
   if (!Number.isFinite(rate)||rate<bounds.min||rate>bounds.max) return `Choose a rate between ${bounds.min}% and ${bounds.max}%.`;
@@ -42,7 +73,7 @@ export function togglePolicy(city: City, id: PolicyId, districtId: string | null
 export function setPriority(city: City, group: keyof GovernanceState['priorities'], priority: Priority) { city.governance.priorities[group]=priority; }
 export function maintenanceBudget(city: City, group: keyof GovernanceState['priorities'], tile?: Tile): number {
   const p=city.governance?.priorities[group]??'standard';
-  return clamp(city.infrastructure.maintenance[group]+(p==='high'?G.maintenance.high:p==='low'?G.maintenance.low:0)+(group==='drainage'&&tile?(localGovernance(city,tile)?.effects.drainage??0):0),0,G.maintenance.maximum);
+  return clamp((city.infrastructure.maintenance[group]+(p==='high'?G.maintenance.high:p==='low'?G.maintenance.low:0)+(group==='drainage'&&tile?(localGovernance(city,tile)?.effects.drainage??0):0))*fiscalFunding(city),0,G.maintenance.maximum);
 }
 export function createDistrict(city: City, ids: number[], name: string, neighborhoodIds: number[] = []): string {
   const g=city.governance;
@@ -79,25 +110,50 @@ export function governanceEvent(city: City, key: string, text: string, force=fal
   g.lastEvents[key]=city.tick;city.history.unshift(`Day ${city.tick}: ${text}`);city.history=city.history.slice(0,60);
   if(city.living){city.living.feed.unshift({id:`governance-${key}-${city.tick}`,tick:city.tick,hour:city.weather.hour,kind:'governance',text,tileId:null,severity:'notice'} as typeof city.living.feed[number]);city.living.feed=city.living.feed.slice(0,80);}
 }
+/** Units a policy's cost scales with on one tile: residents, streets, jobs, drains, depots or stops. */
+export function policyUnits(city: City, tile: Tile, basis: PolicyBasis) {
+  const b=tile.building, active=isOperating(b);
+  switch(basis){
+    case 'residents': return b?.occupants??0;
+    case 'informal-residents': return b&&b.tenure!=='formal'?b.occupants:0;
+    case 'roads': return tile.road?1:0;
+    case 'commercial-jobs': return active&&b!.type==='commercial'?b!.maximumJobs:0;
+    case 'industrial-jobs': return active&&b!.type==='industrial'?b!.maximumJobs:0;
+    case 'business-jobs': return active&&b!.business?b!.maximumJobs:0;
+    case 'commercial-buildings': return active&&b!.type==='commercial'?1:0;
+    case 'drains': return tile.infrastructure&&isDrainage(tile.infrastructure.kind)?1:0;
+    case 'waste-depots': return tile.publicFacility&&city.publicServices?.facilities.find(f=>f.id===tile.publicFacility)?.subtype==='waste-depot'&&city.publicServices.facilities.find(f=>f.id===tile.publicFacility)!.location===tile.y*city.size+tile.x?1:0;
+    case 'stops': return city.transit?.stops.some(s=>s.tileId===tile.y*city.size+tile.x)||city.mobility?.stops.some(s=>s.tileId===tile.y*city.size+tile.x)?1:0;
+  }
+}
+export const POLICY_BASIS_LABEL: Record<PolicyBasis,string>={residents:'resident','informal-residents':'informal resident',roads:'street tile','commercial-jobs':'commercial job','industrial-jobs':'industrial job','business-jobs':'business job','commercial-buildings':'commercial building',drains:'drainage asset','waste-depots':'waste depot',stops:'transport stop'};
+/** Monthly cost of a policy at full strength across a scope (the whole city or one district). */
+export function policyEstimate(city: City, id: PolicyId, districtId: string | null) {
+  const def=POLICIES.find(p=>p.id===id)!,ids=districtId?city.governance.districts.find(d=>d.id===districtId)?.tiles??[]:city.tiles.map((_,n)=>n);
+  return G.effects.policyAdministration+ids.reduce((sum,n)=>sum+def.cost*policyUnits(city,city.tiles[n],def.basis),0);
+}
 function compilePolicies(city: City) {
   const g=city.governance;
   if(!g.policies.length){g.programCost=0;return;}
   const scopes=new Map<string|null,typeof g.policies>();
   for(const p of g.policies){const list=scopes.get(p.districtId)??[];list.push(p);scopes.set(p.districtId,list);}
+  // Programmes the city cannot pay for during severe fiscal stress deliver less.
+  const delivery=fiscalStage(city)==='severe'?BALANCE.fiscal.severePolicyEffect:1;
   const compiled=new Map<string|null,ReturnType<typeof emptyEffects>>();
-  const costs=new Map<string|null,number>();
+  const strengths=new Map<string|null,number[]>();
   for(const scope of [null,...g.districts.map(d=>d.id)]){
-    const effects=emptyEffects();let cost=0;
+    const effects=emptyEffects(),levels:number[]=[];
     for(const def of POLICIES){const strength=Math.max(0,...(scopes.get(null)??[]).filter(p=>p.id===def.id).map(p=>p.strength),...(scope?(scopes.get(scope)??[]).filter(p=>p.id===def.id).map(p=>p.strength):[]));
-      for(const [k,v] of Object.entries(def.effects))effects[k as keyof typeof effects]+=v*strength;
-      cost+=def.cost*strength;
-    }compiled.set(scope,effects);costs.set(scope,cost);
+      for(const [k,v] of Object.entries(def.effects))effects[k as keyof typeof effects]+=v*strength*delivery;
+      levels.push(strength);
+    }compiled.set(scope,effects);strengths.set(scope,levels);
   }
   g.programCost=0;
   for(let id=0;id<city.tiles.length;id++){
-    const l=g.local[id];l.effects=compiled.get(l.districtId)??compiled.get(null)!;
-    const people=city.tiles[id].building?.occupants??0;
-    g.programCost+=people*(costs.get(l.districtId)??costs.get(null)!);
+    const l=g.local[id],t=city.tiles[id];l.effects=compiled.get(l.districtId)??compiled.get(null)!;
+    const levels=strengths.get(l.districtId)??strengths.get(null)!;
+    // Each policy is charged on what it actually serves here (see POLICIES basis), not a flat per-resident fee.
+    for(let n=0;n<POLICIES.length;n++)if(levels[n]>0)g.programCost+=levels[n]*POLICIES[n].cost*policyUnits(city,t,POLICIES[n].basis);
   }
   // A small administration cost also makes unoccupied policy areas cost something.
   g.programCost+=g.policies.reduce((s,p)=>s+p.strength*G.effects.policyAdministration,0);
@@ -170,6 +226,8 @@ function detectChallenges(city: City,emit=true) {
   add('employment','Unemployment',city.unemploymentRate,25,`${Math.round(city.unemploymentRate)}% of the workforce is seeking work.`,['Accessible jobs','Business performance'],['Zone employment near homes','Support firms','Improve shared transport'],'mobility');
   add('commute','Long commutes',city.mobility.stats.averageCommute,30,`${Math.round(city.mobility.stats.averageCommute)} minute average commute.`,['Distance between homes and jobs','Congestion and route availability'],['Support existing transit','Provide bus routes','Encourage nearby jobs'],'mobility');
   add('traffic','Congested corridors',city.mobility.stats.congestion,65,`${Math.round(city.mobility.stats.congestion)}% average congestion.`,['Travel demand exceeds road capacity'],['Improve shared travel','Upgrade bottlenecks','Reduce long trips'],'traffic');
+  const stage=fiscalStage(city);
+  add('fiscal-stress',stage==='severe'?'Severe fiscal stress':'Fiscal stress',stage==='severe'?2:stage==='stress'?1:0,1,`Debt ${Math.round(Math.max(0,-city.treasury)/1e6)}M naira (${(Math.max(0,-city.treasury)/Math.max(1,city.expenses)).toFixed(1)} months of spending); interest ${Math.round(debtService(city)/1e6)}M naira/month. ${stage==='severe'?'Services and maintenance run at reduced funding and programmes deliver less.':'Services and maintenance are partly funded.'}`,['Spending exceeds revenue','Debt interest compounds the deficit'],['Raise revenue gradually','Pause programmes the city cannot afford','Protect essential maintenance'],'none');
   add('budget','Persistent budget deficit',g.deficitDays,60,`Monthly balance ${Math.round(city.income-city.expenses)} naira; ${g.deficitDays} deficit days.`,['Operating commitments exceed revenue'],['Review policy costs','Adjust taxes gradually','Reduce excess spending without abandoning maintenance'],'none');
   for(const [kind,service] of [['school',city.publicServices.stats.education],['health',city.publicServices.stats.healthcare]] as const)add(kind,kind==='school'?'School overcrowding':'Healthcare overload',service.demand?100-service.served/service.demand*100:0,45,'Service demand exceeds effective capacity.',['Capacity, staffing, utilities and road access'],['Inspect existing facilities','Improve staffing budgets and access','Add capacity where needed'],kind==='school'?'education':'healthcare');
   add('waste','Waste backlog',city.publicServices.waste.backlog/Math.max(1,city.population)*100,1,'Uncollected waste is accumulating.',['Collection and disposal capacity'],['Improve existing collection','Check depot and disposal access','Target collection policy'],'waste');

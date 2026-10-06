@@ -91,7 +91,10 @@ describe('capacity, distribution and private resilience', () => {
 });
 describe('seeded weather and spatial flooding', () => {
   it('holds weather for several days and generates repeatable seasons/storms', () => {
-    const a = createCity(0), b = createCity(0); setWeather(a, 'heavy-rain', 6); updateWeather(a); expect(a.weather.kind).toBe('heavy-rain');
+    const a = createCity(0), b = createCity(0); setWeather(a, 'light-rain', 6); updateWeather(a); expect(a.weather.kind).toBe('light-rain'); expect(a.weather.remaining).toBe(5);
+    // A storm spell keeps raining but its peak eases instead of repeating heavy rain for the whole spell.
+    setWeather(a, 'heavy-rain', 6); const peak = a.weather.rainfall; updateWeather(a);
+    expect(a.weather.remaining).toBe(5); expect(a.weather.rainfall).toBeLessThan(peak); expect(a.weather.rainfall).toBeGreaterThan(0);
     for (const c of [a, b]) { c.weather.remaining = 0; c.tick = 150; updateWeather(c); }
     expect(a.weather).toEqual(b.weather); expect(a.weather.season).toBe('rainy');
     a.tick = 20; updateWeather(a); expect(a.weather.season).toBe('dry');

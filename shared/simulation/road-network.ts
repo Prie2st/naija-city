@@ -42,6 +42,15 @@ export function roadPerformance(city: City, tile: Tile) {
   const junction=arms<3?1:treatment==='high-capacity'?1.08:treatment==='signal'?.97:treatment==='roundabout'?(tile.mobility.vehicleFlow<def.capacity*5?1.04:.85):.84;
   return { accessible, capacity: accessible ? def.capacity * resilience * lanes * construction * junction * (1 - (tile.roadClass==='major'||tile.roadClass==='avenue'?0:(localGovernance(city,tile)?.effects.walking??0)*.4)) : 0, speed: accessible ? def.speed * resilience : 0 };
 }
+/**
+ * Travel speed from the same flood, condition and rain values as the graph signature, so a graph reused
+ * from an earlier day is identical to a freshly built one (keeps save/reload and offline runs deterministic).
+ */
+function graphSpeed(city: City, tile: Tile) {
+  const def = ROADS[tile.roadClass ?? 'local'], flood = Math.floor(tile.services.floodDepth / 10) * 10, condition = Math.floor(tile.services.roadCondition / 5) * 5;
+  const rain = city.weather.rainfall / 65, dirt = tile.roadClass === 'dirt';
+  return def.speed * Math.max(0.08, (0.65 + condition * 0.0035) * (1 - Math.min(0.8, flood / 115)) * (1 - rain * (dirt ? 0.55 : 0.15)));
+}
 export function congestionFor(peakVehicles: number, capacity: number) {
   if (!capacity) return peakVehicles ? 100 : 0;
   const ratio = peakVehicles / capacity;
@@ -54,12 +63,12 @@ export function roadGraph(city: City): Graph {
   const key = `${city.tick}:${city.infrastructure.revision}`;
   const cached = cache.get(city); if (cached?.key === key) return cached;
   // Signature includes flood/condition/congestion buckets: route caches never survive changed access.
-  const signature = `${city.transit?.revision??0}|${JSON.stringify(city.transit?.works??{})}|${city.weather.kind}|${city.governance?.policies.map(p=>`${p.id}:${p.districtId}:${Math.round(p.strength*5)}`).join(',')}|` + city.tiles.filter(t => t.road).map(t => `${t.y * city.size + t.x}:${t.roadClass}:${Math.floor(t.services.floodDepth / 10)}:${Math.floor(t.services.roadCondition / 5)}:${Math.floor(t.mobility.congestion / 10)}`).join(',');
+  const signature = `${city.transit?.revision??0}|${JSON.stringify(city.transit?.works??{})}|${city.weather.kind}:${city.weather.rainfall}|${city.governance?.policies.map(p=>`${p.id}:${p.districtId}:${Math.round(p.strength*5)}`).join(',')}|` + city.tiles.filter(t => t.road).map(t => `${t.y * city.size + t.x}:${t.roadClass}:${Math.floor(t.services.floodDepth / 10)}:${Math.floor(t.services.roadCondition / 5)}:${Math.floor(t.mobility.congestion / 10)}`).join(',');
   const previous = cache.get(city); if (previous?.signature === signature) { previous.key = key; return previous; }
   const n = city.tiles.length, neighbours = Array.from({ length: n }, () => [] as number[]), components = Array(n).fill(-1), costs = Array(n).fill(Infinity);
   for (let id = 0; id < n; id++) {
     const p = roadPerformance(city, city.tiles[id]); if (!p.accessible) continue;
-    costs[id] = 0.12 / Math.max(2, p.speed * (1 - city.tiles[id].mobility.congestion * 0.007)) * 60;
+    costs[id] = 0.12 / Math.max(2, graphSpeed(city, city.tiles[id]) * (1 - Math.floor(city.tiles[id].mobility.congestion / 10) * 10 * 0.007)) * 60;
     neighbours[id] = adjacent(city, id).filter(next => roadPerformance(city, city.tiles[next]).accessible);
   }
   let component = 0;

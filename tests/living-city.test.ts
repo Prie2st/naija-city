@@ -65,7 +65,8 @@ describe('business lifecycle and city identity', () => {
     expect(b.business!.closedAt).toBeNull(); c.tick++; operateBusinesses(c);
     expect(b.business!.state).toBe('closed'); refreshCity(c);
     expect(c.jobs).toBe(0); expect(b.monthlyEconomicOutput).toBe(0); expect(cityActivity(c, 13).tiles[136].commercial).toBe(0);
-    const oldName = b.business!.name; c.demand.commercial = 80; c.purchasingPower = 80; t.mobility.accessibility = 90;
+    // A successor firm needs enough customers to trade from these premises, not just city-wide demand.
+    const oldName = b.business!.name; c.demand.commercial = 80; c.purchasingPower = 80; t.mobility.accessibility = 90; c.population = Math.ceil(b.maximumJobs / 0.24);
     for (let i = 0; i < 38; i++) { c.tick++; operateBusinesses(c); }
     expect(b.business!.closedAt).not.toBeNull(); c.tick++; operateBusinesses(c);
     expect(b.business!.state).toBe('opening'); expect(b.business!.name).not.toBe(oldName); expect(c.counters.businessesOpened).toBe(1);

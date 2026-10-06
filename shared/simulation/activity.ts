@@ -4,6 +4,8 @@ import type { CityActivity, SentimentFactor } from '../types/living';
 import { clamp, isOperating } from './world';
 import { roadPerformance, congestionFor, roadAnchor } from './road-network';
 import { effectiveServices } from './infrastructure';
+import { fiscalSatisfaction } from './governance';
+import { persistentUnemployment } from './economy';
 
 const unit = (n: number) => clamp(n, 0, 1);
 const peak = (hour: number, center: number, width: number) => {
@@ -42,7 +44,7 @@ export function sentimentFactors(city: City): SentimentFactor[] {
   return [
     { label:'Local public services',value:city.tiles.reduce((sum,t)=>sum+(t.building?.occupants??0)*((t.publicServices?.education.quality??0)*.015+(t.publicServices?.healthcare.quality??0)*.02+(t.publicServices?.parks.quality??0)*.015-Math.min(5,(t.publicServices?.uncollectedWaste??0)/Math.max(.02,t.publicServices?.wasteGenerated??0)*.1)),0)/Math.max(1,city.population)},
     { label:'Public safety',value:((city.safety?.metrics.publicSafety??75)-75)*.055-city.tiles.reduce((n,t)=>n+(t.building?.occupants??0)*(safetyAt(city,t)?.shock??0)*.1,0)/Math.max(1,city.population) },
-    { label: 'Employment', value: (100 - city.unemploymentRate) * 0.3 },
+    { label: 'Employment', value: (100 - persistentUnemployment(city)) * 0.3 },
     { label: 'Available housing', value: (city.housingCapacity ? clamp(city.vacantHousing / city.housingCapacity * 400) : 0) * 0.1 },
     { label: 'Economic health', value: economic * 0.12 },
     { label: 'Occupied neighborhoods', value: healthy / Math.max(1, buildings.length) * 12 },
@@ -54,6 +56,7 @@ export function sentimentFactors(city: City): SentimentFactor[] {
     { label: 'Generator costs', value: -i.power.generatorDependency * 0.04 },
     { label: 'Jobs accessible by transport', value: (m.jobAccessibility - 65) * 0.06 },
     { label: 'Commute and traffic delays', value: -Math.min(8, Math.max(0, m.averageCommute - 15) * 0.18) },
+    { label:'Municipal finances', value: -fiscalSatisfaction(city) },
     { label:'Planned transit crowding',value:-Math.min(2,Math.max(0,(city.transit?.stats.crowding??0)-1)) },
     { label: 'Crowded shared transport', value: -Math.min(4, city.mobility.routes.reduce((sum, r) => sum + Math.max(0, r.demand * m.sharedUsage / 100 - r.capacity), 0) / Math.max(1, city.population) * 8) },
   ];

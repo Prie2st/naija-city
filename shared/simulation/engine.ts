@@ -15,6 +15,7 @@ import { tileAt } from './world';
 import { asset, emptyServices, INFRASTRUCTURE, isDrainage, isInfrastructure } from './infrastructure-config';
 import { initializeInfrastructure, infrastructureEvents, updateInfrastructure } from './infrastructure';
 import { updateFloods, updateWeather } from './weather';
+import { updateNationalEconomy } from './national-economy';
 export { tileAt, roadAccess } from './world';
 export { refreshCity, updateDemand, propertyValue } from './economy';
 export { attractiveness } from './development';
@@ -126,7 +127,7 @@ export function applyTool(city: City, x: number, y: number, tool: Tool): string 
 export function step(city: City) {
   const previousPopulation = city.population;
   city.tick++;
-  updateGovernance(city);
+  updateGovernance(city); updateNationalEconomy(city);
   updateWeather(city); updateInfrastructure(city); updateFloods(city);
   refreshCity(city); updateMobility(city); labourAndMigration(city); updatePublicServices(city); updateSafety(city); refreshCity(city); updateDemand(city); operateBusinesses(city);
   if (city.tick % 5 === 0) updateLandValues(city);

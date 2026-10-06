@@ -2,9 +2,11 @@ import type { Overlay, Zone } from './city';
 
 export type Priority = 'low' | 'standard' | 'high';
 export type PolicyId = 'street-lighting' | 'community-safety' | 'commercial-patrol' | 'hub-safety' | 'density' | 'affordable' | 'infill' | 'commerce' | 'industry' | 'business' | 'transit' | 'pedestrian' | 'drainage' | 'waste' | 'green' | 'integration' | 'community-upgrade' | 'formalization';
+/** What a policy's monthly cost scales with; cost is naira per unit per month at full strength. */
+export type PolicyBasis = 'residents' | 'informal-residents' | 'roads' | 'commercial-jobs' | 'industrial-jobs' | 'business-jobs' | 'commercial-buildings' | 'drains' | 'waste-depots' | 'stops';
 export interface PolicyDefinition {
   id: PolicyId; name: string; category: string; description: string;
-  scope: 'both'; cost: number; requirements: string; effects: Partial<PolicyEffects>;
+  scope: 'both'; cost: number; basis: PolicyBasis; requirements: string; effects: Partial<PolicyEffects>;
 }
 export interface PolicyEffects { lighting:number; prevention:number; commercialPatrol:number; hubSafety:number; residential: number; commercial: number; industrial: number; upgrade: number; rent: number; business: number; transit: number; walking: number; drainage: number; environment: number; integration: number; waste: number }
 export interface PolicyState { id: PolicyId; districtId: string | null; enabled: boolean; activationDate: number; changedAt: number; strength: number }

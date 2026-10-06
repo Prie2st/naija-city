@@ -5,8 +5,13 @@ import type { Building, City, DevelopmentCluster, Tile } from '../types/city';
 import { createBuilding, setTypology } from './buildings';
 import { clamp, isOperating, neighbourhoods, roadAccess, stableHash } from './world';
 import { effectiveServices, supportsDensity } from './infrastructure';
+import { marketRatio, tradingCapacity } from './economy';
+import { capacities } from './buildings';
 import { isDrainage } from './infrastructure-config';
 import { frontageEffect, ROADS } from './road-network';
+import { BALANCE } from './balance-config';
+import { feedEvent } from './living-city';
+import { floodDeclineDay } from './weather';
 
 export interface DevelopmentFactor { label: string; value: number }
 export interface Attractiveness { score: number; eligible: boolean; factors: DevelopmentFactor[]; reason: string }
@@ -62,9 +67,9 @@ export function updateLandValues(city: City) {
       if (other.zone === 'industrial') industry++;
     }
     const s = t.services;
-    const infrastructureValue = (s.powerReliability + s.waterReliability - 100) * 0.09 + s.drainageQuality * 0.06 - s.floodRisk * 0.08 - Math.min(25, s.floodDepth * 0.15) - s.floodEvents * 0.4 - s.pollution * 0.12;
+    const infrastructureValue = (s.powerReliability + s.waterReliability - 100) * 0.09 + s.drainageQuality * 0.06 - s.floodRisk * 0.08 - Math.min(25, s.floodDepth * 0.15) - Math.min(10, s.floodEvents * 0.4) - s.pollution * 0.12;
     const mobilityValue = (t.mobility.accessibility - 50) * 0.04 + Math.min(8, t.mobility.footTraffic / 100) - t.mobility.congestion * 0.06;
-    const target = clamp(22 + (city.transit?.local[id].tod??0) + Math.min(0,((safetyAt(city,t)?.publicSafety??75)-70)*.055) + (t.road || roadAccess(city, t) ? 20 : -9) + Math.min(20, successful * 3) + Math.min(12, commerce * 5) + Math.min(10, density * 0.8) - industry * 4 - abandoned * 7 - vacancy * 2 + infrastructureValue + mobilityValue + localServiceEffect(t).benefit - localServiceEffect(t).penalty + ((localGovernance(city,t)?.environment??60)-60)*.06 + (frontageEffect(city,t)?.value??0)*.8, 5, 95);
+    const target = clamp(22 + (city.transit?.local[id].tod??0) + Math.min(0,((safetyAt(city,t)?.publicSafety??75)-70)*.055) + (t.road || roadAccess(city, t) ? 20 : -9) + Math.min(20, successful * 3) + Math.min(12, commerce * 5) + Math.min(10, density * 0.8) - industry * 4 - Math.min(BALANCE.recovery.abandonedNeighbourCap, abandoned * BALANCE.recovery.abandonedNeighbourPenalty) - vacancy * 2 + infrastructureValue + mobilityValue + localServiceEffect(t).benefit - localServiceEffect(t).penalty + ((localGovernance(city,t)?.environment??60)-60)*.06 + (frontageEffect(city,t)?.value??0)*.8, 5, 95);
     t.landValue = Math.round((t.landValue * 0.7 + target * 0.3) * 10) / 10;
   }
 }
@@ -93,6 +98,10 @@ export function startUpgrade(b: Building) {
 }
 export function closeBuilding(city: City, b: Building) {
   if (b.abandoned) return;
+  // Residents of a failing home move into the displaced pool and look for housing elsewhere, leaving
+  // gradually if none is found, rather than disappearing from the city at once.
+  const h = city.governance?.housing;
+  if (h && BALANCE.recovery.rehouseAbandonedResidents && b.occupants > 0) { if (!h.displacedResidents) h.displacedSince = city.tick; h.displacedResidents += b.occupants; }
   b.abandoned = true; b.abandonedAt = city.tick; b.occupants = 0; b.jobs = 0; b.occupancy = 0;
   b.taxContribution = 0; b.monthlyEconomicOutput = 0; b.pendingLevel = null; b.constructionState = 'complete';
   if (b.business) { if (b.business.closedAt === null) city.counters.businessesClosed++; b.business.closedAt = city.tick; b.business.state = 'closed'; b.business.employees = 0; b.business.occupancy = 0; b.business.economicOutput = 0; }
@@ -100,6 +109,7 @@ export function closeBuilding(city: City, b: Building) {
 }
 export function updateBuildings(city: City) {
   let active = city.tiles.filter(t => t.building && t.building.constructionState !== 'complete').length;
+  const market = tradingCapacity(city);
   for (const t of city.tiles) {
     const b = t.building; if (!b) continue;
     if (b.constructionState !== 'complete') {
@@ -112,20 +122,32 @@ export function updateBuildings(city: City) {
     }
     b.age++;
     if (b.abandoned) {
-      if (active < 3 && city.tick - (b.abandonedAt ?? city.tick) >= 30 && city.demand[b.type] >= 30 && roadAccess(city, t) && t.landValue >= 25 && attractiveness(city, t).score >= 50) {
+      const idle = city.tick - (b.abandonedAt ?? city.tick);
+      if (active < 3 && idle >= 30 && city.demand[b.type] >= 30 && roadAccess(city, t) && attractiveness(city, t).score >= BALANCE.recovery.redevelopmentScore) {
         b.constructionState = 'redevelopment'; b.constructionProgress = 0;
         active++;
+      } else if (idle >= BALANCE.recovery.clearAbandonedAfter) {
+        // Long-abandoned shells are cleared; the zoned plot can then attract fresh, lower-cost development.
+        feedEvent(city, `cleared:${b.id}`, `The abandoned ${b.name} was cleared. The plot is available for new development.`, t.y * city.size + t.x, 'notice');
+        t.building = null; t.progress = 0;
       }
       continue;
     }
     // Temporary flood closure is distinct from abandonment; storms alone do not erase a business.
-    const bad = !b.floodClosed && (!roadAccess(city, t) || (b.type === 'residential' ? b.occupancy < 0.1 || b.satisfaction < 28 : b.business!.profitability < 35 || b.occupancy < 0.08));
-    b.poorDays = bad ? b.poorDays + 1 : Math.max(0, b.poorDays - 2);
-    if (b.poorDays >= 90) { closeBuilding(city, b); continue; }
+    // Temporary flood stress does not count towards abandonment: households wait out the water.
+    const floodStress = Math.min(25, t.services.floodDepth * 0.2) + t.services.recovery * 0.1;
+    const bad = !b.floodClosed && (!roadAccess(city, t) || (b.type === 'residential' ? b.occupancy < 0.1 || b.satisfaction + floodStress < 28 : b.business!.profitability < 35 || b.occupancy < 0.08));
+    // While floodwater disrupts the city, decline still counts but slowly: owners and households wait out the season.
+    b.poorDays = bad ? b.poorDays + (floodDeclineDay(city) ? 1 : 0) : Math.max(0, b.poorDays - 2);
+    // Owners differ in how long they hold on, so a shared shock does not empty a district on one day.
+    if (b.poorDays >= BALANCE.recovery.abandonmentDays + stableHash(city.seed + 61, t.y * city.size + t.x) % (BALANCE.recovery.abandonmentSpread + 1)) { closeBuilding(city, b); continue; }
     const developed = neighbourhoods(city.size)[t.y * city.size + t.x].filter(id => isOperating(city.tiles[id].building)).length;
-    const canUpgrade = b.tenure === 'formal' && (t.publicServices?.fireDamage??0)<15 && (b.level<3||(t.publicServices?.qualityOfLife??45)>=45) && b.level < 5 && supportsDensity(t, b.level + 1) && b.age >= 25 * b.level && b.occupancy >= 0.78 && t.landValue >= 38 + b.level * 6 && city.demand[b.type] >= 28 && developed >= 2 && (b.type === 'residential' || b.business!.closedAt === null && b.business!.profitability >= 50);
+    // Firms expand only when the larger premises would still have enough customers or workers.
+    const added = b.business && b.level < 5 ? capacities(b.type, b.level + 1).jobs - b.maximumJobs : 0;
+    const canUpgrade = b.tenure === 'formal' && (t.publicServices?.fireDamage??0)<15 && (b.level<3||(t.publicServices?.qualityOfLife??45)>=45) && b.level < 5 && supportsDensity(t, b.level + 1) && b.age >= 25 * b.level && b.occupancy >= 0.78 && t.landValue >= 38 + b.level * 6 && city.demand[b.type] >= 28 && developed >= 2 && (b.type === 'residential' || b.business!.closedAt === null && b.business!.profitability >= 50 && marketRatio(city, b.type, market, added) >= BALANCE.recovery.expansionMarket);
     b.upgradeProgress = clamp(b.upgradeProgress + (canUpgrade ? 2 + t.landValue / 50 + (localGovernance(city,t)?.effects.upgrade??0) : -0.5));
-    if (b.upgradeProgress >= 100 && active < 3 && startUpgrade(b)) active++;
+    // Conditions are checked again when work would start; accumulated interest alone does not start a project.
+    if (b.upgradeProgress >= 100 && canUpgrade && active < 3 && startUpgrade(b)) { active++; if (b.business) { if (b.type === 'commercial') market.commercial += added; else market.industrial += added; } }
   }
 }
 export function developmentTick(city: City) {

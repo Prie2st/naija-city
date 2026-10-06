@@ -1,5 +1,6 @@
 import { safetyAt } from './safety';
-import { localGovernance } from './governance';
+import { localGovernance, fiscalFunding } from './governance';
+import { assetAgeFactor } from './infrastructure';
 import type { City, Tile } from '../types/city';
 import type { FacilityKind, PublicServiceFacility, ServiceGroup } from '../types/public-services';
 import { PUBLIC_SERVICES, SERVICE_BALANCE as B, SERVICE_GROUPS, QOL_WEIGHTS, publicServiceState, emptyPublicTile, fundingEffect } from './public-service-config';
@@ -42,7 +43,8 @@ export function updatePublicStaff(city: City, available: number) {
   p.employed=p.facilities.reduce((s,f)=>s+f.employeesAvailable,0);
 }
 function operatingFacilities(city: City) {
-  const p=city.publicServices, budgetRoom = city.treasury < 0 ? clamp(1 + city.treasury / Math.max(1000000, city.expenses*3),0.5,0.85) : 1;
+  // Funding actually paid depends on the fiscal stage: deficits borrow, fiscal stress cuts services.
+  const p=city.publicServices, budgetRoom = fiscalFunding(city);
   p.costs={police:0,education:0,healthcare:0,fire:0,waste:0,parks:0};
   for (const f of p.facilities) {
     const t=city.tiles[f.location], def=PUBLIC_SERVICES[f.subtype];
@@ -56,7 +58,7 @@ function operatingFacilities(city: City) {
     f.effectiveCapacity=working ? f.capacity*funding*staffing*utility*f.maintenanceCondition/100*(f.subtype==='waste-depot'?1+(localGovernance(city,city.tiles[f.location])?.effects.waste??0):1) : 0;
     if(f.subtype==='landfill')f.effectiveCapacity=Math.min(f.effectiveCapacity,Math.max(0,PUBLIC_SERVICES.landfill.wasteStorage!-f.storedWaste));
     f.serviceQuality=working ? clamp(100*funding*(0.3+staffing*0.7)*utility*f.maintenanceCondition/100) : 0;
-    f.monthlyOperatingCost=f.active ? def.monthlyCost*(0.2+f.fundingLevel/100*0.8) : def.monthlyCost*0.12;
+    f.monthlyOperatingCost=(f.active ? def.monthlyCost*(0.2+f.fundingLevel/100*0.8) : def.monthlyCost*0.12)*assetAgeFactor(city,f.builtAt);
     f.currentUsage=0;f.served=0;f.averageAccess=0;p.costs[f.type]+=f.monthlyOperatingCost;
     f.status=!working ? 'inactive' : f.fundingLevel<75 ? 'underfunded' : staffing<0.7 ? 'understaffed' : utility<0.65 ? 'utility-disrupted' : f.subtype==='landfill'&&f.effectiveCapacity===0?'strained':'operating';
   }
@@ -233,7 +235,7 @@ function serviceEvents(city: City) {
 }
 export function updatePublicServices(city: City, progress=true) {
   const p=city.publicServices;if(!p)return;
-  if(progress)for(const f of p.facilities)f.maintenanceCondition=maintainedCondition(f.maintenanceCondition,p.funding[f.type]*(city.treasury<0?.7:1));
+  if(progress)for(const f of p.facilities)f.maintenanceCondition=maintainedCondition(f.maintenanceCondition,p.funding[f.type]*fiscalFunding(city));
   operatingFacilities(city);
   if(!p.facilities.length){
     // Founding/migrated cities have no facilities. Avoid rebuilding thousands of
