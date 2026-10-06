@@ -8,7 +8,7 @@ export function mobilitySummary(city: City) {
 }
 export function transportPanel(city: City, tab: string, selectedRoute: string | null) {
   if(['bus','brt','network'].includes(tab))return transitPlanningPanel(city,tab,selectedRoute);
-  const tabs = `<div class="transport-tabs">${['overview', 'roads', 'informal', 'bus', 'brt', 'network'].map(t => `<button data-transport-tab="${t}" aria-pressed="${tab === t}">${t}</button>`).join('')}</div>`;
+  const tabs = `<div class="transport-tabs">${['overview', 'roads', 'informal', 'bus', 'brt', 'network'].map(t => `<button data-transport-tab="${t}" aria-pressed="${tab === t}">${t === 'brt' ? 'BRT' : t}</button>`).join('')}</div>`;
   const routes = city.mobility.routes.filter(r => tab === 'bus' ? r.mode === 'bus' : r.mode !== 'bus');
   const cards = routes.map(r => `<button class="route-card" data-route="${escapeHtml(r.id)}"><small>${r.formalized ? 'Recognized' : 'Organic informal'} ${r.mode}</small><b>${escapeHtml(r.originName)} ↔ ${escapeHtml(r.destinationName)}</b><span>${Math.round(r.ridership)} daily riders · ${r.vehicles} vehicles · ${Math.round(r.reliability)}% reliability</span></button>`).join('');
   const route = city.mobility.routes.find(r => r.id === selectedRoute);

@@ -9,6 +9,7 @@ import { serviceOverlayValue, publicDebugValue } from './public-service-art';
 import { TrafficArt, drawTransportNetwork } from './traffic-art';
 import { waypointPath } from '../../shared/simulation/road-network';
 import Phaser from 'phaser';
+import { dragIntent, followsPointer, pressBuildsImmediately, tapIntent, type GestureContext } from './gesture-policy';
 import type { City, Tool, Overlay } from '../../shared/types/city';
 import { previewTool } from '../../shared/simulation/engine';
 import { drawRoad } from './roads';
@@ -99,6 +100,18 @@ export class CityScene extends Phaser.Scene {
   constructor(private getCity: () => City, private getTool: () => Tool,
     private selectTile: (x: number, y: number, paint: boolean) => void,
     private previewTile: (x: number, y: number) => void) { super('city'); }
+  private drawMode = false;
+  private strokeEnd: ((tiles: number) => void) | null = null;
+  private viewInsets = { right: 0, bottom: 0 };
+  /** Touch Draw mode: a one-finger drag paints the active tool instead of moving the map. */
+  setDrawMode(on: boolean) { this.drawMode = on; }
+  /** Called once when a construction stroke (click, tap-confirm or drag) finishes. */
+  onStrokeEnd(handler: (tiles: number) => void) { this.strokeEnd = handler; }
+  /** CSS pixels of map covered by UI panels, so focusing keeps the target in the visible area. */
+  setViewInsets(insets: { right: number; bottom: number }) { this.viewInsets = insets; }
+  private gesture(p: Phaser.Input.Pointer): GestureContext {
+    return { inspecting: this.getTool() === 'inspect', touch: p.wasTouch, drawMode: this.drawMode, rightButton: p.rightButtonDown(), multiTouch: this.pointers.size > 1 || this.hadPinch };
+  }
   preload() { preloadArchitecture(this); preloadModels(this); }
   // Isolated art-fixture presentation; no city/save fields are added.
   setArtPreviewGround(ground:Map<number,string>) { if(this.worldArt)this.worldArt.previewGround=ground;this.redraw(); }
@@ -125,9 +138,11 @@ export class CityScene extends Phaser.Scene {
       this.down = { x: p.x, y: p.y }; this.dragged = false; this.painted.clear(); this.lastPaint = null;
       if (this.pointers.size === 2) { this.pinchDistance = this.distance(); this.dragged = true; this.hadPinch = true; }
       else if (this.getTool() !== 'inspect' && !p.rightButtonDown()) {
-        this.highlight(p);
-        // Touch shows a preview first; a deliberate drag paints, or the HUD confirms a tap.
-        if (!p.wasTouch) this.pick(p, true);
+        // Touch never builds on press: a tap previews, a second tap or the Build button confirms,
+        // and only an explicit Draw mode turns a one-finger drag into painting.
+        const context = this.gesture(p);
+        if (followsPointer(context)) this.highlight(p);
+        if (pressBuildsImmediately(context)) this.pick(p, true);
       }
     });
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
@@ -138,7 +153,7 @@ export class CityScene extends Phaser.Scene {
           const d = this.distance();
           if (this.pinchDistance > 0) this.zoom(d / this.pinchDistance, this.midpoint());
           this.pinchDistance = d; this.dragged = true;
-        } else if (this.getTool() === 'inspect' || p.rightButtonDown() || this.hadPinch) {
+        } else if (dragIntent(this.gesture(p)) === 'pan') {
           this.cameras.main.scrollX -= (p.x - last.x) / this.cameras.main.zoom;
           this.cameras.main.scrollY -= (p.y - last.y) / this.cameras.main.zoom;
           if (Math.hypot(p.x - this.down.x, p.y - this.down.y) > 5*this.renderDpr) this.dragged = true;
@@ -146,10 +161,17 @@ export class CityScene extends Phaser.Scene {
           this.dragged = true; this.pick(p, true);
         }
       }
-      this.highlight(p);
+      if (followsPointer(this.gesture(p))) this.highlight(p);
     });
     const up = (p: Phaser.Input.Pointer) => {
-      if (this.pointers.size === 1 && !this.dragged && this.getTool() === 'inspect') this.pick(p, false);
+      if (this.pointers.size === 1 && !this.dragged && !this.hadPinch) {
+        const target = this.coords(p);
+        const intent = tapIntent({ ...this.gesture(p), sameAsPreview: !!this.preview && this.preview.x === target.x && this.preview.y === target.y });
+        if (intent === 'select') this.pick(p, false);
+        else if (intent === 'preview') this.highlight(p);
+        else if (intent === 'build') { this.painted.clear(); this.lastPaint = null; this.down = { x: p.x, y: p.y }; this.pick(p, true); }
+      }
+      if (this.pointers.size === 1 && this.painted.size && this.getTool() !== 'inspect') this.strokeEnd?.(this.painted.size);
       this.pointers.delete(p.id); this.pinchDistance = 0;
     };
     this.input.on('pointerup', up); this.input.on('pointerupoutside', up);
@@ -203,7 +225,15 @@ export class CityScene extends Phaser.Scene {
   focusTile(x: number, y: number) {
     const camera=this.cameras.main,zoom=Math.max(this.viewZoom,this.cssWidth<600?2:2.2);
     this.zoomAnchor=null;this.targetZoom=zoom;camera.setZoom(zoom*this.renderDpr);this.cameraBounds();
-    camera.centerOn(ORIGIN+(x-y)*W/2,(x+y)*H/2+12-30/zoom);
+    camera.centerOn(ORIGIN+(x-y)*W/2+this.viewInsets.right/2/zoom,(x+y)*H/2+12-30/zoom+this.viewInsets.bottom/2/zoom);
+  }
+  /** Pan just enough that a tile sits inside the part of the map not covered by panels. */
+  ensureVisible(x: number, y: number, margin = 48) {
+    const at = this.tileScreen(x, y), camera = this.cameras.main, zoom = camera.zoom / this.renderDpr;
+    const maxX = this.cssWidth - this.viewInsets.right - margin, maxY = this.cssHeight - this.viewInsets.bottom - margin;
+    const dx = at.x > maxX ? at.x - maxX : at.x < margin ? at.x - margin : 0;
+    const dy = at.y > maxY ? at.y - maxY : at.y < margin + 110 ? at.y - margin - 110 : 0;
+    if (dx || dy) { camera.scrollX += dx / zoom; camera.scrollY += dy / zoom; }
   }
   private coords(p: { x: number; y: number }) {
     const world = this.cameras.main.getWorldPoint(p.x, p.y);

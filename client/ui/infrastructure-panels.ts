@@ -15,7 +15,7 @@ export function infrastructureSummary(city: City) {
 }
 export function servicePanel(city: City, group: string) {
   const i = city.infrastructure;
-  let html = '<div class="service-tabs"><button data-service="education">Education</button><button data-service="healthcare">Healthcare</button><button data-service="police">Police</button><button data-service="fire">Emergency</button><button data-service="waste">Waste</button><button data-service="parks">Parks</button><button data-service="power">⚡ Power</button><button data-service="water">◉ Water</button><button data-service="drainage">≋ Drainage</button></div>';
+  let html = '<div class="service-tabs"><button data-service="education">Education</button><button data-service="healthcare">Healthcare</button><button data-service="police">Police</button><button data-service="fire">Emergency</button><button data-service="waste">Waste</button><button data-service="parks">Parks</button><button data-service="power">⚡ Power</button><button data-service="water">◉ Water</button><button data-service="drainage">≋ Drainage</button></div>'.replace(`data-service="${group.slice(9)}"`, `data-service="${group.slice(9)}" aria-pressed="true"`);
   if(['education','healthcare','fire','waste','parks','police'].includes(group.slice(9)))return html+publicServicePanel(city,group.slice(9));
   if (group === 'services') return `${html}<p>Capacity, coverage and condition work together. Generation needs substations; water needs production and local reach. Drains can be added to roads and occupied parcels.</p>${publicServicePanel(city,"overview")}${infrastructureSummary(city)}`;
   const kind = group.slice(9) as 'power' | 'water' | 'drainage';
