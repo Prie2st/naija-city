@@ -195,6 +195,11 @@ export class CityScene extends Phaser.Scene {
     this.zoomAnchor=null;this.targetZoom=frame.zoom;this.cameras.main.setZoom(frame.zoom*this.renderDpr);
     this.cameraBounds();this.cameras.main.centerOn(frame.x,frame.y);
   }
+  /** CSS-pixel position of a tile centre inside the canvas (browser QA and accessibility probes). */
+  tileScreen(x: number, y: number) {
+    const camera=this.cameras.main, world={x:ORIGIN+(x-y)*W/2,y:(x+y)*H/2+H/2};
+    return {x:(world.x-camera.worldView.x)*camera.zoom/this.renderDpr,y:(world.y-camera.worldView.y)*camera.zoom/this.renderDpr};
+  }
   focusTile(x: number, y: number) {
     const camera=this.cameras.main,zoom=Math.max(this.viewZoom,this.cssWidth<600?2:2.2);
     this.zoomAnchor=null;this.targetZoom=zoom;camera.setZoom(zoom*this.renderDpr);this.cameraBounds();

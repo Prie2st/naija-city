@@ -2,12 +2,25 @@ import { TRANSIT } from './transit-config';
 import { localGovernance } from './governance';
 import type { City, Tile, Tool } from '../types/city';
 import type { RoadClass, TileMobility } from '../types/mobility';
-export const ROADS: Record<RoadClass, { name: string; cost: number; upkeep: number; capacity: number; speed: number }> = {
-  dirt: { name: 'Dirt road', cost: 80000, upkeep: 2400, capacity: 55, speed: 12 },
-  local: { name: 'Local road', cost: 250000, upkeep: 3000, capacity: 140, speed: 25 },
-  avenue: { name: 'Avenue', cost: 800000, upkeep: 12600, capacity: 420, speed: 40 },
-  major: { name: 'Major road', cost: 1800000, upkeep: 25500, capacity: 850, speed: 55 },
+// walking: pedestrian comfort multiplier (wide arterials are slower to cross).
+// frontage: development appeal for each adjoining zone (arterial noise versus visibility).
+type Frontage = Record<'residential' | 'commercial' | 'industrial', number>;
+export const ROADS: Record<RoadClass, { name: string; cost: number; upkeep: number; capacity: number; speed: number; walking: number; frontage: Frontage }> = {
+  dirt: { name: 'Dirt road', cost: 80000, upkeep: 2400, capacity: 55, speed: 12, walking: .7, frontage: { residential: -2, commercial: -3, industrial: -2 } },
+  local: { name: 'Local road', cost: 250000, upkeep: 3000, capacity: 140, speed: 25, walking: 1, frontage: { residential: 0, commercial: 0, industrial: 0 } },
+  avenue: { name: 'Avenue', cost: 800000, upkeep: 12600, capacity: 420, speed: 40, walking: .95, frontage: { residential: 1, commercial: 4, industrial: 2 } },
+  major: { name: 'Major road', cost: 1800000, upkeep: 25500, capacity: 850, speed: 55, walking: .85, frontage: { residential: -5, commercial: 5, industrial: 4 } },
 };
+const ROAD_RANK: RoadClass[] = ['dirt', 'local', 'avenue', 'major'];
+/** The busiest road class a parcel faces; upgrades change its development appeal. */
+export function roadFrontage(city: City, tile: Tile): RoadClass | null {
+  let best: RoadClass | null = null;
+  for (const id of adjacent(city, tile.y * city.size + tile.x)) { const road = city.tiles[id]; if (road.road && (!best || ROAD_RANK.indexOf(road.roadClass ?? 'local') > ROAD_RANK.indexOf(best))) best = road.roadClass ?? 'local'; }
+  return best;
+}
+export function frontageEffect(city: City, tile: Tile) {
+  const road = roadFrontage(city, tile); return road && tile.zone ? { road, value: ROADS[road].frontage[tile.zone] } : null;
+}
 export function roadTool(tool: Tool): RoadClass | null {
   return ({ road: 'local', 'dirt-road': 'dirt', avenue: 'avenue', 'major-road': 'major' } as Record<string, RoadClass>)[tool] ?? null;
 }

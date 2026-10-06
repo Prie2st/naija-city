@@ -1,10 +1,11 @@
-import { prepareTransit, finishTransit, updateTransitCityMetrics, transitChoice, transitAvailable, boardTransit } from './transit';
+import { prepareTransit, finishTransit, updateTransitCityMetrics, transitChoice, boardTransit } from './transit';
 import { localGovernance } from './governance';
 import { facilityAnchors } from './public-service-access';
 import type { City, Tile } from '../types/city';
 import type { MobilityState, TravelFlow, TravelMode, TransportRoute } from '../types/mobility';
 import { adjacent, emptyMobilityTile, roadAnchor, roadGraph, roadPath, roadPerformance, congestionFor, ROADS, waypointPath, invalidateRoadGraph } from './road-network';
 import { clamp, isOperating } from './world';
+import { INFORMAL_SERVICE, TRANSIT, TRANSIT_VEHICLES } from './transit-config';
 
 export const MODES: TravelMode[] = ['walk', 'car', 'okada', 'keke', 'danfo', 'bus', 'brt'];
 export const modeCounts = (): Record<TravelMode, number> => ({ walk: 0, car: 0, okada: 0, keke: 0, danfo: 0, bus: 0, brt: 0 });
@@ -68,25 +69,40 @@ export function chooseModes(city: City, flow: TravelFlow, wealth: number): Recor
   };
   for (const route of servingRoutes(city, flow)) {
     const free = Math.max(0, route.capacity - route.ridership);
-    const fare = route.mode === 'keke' ? 180 : route.mode === 'danfo' ? 220 : (city.transit?.routes.find(r=>r.id===route.id)?.fare??160)*(1-(city.transit?.subsidyRate??0)/100);
+    const fare = routeFare(city, route);
     const wait = route.mode === 'bus' ? Math.max(3, route.minutes * 2 / Math.max(1, route.vehicles)) : 4;
     weights[route.mode] += Math.min(4, free / Math.max(1, flow.trips) * 4) * route.reliability / 100 * (700 / (fare + (route.minutes + wait) * 12))*(1+(policy?.transit??0));
   }
   const transit = city.transit?.routes.some(r=>!r.legacy) ? transitChoice(city,flow.origin,flow.destination) : null;
   const plannedMode = transit?.legs.some(l=>l.mode==='brt') ? 'brt' : 'bus';
-  if(transit)weights[plannedMode] += 4 * 35 / Math.max(8, transit.cost) * (transit.legs.every(l=>(city.transit.routes.find(r=>r.id===l.routeId)?.capacity??city.mobility.routes.find(r=>r.id===l.routeId)?.capacity??0)>0)?1:0) * (1+(policy?.transit??0));
+  const planned = transit ? TRANSIT.baseChoice * 35 / Math.max(8, transit.cost) * (transit.legs.every(l=>(city.transit.routes.find(r=>r.id===l.routeId)?.capacity??city.mobility.routes.find(r=>r.id===l.routeId)?.capacity??0)>0)?1:0) * (1+(policy?.transit??0)) : 0;
+  weights[plannedMode] += planned;
   const sum = Object.values(weights).reduce((s, w) => s + w, 0);
   let remaining = flow.trips;
   for (const mode of MODES.filter(m => m !== 'okada')) { counts[mode] = Math.floor(flow.trips * weights[mode] / sum); remaining -= counts[mode]; }
   counts.okada = remaining;
-  let boarded = 0;
-  if(transit){const outcome=boardTransit(city,flow.id,transit,counts[plannedMode]);boarded=outcome.riders;counts[plannedMode]=outcome.riders;counts.okada+=outcome.wanted-outcome.riders;}
+  let boarded = 0, overflow = 0;
+  if (transit) {
+    // Only the planned-network share boards the planned journey. Riders who chose an
+    // existing bus service keep it, and planned overflow tries those buses next.
+    boarded = boardTransit(city, flow.id, transit, Math.min(counts[plannedMode], Math.floor(flow.trips * planned / sum)), flow.purpose).riders;
+    if (plannedMode === 'brt') { overflow = counts.brt - boarded; counts.brt = boarded; }
+  }
   for (const mode of ['keke', 'danfo', 'bus'] as const) {
     let riders = counts[mode] - (mode===plannedMode ? boarded : 0);
     for (const route of servingRoutes(city, flow).filter(r => r.mode === mode)) { const accepted = Math.min(riders, Math.max(0, Math.floor(route.capacity - route.ridership))); route.ridership += accepted; riders -= accepted; }
-    counts[mode] -= riders; counts.okada += riders;
+    counts[mode] -= riders;
+    if (transit && mode === plannedMode) overflow += riders; else counts.okada += riders;
   }
+  // Travellers turned away by full planned services fall back to their own alternatives.
+  const fallback = weights.car + weights.okada + weights.walk;
+  if (overflow && fallback > 0) { const car = Math.floor(overflow * weights.car / fallback), walk = Math.floor(overflow * weights.walk / fallback); counts.car += car; counts.walk += walk; counts.okada += overflow - car - walk; }
+  else counts.okada += overflow;
   return counts;
+}
+function routeFare(city: City, route: TransportRoute) {
+  if (route.mode !== 'bus') return INFORMAL_SERVICE[route.mode].fare;
+  return (city.transit?.routes.find(r => r.id === route.id)?.fare ?? TRANSIT_VEHICLES.bus.fare) * (1 - (city.transit?.subsidyRate ?? 0) / 100);
 }
 function routeServes(city: City, route: TransportRoute, flow: TravelFlow) {
   if (!route.path.length || !flow.path.length) return false;
@@ -227,7 +243,7 @@ export function updateMobility(city: City, progress = true, force = false) {
   m.costs = { buses: 0, administration: 0, fares: 0 };
   for (const route of m.routes) {
     const dailyCost = route.vehicles * (route.mode === 'keke' ? 5000 : route.mode === 'danfo' ? 14000 : 60000);
-    const fare = route.mode === 'keke' ? 180 : route.mode === 'danfo' ? 220 : (city.transit?.routes.find(r=>r.id===route.id)?.fare??160)*(1-(city.transit?.subsidyRate??0)/100);
+    const fare = routeFare(city, route);
     route.netProfit = route.ridership * fare - dailyCost;
     route.profitability = clamp(50 + route.netProfit / Math.max(1, dailyCost, route.ridership * fare) * 100);
     route.poorDays = route.profitability < 30 ? route.poorDays + elapsed : Math.max(0, route.poorDays - elapsed * 2);

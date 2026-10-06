@@ -6,6 +6,7 @@ import { createBuilding, setTypology } from './buildings';
 import { clamp, isOperating, neighbourhoods, roadAccess, stableHash } from './world';
 import { effectiveServices, supportsDensity } from './infrastructure';
 import { isDrainage } from './infrastructure-config';
+import { frontageEffect, ROADS } from './road-network';
 
 export interface DevelopmentFactor { label: string; value: number }
 export interface Attractiveness { score: number; eligible: boolean; factors: DevelopmentFactor[]; reason: string }
@@ -39,6 +40,7 @@ export function attractiveness(city: City, tile: Tile): Attractiveness {
   const civic=localServiceEffect(tile);factors.push({label:'Schools, healthcare and recreation',value:Math.round(civic.benefit)});factors.push({label:'Waste backlog, landfill and fire damage',value:-Math.round(civic.penalty)});
   const governance=localGovernance(city,tile);
   if(governance) {factors.push({label:'Governance policy support',value:governance.effects[tile.zone]});factors.push({label:'Tax climate',value:-Math.round(taxPressure(city,tile.zone)*8)});if(tile.zone==='residential')factors.push({label:'Housing affordability',value:Math.min(0,(governance.affordability-70)*.06)});}
+  const frontage=frontageEffect(city,tile);if(frontage?.value)factors.push({label:`${ROADS[frontage.road].name} frontage`,value:frontage.value});
   factors.push({label:'Useful transit / station-area investment',value:tile.zone==='industrial'?0:city.transit?.local[tile.y*city.size+tile.x].tod??0});
   factors.push({label:'Local public safety',value:Math.min(0,((safetyAt(city,tile)?.publicSafety??75)-70)*.06)});
   const score = Math.round(clamp(factors.reduce((s, f) => s + f.value, 0)));
@@ -62,7 +64,7 @@ export function updateLandValues(city: City) {
     const s = t.services;
     const infrastructureValue = (s.powerReliability + s.waterReliability - 100) * 0.09 + s.drainageQuality * 0.06 - s.floodRisk * 0.08 - Math.min(25, s.floodDepth * 0.15) - s.floodEvents * 0.4 - s.pollution * 0.12;
     const mobilityValue = (t.mobility.accessibility - 50) * 0.04 + Math.min(8, t.mobility.footTraffic / 100) - t.mobility.congestion * 0.06;
-    const target = clamp(22 + (city.transit?.local[id].tod??0) + Math.min(0,((safetyAt(city,t)?.publicSafety??75)-70)*.055) + (t.road || roadAccess(city, t) ? 20 : -9) + Math.min(20, successful * 3) + Math.min(12, commerce * 5) + Math.min(10, density * 0.8) - industry * 4 - abandoned * 7 - vacancy * 2 + infrastructureValue + mobilityValue + localServiceEffect(t).benefit - localServiceEffect(t).penalty + ((localGovernance(city,t)?.environment??60)-60)*.06, 5, 95);
+    const target = clamp(22 + (city.transit?.local[id].tod??0) + Math.min(0,((safetyAt(city,t)?.publicSafety??75)-70)*.055) + (t.road || roadAccess(city, t) ? 20 : -9) + Math.min(20, successful * 3) + Math.min(12, commerce * 5) + Math.min(10, density * 0.8) - industry * 4 - abandoned * 7 - vacancy * 2 + infrastructureValue + mobilityValue + localServiceEffect(t).benefit - localServiceEffect(t).penalty + ((localGovernance(city,t)?.environment??60)-60)*.06 + (frontageEffect(city,t)?.value??0)*.8, 5, 95);
     t.landValue = Math.round((t.landValue * 0.7 + target * 0.3) * 10) / 10;
   }
 }

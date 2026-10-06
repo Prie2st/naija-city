@@ -12,6 +12,8 @@ Formal buses and BRT share ordered stops, connected walking catchments, bounded 
 
 Use **Transport → Bus / BRT / Network** to place stops/stations/depots, create and govern services, inspect accessibility and compare districts. Junction treatments, temporary works, transit overlays, City Pulse, actual waiting activity and pooled representative buses expose consequences. Current saves are version 9 with versions 1–8 migrated and original keys retained. See [transit architecture, balance and validation](docs/transit.md). Rail/metro and Milestone 9 remain excluded.
 
+Ridership is split into rush, daytime and evening periods, so crowding reflects the busiest period and poor night safety thins evening travel. Road inspectors compare people moved with people capacity, the Network tab compares districts' access, commutes and mode share, and access is banded Poor/Weak/Good/Excellent. `shared/simulation/transit-metrics.ts` derives these views; Settings → Developer controls → Transit diagnostics → report shows demand, boardings, transfers and mode share. `transitNetworkFixture` in `shared/simulation/transit-fixtures.ts` builds the drained 10k/100k/500k test city used by `tests/transit-long-run.test.ts`. `tools/check-transit-browser.cjs` checks route creation, inspectors and overlays at 390×844, 430×932 and 1440×900 against `npm run dev`.
+
 ## Milestone 7: public safety and emergency response
 
 Spatial safety combines structural crime pressure, community prevention, powered road lighting, bounded recent incident memory and effective police response. Employment, stable housing, public services and active streets can support safe neighborhoods without extensive policing; income and informal tenure are never direct crime inputs.

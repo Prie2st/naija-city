@@ -14,6 +14,8 @@ export function drawTransit(g: Phaser.GameObjects.Graphics, city: City, network:
   if (network) for (const r of city.transit.routes) {
     if (r.path.length < 2 || !r.path.some(id => view.contains(point(id).x, point(id).y))) continue;
     if (r.id === focused) { g.lineStyle(6, 0xfff1cd, .9); g.strokePoints(r.path.map(point), false); }
+    // Crowded services get a warm halo so pressure is visible without opening each route.
+    if (r.crowding > 1 && r.status === 'active') { g.lineStyle(r.mode === 'brt' ? 6.5 : 5, 0xc0573d, Math.min(.75, .3 + (r.crowding - 1) * .3)); g.strokePoints(r.path.map(point), false); }
     g.lineStyle(r.mode === 'brt' ? 3.2 : 2, r.color, r.status === 'active' ? .95 : .35); g.strokePoints(r.path.map(point), false);
     if (r.mode === 'brt') { g.lineStyle(.5, 0xf5eddb, .8); g.strokePoints(r.path.map(point), false); }
   }
@@ -22,8 +24,12 @@ export function drawTransit(g: Phaser.GameObjects.Graphics, city: City, network:
     const scale = network ? Math.max(1, 1 / zoom) : 1;
     if (network) {
       g.fillStyle(0xf4f0df, .95); g.lineStyle(1 / zoom, 0x425e66);
+      // Transfer points get a soft ring sized by transfers; hubs and depots read differently from stops.
+      if (s.transfers > 0) { g.fillStyle(0x6a8f7a, .28); g.fillCircle(p.x, p.y, (6 + Math.min(6, Math.log10(1 + s.transfers) * 2)) * scale); g.fillStyle(0xf4f0df, .95); }
       if (s.kind === 'brt-station') { g.fillRect(p.x - 3 * scale, p.y - 3 * scale, 6 * scale, 6 * scale); g.strokeRect(p.x - 3 * scale, p.y - 3 * scale, 6 * scale, 6 * scale); }
-      else { g.fillCircle(p.x, p.y, (s.kind === 'transport-interchange' ? 5 : 3) * scale); g.strokeCircle(p.x, p.y, (s.kind === 'transport-interchange' ? 5 : 3) * scale); }
+      else if (s.kind === 'bus-terminal') { g.fillRoundedRect(p.x - 5 * scale, p.y - 3.5 * scale, 10 * scale, 7 * scale, 2 * scale); g.strokeRoundedRect(p.x - 5 * scale, p.y - 3.5 * scale, 10 * scale, 7 * scale, 2 * scale); }
+      else if (s.kind === 'bus-depot') { g.fillStyle(0x51605f, .9); g.fillRect(p.x - 3 * scale, p.y - 3 * scale, 6 * scale, 6 * scale); g.strokeRect(p.x - 3 * scale, p.y - 3 * scale, 6 * scale, 6 * scale); }
+      else { g.fillCircle(p.x, p.y, (s.kind === 'transport-interchange' ? 5 : 3) * scale); g.strokeCircle(p.x, p.y, (s.kind === 'transport-interchange' ? 5 : 3) * scale); if (s.kind === 'transport-interchange') g.strokeCircle(p.x, p.y, 2.5 * scale); }
       if (s.crowding > 1) { g.lineStyle(1 / zoom, 0xb65e46); g.strokeCircle(p.x, p.y, 7 * scale); }
     } else if (zoom >= .8) {
       if (s.kind === 'bus-stop') {

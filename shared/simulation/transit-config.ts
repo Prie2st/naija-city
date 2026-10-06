@@ -11,7 +11,26 @@ export const TRANSIT = {
   busPce: 2.5, brtPce: 3, busRunsMinimum: 4, historyLimit: 240,
   signalCost: 4000000, junctionCost: 12000000, roundaboutCost: 8000000,
   junctionMonthly: 35000, fareMaximum: 3000, baseChoice: 4,
+  // Poor night safety removes up to this share of evening transit trips.
+  eveningSafetyThreshold: 60, eveningSafetyRange: 40, eveningSafetyLoss: .25,
+  // Long mixed-traffic routes accumulate delay; terminals give layover recovery.
+  busLengthReliability: 1, brtLengthReliability: .3, lengthReliabilityMaximum: 10, layoverReliability: 4,
+  // People carried per general-lane vehicle (cars, Okada, Keke and Danfo mixed).
+  generalOccupancy: 1.5,
+  networkMilestones: [5000, 20000, 50000, 100000], routeMilestones: [1000, 10000],
+  corridorCongestion: 80, corridorTrips: 600, jobAccessShare: .5, jobAccessTrips: 120,
 } as const;
+/** The 16-hour service day. Each purpose's shares sum to 1; hours sum to serviceHours. */
+export const TRANSIT_PERIODS = [
+  { id: 'rush', name: 'Rush hours', hours: 4, evening: false, share: { work: .42, shopping: .12, services: .3, delivery: 0 } },
+  { id: 'day', name: 'Daytime', hours: 9, evening: false, share: { work: .43, shopping: .63, services: .62, delivery: 1 } },
+  { id: 'evening', name: 'Evening', hours: 3, evening: true, share: { work: .15, shopping: .25, services: .08, delivery: 0 } },
+] as const;
+/** Useful-access bands shown by the accessibility overlay and inspectors. */
+export const TRANSIT_ACCESS_BANDS = [{ name: 'Excellent', minimum: 70 }, { name: 'Good', minimum: 45 }, { name: 'Weak', minimum: 20 }, { name: 'Poor', minimum: 0 }] as const;
+export const accessBand = (access: number) => TRANSIT_ACCESS_BANDS.find(b => access >= b.minimum)!.name;
+/** Privately operated services keep their own fares and typical waits. */
+export const INFORMAL_SERVICE = { keke: { fare: 180, wait: 4 }, danfo: { fare: 220, wait: 4 } } as const;
 export const TRANSIT_VEHICLES: Record<TransitMode, { passengers: number; cost: number; dailyCost: number; fare: number; speed: number }> = {
   bus: { passengers: 50, cost: 12000000, dailyCost: 60000, fare: 160, speed: 38 },
   brt: { passengers: 90, cost: 42000000, dailyCost: 110000, fare: 220, speed: 48 },

@@ -1,13 +1,31 @@
 import { transitChallenges } from './transit-events';
 import type { City } from '../types/city';
+import type { TravelFlow } from '../types/mobility';
 import type { TransitAccessibility, TransitDemand, TransitFacilityKind, TransitMode, TransitNetwork, TransitRoute, TransitStop } from '../types/transit';
 import { adjacent, roadAnchor, roadGraph, roadPath, roadPerformance, waypointPath, invalidateRoadGraph } from './road-network';
-import { TRANSIT as C, TRANSIT_COLORS, TRANSIT_FACILITIES, TRANSIT_VEHICLES } from './transit-config';
+import { accessBand, TRANSIT as C, TRANSIT_ACCESS_BANDS, TRANSIT_COLORS, TRANSIT_FACILITIES, TRANSIT_PERIODS, TRANSIT_VEHICLES } from './transit-config';
 import { invalidateTransit, transitJourney, walkingReach, stopFacilityCapacity } from './transit-network';
 import { clamp } from './world';
 import { localGovernance } from './governance';
 import { feedEvent } from './living-city';
 
+// Riders and demand per service period (rush, day, evening) for the current
+// evaluation only. prepareTransit clears it; saves keep the resulting crowding.
+const periodLoads = new WeakMap<City, Map<string, { demand: number[]; riders: number[] }>>();
+function loadsFor(city: City, id: string) {
+  let all = periodLoads.get(city); if (!all) { all = new Map(); periodLoads.set(city, all); }
+  let load = all.get(id); if (!load) { load = { demand: TRANSIT_PERIODS.map(() => 0), riders: TRANSIT_PERIODS.map(() => 0) }; all.set(id, load); }
+  return load;
+}
+/** Boardings by period for a route or stop, available after a mobility evaluation. */
+export function transitPeriodLoads(city: City, id: string) { return periodLoads.get(city)?.get(id) ?? null; }
+/** Busiest-period load factor: rush-hour demand against rush-hour capacity, etc. */
+function periodCrowding(city: City, id: string, dailyCapacity: number, key: 'demand' | 'riders') {
+  const load = periodLoads.get(city)?.get(id); if (!load || dailyCapacity <= 0) return 0;
+  return Math.max(...TRANSIT_PERIODS.map((p, i) => load[key][i] / (dailyCapacity * p.hours / C.serviceHours)));
+}
+/** Share of evening trips still taken by transit at a stop with this night safety. */
+export function eveningFactor(nightSafety: number) { return 1 - C.eveningSafetyLoss * clamp((C.eveningSafetyThreshold - nightSafety) / C.eveningSafetyRange, 0, 1); }
 export const emptyTransitAccess = (): TransitAccessibility => ({ access: 0, demand: 0, ridership: 0, jobs45: 0, education: 0, healthcare: 0, commerce: 0, center: 0, firstMile: 0, lastMile: 0, tod: 0, throughput: 0 });
 export function newTransitState(): TransitNetwork {
   return { revision: 0, nextId: 1, lastTick: -1, stops: [], routes: [], corridors: [], junctions: {}, works: {}, demand: [], transfers: [],
@@ -25,9 +43,15 @@ function makeStop(city: City, tileId: number, kind: TransitFacilityKind, legacy 
   return { id, name: `${TRANSIT_FACILITIES[kind].name} ${city.transit.nextId - 1}`, kind, tileId, anchor: roadAnchor(city, tileId) ?? tileId, builtAt: city.tick,
     condition: 100, capacity: TRANSIT_FACILITIES[kind].capacity, routes: [], boardings: 0, transfers: 0, demand: 0, crowding: 0, accessibility: legacy ? 100 : 0, nightSafety: 75, lighting: 0 };
 }
+/** Readable default names ("Bus 1", "BRT 2") that stay unique after routes are retired. */
+export function nextRouteName(city: City, mode: TransitMode) {
+  const prefix = mode === 'brt' ? 'BRT' : 'Bus', used = new Set(city.transit.routes.map(r => r.name));
+  let n = 1; while (used.has(`${prefix} ${n}`)) n++;
+  return `${prefix} ${n}`;
+}
 function makeRoute(city: City, mode: TransitMode, stops: string[], vehicles: number, legacy = false): TransitRoute {
   const sequence = city.transit.nextId++, id = `transit-${sequence}`;
-  return { id, name: `${mode === 'brt' ? 'BRT' : 'Bus'} ${city.transit.routes.filter(r => r.mode === mode).length + 1}`, mode, color: TRANSIT_COLORS[sequence % TRANSIT_COLORS.length], stops, path: [],
+  return { id, name: nextRouteName(city, mode), mode, color: TRANSIT_COLORS[sequence % TRANSIT_COLORS.length], stops, path: [],
     length: 0, vehicles, availableVehicles: 0, headway: 0, capacity: 0, ridership: 0, demand: 0, speed: 0, wait: 0, minutes: 0, reliability: 0,
     operatingCost: 0, fare: TRANSIT_VEHICLES[mode].fare, revenue: 0, subsidy: 0, crowding: 0, status: 'active', createdAt: city.tick, legacy, suspended: false, deadhead: 0, segmentLoads: [] };
 }
@@ -138,7 +162,7 @@ export function prepareTransit(city: City, progress = false) {
   syncLegacyTransit(city);
   const t = city.transit; if (!t) return;
   const elapsed = progress ? Math.max(1, Math.min(3, city.tick - t.lastTick)) : 0;
-  t.demand = []; t.transfers = [];
+  t.demand = []; t.transfers = []; periodLoads.delete(city);
   const stationCrowding=new Map(t.stops.map(s=>[s.id,s.crowding]));
   for (const s of t.stops) {
     s.anchor = roadAnchor(city, s.tileId) ?? s.tileId;
@@ -183,7 +207,10 @@ export function prepareTransit(city: City, progress = false) {
     r.minutes = minutes + r.stops.length * (r.mode === 'brt' ? C.brtDwell : C.stopDwell);
     r.speed = r.length / Math.max(1, r.minutes) * 60;
     const qualityAverage = quality / Math.max(1, r.path.length);
-    r.reliability = r.status === 'active' ? clamp(qualityAverage - city.weather.rainfall * (r.mode === 'brt' ? .05 : .12) - Math.min(12, Math.max(0, previousCrowding - 1) * 6) + priority * 8) : 0;
+    // Long mixed-traffic routes accumulate delay; a terminal or interchange at either end gives layover recovery.
+    const lengthDelay = Math.min(C.lengthReliabilityMaximum, r.length * (r.mode === 'brt' ? C.brtLengthReliability : C.busLengthReliability));
+    const layover = [stops[0], stops.at(-1)].some(s => s?.kind === 'bus-terminal' || s?.kind === 'transport-interchange') ? C.layoverReliability : 0;
+    r.reliability = r.status === 'active' ? clamp(qualityAverage - city.weather.rainfall * (r.mode === 'brt' ? .05 : .12) - Math.min(12, Math.max(0, previousCrowding - 1) * 6) + priority * 8 - lengthDelay + layover) : 0;
     const nearestDepot = depots.map(s => roadPath(city, s.anchor, r.path[0])).filter(p => p !== null).sort((a, b) => a!.minutes - b!.minutes)[0];
     r.deadhead = nearestDepot?.minutes ?? 0;
     const cycle = Math.max(8, r.minutes * 2 + 6 + r.deadhead * .1);
@@ -203,9 +230,19 @@ export function transitAvailable(city: City, plan: Omit<TransitDemand, 'flowId' 
     return r ? r.capacity - r.ridership : 0;
   })));
 }
-export function boardTransit(city: City, flowId: string, plan: Omit<TransitDemand, 'flowId' | 'passengers'>, wanted: number) {
-  const riders = Math.max(0, Math.min(Math.floor(wanted), Math.floor(transitAvailable(city, plan))));
+export function boardTransit(city: City, flowId: string, plan: Omit<TransitDemand, 'flowId' | 'passengers'>, wanted: number, purpose: TravelFlow['purpose'] = 'work') {
+  // Each period can only use its own share of daily capacity, so rush-hour demand
+  // crowds before daily totals do. Poor night safety at the stops used removes
+  // part of the evening share; those travellers fall back to other modes.
+  const services = plan.legs.map(l => city.transit.routes.find(r => r.id === l.routeId) ?? city.mobility.routes.find(r => r.id === l.routeId));
+  const used = plan.legs.flatMap(l => [l.from, l.to]).map(id => city.transit.stops.find(s => s.id === id)).filter(s => s !== undefined);
+  const evening = eveningFactor(used.length ? Math.min(...used.map(s => s.nightSafety)) : 75);
+  const desired = TRANSIT_PERIODS.map(p => Math.max(0, wanted) * p.share[purpose] * (p.evening ? evening : 1));
+  const accepted = TRANSIT_PERIODS.map((p, i) => Math.max(0, Math.min(desired[i], ...services.map(r => r ? r.capacity * p.hours / C.serviceHours - loadsFor(city, r.id).riders[i] : 0))));
+  const total = accepted.reduce((n, v) => n + v, 0);
+  const riders = Math.max(0, Math.min(Math.floor(wanted), Math.floor(total + 1e-9))), scale = total ? riders / total : 0;
   const count = { wanted, riders };
+  const addLoad = (id: string, share: number, transfer = false) => { const load = loadsFor(city, id); TRANSIT_PERIODS.forEach((_, i) => { if (!transfer) load.demand[i] += desired[i] * share; load.riders[i] += accepted[i] * scale * share; }); };
   for (const leg of plan.legs) {
     const r = city.transit.routes.find(r => r.id === leg.routeId);
     if (r) {
@@ -213,7 +250,8 @@ export function boardTransit(city: City, flowId: string, plan: Omit<TransitDeman
       const from = r.stops.indexOf(leg.from), to = r.stops.indexOf(leg.to);
       for (let i = Math.min(from, to); i < Math.max(from, to); i++) if (i >= 0) r.segmentLoads[i] += riders;
     } else { const informal = city.mobility.routes.find(r => r.id === leg.routeId); if (informal) informal.ridership += riders; }
-    for(const id of [leg.from,leg.to]){const stop=city.transit.stops.find(s=>s.id===id);if(stop){stop.boardings+=riders/2;stop.demand+=wanted/2;}}
+    addLoad(leg.routeId, 1);
+    for(const id of [leg.from,leg.to]){const stop=city.transit.stops.find(s=>s.id===id);if(stop){stop.boardings+=riders/2;stop.demand+=wanted/2;addLoad(stop.id,.5);}}
   }
   if (riders) city.transit.demand.push({ flowId, passengers: riders, ...plan });
   for (let i = 1; i < plan.legs.length && riders; i++) {
@@ -221,7 +259,7 @@ export function boardTransit(city: City, flowId: string, plan: Omit<TransitDeman
     const tileId = stop?.tileId ?? Number(to.from.split(':').at(-1));
     const previous = city.transit.transfers.find(t => t.from === from.routeId && t.to === to.routeId && t.tileId === tileId);
     if (previous) previous.passengers += riders; else city.transit.transfers.push({ from: from.routeId, to: to.routeId, tileId, passengers: riders });
-    if (stop) stop.transfers += riders;
+    if (stop) { stop.transfers += riders; addLoad(stop.id, 1, true); }
   }
   return count;
 }
@@ -231,7 +269,7 @@ export function finishTransit(city: City, progress = false) {
   for (const r of t.routes) {
     const old = r.legacy ? city.mobility.routes.find(o => o.id === r.id) : undefined;
     if (old) { const direct = Math.max(0, old.ridership-r.ridership); r.ridership = old.ridership; for(const id of r.stops){const stop=t.stops.find(s=>s.id===id);if(stop){stop.boardings+=direct/Math.max(1,r.stops.length);stop.demand+=direct/Math.max(1,r.stops.length);}} r.demand = Math.max(r.demand, old.demand * city.mobility.stats.sharedUsage / 100); }
-    r.crowding = r.capacity ? Math.min(10, r.demand / r.capacity) : r.demand ? 10 : 0;
+    r.crowding = r.capacity ? Math.min(10, Math.max(r.demand / r.capacity, periodCrowding(city, r.id, r.capacity, 'demand'))) : r.demand ? 10 : 0;
     r.revenue = r.ridership * r.fare * (1 - t.subsidyRate / 100) * 30;
     r.subsidy = Math.max(0, r.operatingCost - r.revenue);
     if (!r.legacy) { finance[r.mode] += r.operatingCost; finance.fares += r.revenue; }
@@ -245,12 +283,12 @@ export function finishTransit(city: City, progress = false) {
         if (r.mode !== 'brt') city.tiles[id].mobility.vehicleFlow += trips;
       }
     }
-    if (progress && r.ridership >= 1000) record(city, `route-1000:${r.id}`, `${r.name} now carries at least 1,000 daily passengers.`, r.path[0]);
+    if (progress) for (const n of C.routeMilestones) if (r.ridership >= n) record(city, `route-${n}:${r.id}`, `${r.name} now carries at least ${n.toLocaleString()} daily passengers.`, r.path[0]);
   }
   for (const s of t.stops) {
     const def = TRANSIT_FACILITIES[s.kind], cost = def.monthly;
     if (s.kind === 'bus-depot') finance.depots += cost; else if (s.kind === 'bus-terminal' || s.kind === 'transport-interchange') finance.terminals += cost; else finance.stations += cost;
-    s.crowding = s.kind === 'bus-depot' ? 0 : Math.min(10, (s.boardings + s.transfers) / Math.max(1, stopFacilityCapacity(s)));
+    s.crowding = s.kind === 'bus-depot' ? 0 : Math.min(10, Math.max((s.boardings + s.transfers) / Math.max(1, stopFacilityCapacity(s)), periodCrowding(city, s.id, Math.max(1, stopFacilityCapacity(s)), 'riders')));
     if (s.kind !== 'bus-depot') {
       city.tiles[s.tileId].mobility.footTraffic += s.boardings + s.transfers;
       if (s.kind === 'bus-terminal' || s.kind === 'transport-interchange') city.tiles[s.anchor].mobility.vehicleFlow += (s.boardings + s.transfers) * .025;
@@ -314,6 +352,17 @@ export function finishTransit(city: City, progress = false) {
     reliability: riders ? t.routes.reduce((n, r) => n + r.reliability * r.ridership, 0) / riders : 0,
     throughput: city.mobility.stats.dailyTrips * C.peakShare, crowding: riders ? t.routes.reduce((n, r) => n + r.crowding * r.ridership, 0) / riders : 0,
     profile: city.mobility.stats.congestion > 75 ? 'Congested metropolis' : access.access > 55 && city.mobility.stats.sharedUsage > 40 ? 'Transit-oriented city' : city.mobility.stats.jobAccessibility > 85 ? 'Highly connected city' : city.mobility.stats.modes.car > city.mobility.stats.dailyTrips * .5 ? 'Car-dependent city' : 'Mixed mobility city' };
+  if (progress) {
+    for (const n of C.networkMilestones) if (riders >= n) record(city, `network-${n}`, `Formal bus and BRT services now carry ${n.toLocaleString()} daily boardings.`);
+    // Announce the best band reached once; a lower band is never announced after it.
+    for (const d of city.governance?.districts ?? []) {
+      const reached = TRANSIT_ACCESS_BANDS.slice(0, 2).filter(b => (t.districts[d.id]?.access ?? 0) >= b.minimum), key = (name: string) => `district-access-${name.toLowerCase()}:${d.id}`;
+      if (!reached.length) continue;
+      record(city, key(reached[0].name), `Transit accessibility improved in ${d.name}: useful access is now ${reached[0].name.toLowerCase()}.`, d.tiles[0] ?? null);
+      for (const lower of reached.slice(1)) if (!city.milestones.includes(key(lower.name))) city.milestones.push(key(lower.name));
+    }
+    if (access.access >= TRANSIT_ACCESS_BANDS[1].minimum) record(city, 'city-access-good', 'Useful transit access across the city reached a good level.');
+  }
   if (progress && city.tick % 30 === 0) { t.history.push({ tick: city.tick, ridership: riders, access: access.access, jobs45: access.jobs45, wait: t.stats.wait, subsidy: finance.subsidy }); t.history = t.history.slice(-C.historyLimit); }
   for (const id of Object.keys(t.works)) if (t.works[id] <= city.tick) delete t.works[id];
 
@@ -321,7 +370,8 @@ export function finishTransit(city: City, progress = false) {
 }
 export function transitOverlay(city: City, tileId: number, name: string): number | undefined {
   const l = city.transit?.local[tileId]; if (!l) return;
-  return name === 'transit-accessibility' ? l.access : name === 'transit-demand' ? clamp(l.demand / 10) : name === 'transit-ridership' ? clamp(l.ridership / 10) : name === 'jobs-accessible' ? clamp(l.jobs45 / Math.max(1, city.jobs) * 100) : name === 'transit-throughput' ? clamp(l.throughput / 20) : undefined;
+  // Accessibility is shown in four readable bands rather than a false-precision gradient.
+  return name === 'transit-accessibility' ? ({ Poor: 8, Weak: 35, Good: 62, Excellent: 92 } as const)[accessBand(l.access)] : name === 'transit-demand' ? clamp(l.demand / 10) : name === 'transit-ridership' ? clamp(l.ridership / 10) : name === 'jobs-accessible' ? clamp(l.jobs45 / Math.max(1, city.jobs) * 100) : name === 'transit-throughput' ? clamp(l.throughput / 20) : undefined;
 }
 
 /** Final city metrics are available only after general-road congestion is tallied. */

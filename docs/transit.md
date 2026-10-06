@@ -2,9 +2,9 @@
 
 ## Architecture
 
-`shared/types/transit.ts` defines routes, passenger facilities, depot support, transfer demand, local/district accessibility and finance. `transit.ts` manages assets and periodic service evaluation; `transit-network.ts` caches connected walking catchments and bounded-transfer searches. Existing aggregate OD generation, employment matching, road routing and organic operators remain in `mobility.ts`. The renderer reads paths and activity snapshots; no persistent passenger or visual vehicle entities are saved.
+`shared/types/transit.ts` defines routes, passenger facilities, depot support, transfer demand, local/district accessibility and finance. `transit.ts` manages assets and periodic service evaluation; `transit-network.ts` caches connected walking catchments and bounded-transfer searches. `transit-metrics.ts` derives person capacity per road, district mobility and the diagnostics report without storing anything. Existing aggregate OD generation, employment matching, road routing and organic operators remain in `mobility.ts`. The renderer reads paths and activity snapshots; no persistent passenger or visual vehicle entities are saved.
 
-Build stops/stations, a connected depot, and then select passenger facilities in journey order through **Transport → Bus / BRT**. Routes can be named, priced, suspended, edited or retired. **Network** exposes integration, fare support, district access and facility construction. Road inspectors offer junction treatments. Construction purchases and monthly operation are separate commitments.
+Build stops/stations, a connected depot, and then select passenger facilities in journey order through **Transport → Bus / BRT**. Routes can be named, priced, suspended, edited or retired. **Network** exposes integration, fare support, district access and mobility, and facility construction. Road inspectors offer junction treatments and show people moved and people capacity per hour. Construction purchases and monthly operation are separate commitments.
 
 ## Balance assumptions
 
@@ -14,13 +14,25 @@ Conventional buses carry 50 passengers; BRT vehicles carry 90. Frequency follows
 
 Dedicated lanes cost ₦1.8M per road segment and retain 72% of previous general-vehicle capacity. Avenue/major-road corridors and stations are required. Four-day works temporarily retain 60% capacity. Junctions model aggregate bottlenecks rather than traffic signals/lane-level turns. Roundabouts help moderate volumes and can underperform at very high volumes.
 
-Passenger demand comes exclusively from existing work, shopping and service OD flows. Ridership and boardings differ when transfers are used. Low-demand routes still cost money; capacity-constrained service leaves some passengers using alternatives. Fares/support change generalized cost and municipal finances. Danfo/Keke can feed the shared graph and compete; existing organic profitability and withdrawal remain authoritative.
+Passenger demand comes exclusively from existing work, shopping and service OD flows. Ridership and boardings differ when transfers are used. Low-demand routes still cost money; capacity-constrained service leaves some passengers using alternatives. Fares/support change generalized cost and municipal finances. Danfo/Keke can feed the shared graph and compete; existing organic profitability and withdrawal remain authoritative. A planned journey only takes the share of bus demand it wins; people choosing an existing bus keep using it, and planned-network overflow tries existing buses before falling back to car, walking or Okada.
+
+### Time of day
+
+`TRANSIT_PERIODS` splits the service day into rush hours (4 h), daytime (9 h) and evening (3 h). Each trip purpose spreads its riders differently: work trips concentrate in the rush, shopping and services in the daytime, and deliveries never use passenger services. Each period can only use its share of daily capacity, so a route that carries its daily demand comfortably can still turn riders away in the rush. Route and stop crowding is the busiest period's load. Evening demand falls by up to 25% when night safety at the stops used drops below 60, reaching the full loss at 20. Period loads are recomputed every evaluation and are not saved.
+
+### Reliability, roads and throughput
+
+Mixed-traffic buses lose one reliability point per route kilometre and BRT 0.3, capped at 10. A terminal or interchange at either end of a route adds four points of layover recovery. Road classes now differ for pedestrians (dirt 0.7, local 1, avenue 0.95, major 0.85 walking quality) and for frontage: avenues and major roads raise commercial and industrial land value, while major roads lower residential attractiveness. Person capacity per road counts general lanes at 1.5 people per vehicle plus the scheduled hourly capacity of active planned services on the tile, so a busy BRT corridor can move more people than the car lanes it replaced.
+
+### Accessibility bands, events and challenges
+
+Useful access is reported as Excellent (70+), Good (45+), Weak (20+) or Poor, and the accessibility overlay draws those four bands. City Feed and history record network boardings at 5,000, 20,000, 50,000 and 100,000; individual routes at 1,000 and 10,000; the best access band a district reaches; and the city reaching good access. Flooded routes are named as flood disruptions. Major corridor congestion (600+ daily trips at 80%+ congestion) and poor job accessibility (an origin with 120+ work trips where under half reach work within 45 minutes) are located urban challenges. Welcome Back reports farebox recovery before and after, the busiest hub's load and disrupted services.
 
 Useful station access contributes bounded, smoothed development support up to eight points. It cannot place buildings or bypass zoning, demand, construction, utilities, services or policy. Night safety and rainfall affect activity; flooded access disrupts routes or triggers real road detours.
 
 ## Persistence and limits
 
-Version 9 adds planned transit state and safely migrates versions 1–8 while retaining original storage keys. Existing public buses are adapted with their identities, paths and fleets; migration does not charge for another fleet or depot. Those legacy services retain their earlier road-waypoint operation. New planned services require depot support. Paths, references, finite fares/capacities and bounded histories are validated.
+Version 9 adds planned transit state and safely migrates versions 1–8 while retaining original storage keys. Existing public buses are adapted with their identities, paths and fleets; migration does not charge for another fleet or depot. Those legacy services retain their earlier road-waypoint operation. New planned services require depot support. Paths, references, finite fares/capacities and bounded histories are validated. The Milestone 8 completion work added no saved fields: period loads, person capacity and district mobility are derived on demand, and milestones reuse the existing history and feed records.
 
 Offline progression executes the same daily aggregate rules. Visual buses and waiting passengers regenerate only when rendering. Local accessibility is an approximate planning measure over existing grouped OD destinations, not an exhaustive individual travel survey. BRT and buses reuse the existing vehicle art with route color/line identity; dedicated production station/depot art remains future work.
 
@@ -28,4 +40,16 @@ Rail, metro, trams, ferries, airports, individual passengers, detailed timetable
 
 ## Validation
 
-Deterministic tests and isolated browser checks cover useful/useless routes, fleet support, fares, transfers, BRT capacity tradeoffs, informal coexistence, station-area development, flood/safety effects, migration, offline equivalence and large networks. Measured results are added after validation completes.
+`tests/transit.test.ts` covers useful/useless routes, fleet support, capacity relief, fares, rush-hour limits, night safety, transfers including walk → Danfo → BRT, BRT person capacity, station spacing, informal coexistence, station-area development, flood/safety effects, district mobility, challenges, milestones, Welcome Back, unique names, road consequences, migration and offline equivalence. `tests/transit-long-run.test.ts` runs a drained, populated city (`transitNetworkFixture`) for twenty years and checks 10/50/100/200-route networks and 100k/500k residents.
+
+Measured on the development container (Node 22, one worker):
+
+| Check | Result |
+|---|---|
+| One mobility evaluation, 10 / 50 / 100 / 200 routes, 152 facilities | 61–82 / 81–118 / 108–195 / 186–442 ms |
+| Transit graph builds | One per evaluation; repeated journey queries reuse it |
+| 100k residents | 114–142 ms per evaluation, 4.4 s per simulated month, ~20,000 daily boardings |
+| 500k residents | 129–132 ms per evaluation, 4.4 s per simulated month, ~34,600 daily boardings |
+| Twenty simulated years, 10k residents | Passes: no ridership runaway or collapse, BRT under half of trips, Danfo/Keke still running, subsidies bounded by costs, save growth under 25%, the last three years under 2.5× the time of the first three |
+
+Journey searches key their states by number and share walking-transfer lookups across one graph, which cut a 100k-resident month from about 10.5 s to 4.4 s with identical results. `tools/check-transit-browser.cjs` drives route creation, stop selection, the route and stop inspectors, the Network tab, the accessibility overlay and the network view at 390×844, 430×932 and 1440×900 in an isolated browser profile. All three pass with no horizontal overflow and every panel inside the viewport. Start `npm run dev` first; `PLAYWRIGHT_MODULE`, `CHROMIUM_PATH` and `QA_URL` override the defaults, and screenshots go to `.qa/transit/`.

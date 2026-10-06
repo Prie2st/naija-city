@@ -4,16 +4,19 @@ import { describe, expect, it } from 'vitest';
 import { advance, applyTool, catchUp, createCity, refreshCity, TICK_MS } from '../shared/simulation/engine';
 import { createBuilding, setTypology } from '../shared/simulation/buildings';
 import { initializeMobility, updateMobility, establishBus } from '../shared/simulation/mobility';
-import { createTransitRoute, placeTransitFacility, previewTransitRoute, editTransitRoute, prepareTransit, finishTransit, buildBrtCorridor, improveJunction, removeTransitFacility, initializeTransit } from '../shared/simulation/transit';
+import { createTransitRoute, placeTransitFacility, previewTransitRoute, editTransitRoute, prepareTransit, finishTransit, buildBrtCorridor, improveJunction, removeTransitFacility, initializeTransit, removeTransitRoute, transitPeriodLoads, transitOverlay } from '../shared/simulation/transit';
 import { transitJourney, walkingReach, transitNetworkDiagnostics, invalidateTransit } from '../shared/simulation/transit-network';
-import { TRANSIT } from '../shared/simulation/transit-config';
-import { roadPerformance, invalidateRoadGraph } from '../shared/simulation/road-network';
+import { TRANSIT, accessBand } from '../shared/simulation/transit-config';
+import { districtMobility, personCapacity, transitReport } from '../shared/simulation/transit-metrics';
+import { transitChallenges } from '../shared/simulation/transit-events';
+import { createDistrict } from '../shared/simulation/governance';
+import { roadPerformance, invalidateRoadGraph, ROADS } from '../shared/simulation/road-network';
 import { decodeCity } from '../shared/simulation/save-format';
 import { attractiveness, updateLandValues } from '../shared/simulation/development';
 import { publicServiceFixture } from '../shared/simulation/public-service-fixtures';
 import { cityActivity } from '../shared/simulation/activity';
 import { vehiclePlan } from '../client/game/activity-policy';
-import { transitPlanningPanel, transitInspector } from '../client/ui/transit-panels';
+import { transitPlanningPanel, transitInspector, transitReportHtml } from '../client/ui/transit-panels';
 import { detectCityPulse } from '../client/ui/city-pulse';
 
 
@@ -132,7 +135,111 @@ describe('planned aggregate metropolitan transit', () => {
     const first = transitJourney(c, 130, 154); expect(first).not.toBeNull(); const before = transitNetworkDiagnostics(c).builds; transitJourney(c, 130, 154); expect(transitNetworkDiagnostics(c).builds).toBe(before); expect(c.transit.routes).toHaveLength(count); expect(c.transit.routes.reduce((n, r) => n + r.availableVehicles, 0)).toBeLessThanOrEqual(c.transit.stats.depotCapacity);
   }, 60000);
   for (const population of [100000, 500000] as const) it(`keeps ${population} residents aggregate`, () => { const c = publicServiceFixture(population); updateMobility(c, false, true); expect(c.population).toBe(population); expect(c.mobility.flows.length).toBeLessThanOrEqual(768); expect(c.transit.local).toHaveLength(1024); }, 60000);
-  it('remains finite and bounded over twenty simulated years', () => {
-    const c = transitFixture(); route(c, 'brt'); advance(c, 7200); expect(Number.isFinite(c.treasury)).toBe(true); expect(c.transit.history.length).toBeLessThanOrEqual(240); expect(c.transit.routes.every(r => Number.isFinite(r.ridership) && r.ridership <= r.capacity && r.crowding <= 10)).toBe(true); expect(c.transit.local.every(l => l.tod <= 8)).toBe(true); expect(decodeCity(JSON.parse(JSON.stringify(c)))).toEqual(c);
-  }, 240000);
+  // The twenty-year run lives in transit-long-run.test.ts on a drained, populated city.
+});
+
+// Milestone 8 completion: behaviours the handoff spec requires that Codex's suite did not cover.
+function stops(c: ReturnType<typeof createCity>, tiles: number[], kind: 'bus-stop' | 'brt-station' = 'bus-stop') {
+  for (const id of tiles) expect(placeTransitFacility(c, id, kind)).toBe('');
+  if (!c.transit.stops.some(s => s.kind === 'bus-depot')) expect(placeTransitFacility(c, 195, 'bus-depot')).toBe('');
+  return tiles.map(id => c.transit.stops.find(s => s.tileId === id)!.id);
+}
+const totals = (c: ReturnType<typeof createCity>) => { for (const f of c.mobility.flows) expect(Object.values(f.modes).reduce((a, b) => a + b, 0)).toBe(f.trips); };
+describe('Milestone 8 completion behaviours', () => {
+  it('keeps riders on existing buses when a planned route joins the corridor', () => {
+    const c = transitFixture(6000); expect(establishBus(c, [162, 186], 2)).toBe(''); updateMobility(c, false, true);
+    const legacy = c.mobility.routes.find(r => r.mode === 'bus')!, before = legacy.ridership; expect(before).toBeGreaterThan(0);
+    // A free planned route takes the bus share first; riders who chose the existing buses, and its overflow, must still reach them.
+    expect(createTransitRoute(c, 'bus', stops(c, [163, 185]), 3)).toBe(''); const planned = c.transit.routes.find(r => !r.legacy)!; editTransitRoute(c, planned.id, { fare: 0 }); updateMobility(c, false, true);
+    expect(transitJourney(c, 130, 154)!.legs.some(l => l.routeId === planned.id)).toBe(true);
+    expect(legacy.ridership).toBeGreaterThanOrEqual(before * .9); totals(c);
+  });
+  it('gives a useful corridor meaningful ridership and an irrelevant one almost none', () => {
+    const c = transitFixture(4000); const [a, b, x, y] = stops(c, [162, 186, 170, 178]);
+    createTransitRoute(c, 'bus', [a, b], 6); createTransitRoute(c, 'bus', [x, y], 6); updateMobility(c, false, true);
+    const [useful, useless] = c.transit.routes; expect(useful.ridership).toBeGreaterThan(1000); expect(useless.ridership).toBeLessThan(useful.ridership * .02); expect(useless.subsidy).toBeGreaterThan(0);
+  });
+  it('crowds a popular route with too few vehicles and relieves it with more service', () => {
+    const c = transitFixture(6000); createTransitRoute(c, 'bus', stops(c, [162, 186]), 1); updateMobility(c, false, true); const r = c.transit.routes[0];
+    const crowding = r.crowding, wait = r.wait, ridership = r.ridership; expect(crowding).toBeGreaterThan(1); expect(r.ridership).toBeLessThan(r.demand);
+    expect(editTransitRoute(c, r.id, { vehicles: 12 })).toBe(''); updateMobility(c, false, true); updateMobility(c, false, true);
+    expect(r.crowding).toBeLessThan(1); expect(r.wait).toBeLessThan(wait); expect(r.ridership).toBeGreaterThan(ridership); totals(c);
+  });
+  it('fills rush hours before the daily total, so crowding is felt at peak', () => {
+    const c = transitFixture(7000); createTransitRoute(c, 'bus', stops(c, [162, 186]), 3); updateMobility(c, false, true); updateMobility(c, false, true);
+    const r = c.transit.routes[0], load = transitPeriodLoads(c, r.id)!;
+    expect(r.capacity).toBeGreaterThan(r.demand); expect(r.ridership).toBeLessThan(r.demand); expect(r.crowding).toBeGreaterThan(1);
+    expect(load.riders[0]).toBeCloseTo(r.capacity * 4 / TRANSIT.serviceHours, 0); expect(load.demand[0]).toBeGreaterThan(load.riders[0]);
+    expect(load.riders[1]).toBeGreaterThan(load.demand[1] * .99);
+  });
+  it('lets poor night safety modestly reduce evening ridership', () => {
+    const run = (safety: number) => { const c = transitFixture(4000); const ids = stops(c, [162, 174, 186]); for (const s of c.transit.stops) c.safety.local[s.tileId].nightSafety = safety; createTransitRoute(c, 'bus', ids, 8); updateMobility(c, false, true); return { r: c.transit.routes[0], load: transitPeriodLoads(c, c.transit.routes[0].id)! }; };
+    const safe = run(85), unsafe = run(15);
+    expect(unsafe.load.riders[2]).toBeLessThan(safe.load.riders[2] * .8); expect(unsafe.load.riders[0]).toBeCloseTo(safe.load.riders[0], 0);
+    expect(unsafe.r.ridership).toBeLessThan(safe.r.ridership); expect(unsafe.r.ridership).toBeGreaterThan(safe.r.ridership * .9);
+  });
+  it('carries walk → Danfo → BRT → walk journeys and keeps Danfo as a feeder', () => {
+    const c = transitFixture(4000); for (let n = 0; n < 18; n++) { c.tick++; updateMobility(c); } const danfo = c.mobility.routes.find(r => r.mode === 'danfo')!;
+    const ids = stops(c, [176, 186], 'brt-station'); expect(buildBrtCorridor(c, [176, 186])).toBe(''); expect(createTransitRoute(c, 'brt', ids, 6)).toBe(''); updateMobility(c, false, true);
+    const journey = transitJourney(c, 130, 154)!; expect(journey.legs.map(l => l.mode)).toEqual(['danfo', 'brt']);
+    expect(c.mobility.routes).toContain(danfo); expect(danfo.ridership).toBeGreaterThan(0); expect(c.transit.routes[0].ridership).toBeGreaterThan(0);
+    expect(c.transit.transfers.some(t => t.from === danfo.id && t.to === c.transit.routes[0].id)).toBe(true); totals(c);
+  });
+  it('moves more people per hour on a BRT corridor than the general lanes it replaces, and beats buses in congestion', () => {
+    const congested = () => { const c = transitFixture(6000); c.mobility.debug.loadMultiplier = 20; c.mobility.debug.until = c.tick + 30; updateMobility(c, false, true); return c; };
+    const b = congested(), general = personCapacity(b, 170), ids = stops(b, [162, 174, 186], 'brt-station'); expect(buildBrtCorridor(b, [162, 186])).toBe(''); expect(createTransitRoute(b, 'brt', ids, 8)).toBe(''); updateMobility(b, false, true);
+    const brt = b.transit.routes[0], corridor = personCapacity(b, 170);
+    expect(corridor.general).toBeLessThan(general.general); expect(corridor.total).toBeGreaterThan(general.total * 2);
+    const bus = congested(); createTransitRoute(bus, 'bus', stops(bus, [162, 174, 186]), 8); updateMobility(bus, false, true); const ordinary = bus.transit.routes[0];
+    expect(brt.minutes).toBeLessThan(ordinary.minutes); expect(brt.reliability).toBeGreaterThan(ordinary.reliability); expect(brt.capacity).toBeGreaterThan(ordinary.capacity);
+  });
+  it('trades speed for walking coverage through station spacing', () => {
+    const run = (tiles: number[]) => { const c = transitFixture(4000); createTransitRoute(c, 'bus', stops(c, tiles), 6); updateMobility(c, false, true); const covered = new Set(tiles.flatMap(id => [...walkingReach(c, id).keys()])); return { minutes: c.transit.routes[0].minutes, covered: covered.size }; };
+    const sparse = run([162, 186]), dense = run([162, 165, 168, 171, 174, 177, 180, 183, 186]);
+    expect(dense.minutes).toBeGreaterThan(sparse.minutes); expect(dense.covered).toBeGreaterThan(sparse.covered);
+  });
+  it('compares districts by transit access, job access, commute and mode share', () => {
+    const c = transitFixture(4000); expect(createDistrict(c, [130, 131, 98, 99], 'Riverside')).toBe(''); createTransitRoute(c, 'bus', stops(c, [162, 174, 186]), 8); updateMobility(c, false, true);
+    const [d] = districtMobility(c); expect(d.name).toBe('Riverside'); expect(d.trips).toBeGreaterThan(0); expect(d.commute).toBeGreaterThan(0); expect(d.modes.bus).toBeGreaterThan(0);
+    expect(Object.values(d.modes).reduce((a, b) => a + b, 0)).toBe(d.trips); expect(d.sharedShare).toBeGreaterThan(0); expect(transitPlanningPanel(c, 'network', null)).toContain('Riverside');
+  });
+  it('raises located challenges for corridor congestion, poor job access and flood disruption', () => {
+    const c = transitFixture(6000); c.mobility.debug.loadMultiplier = 30; c.mobility.debug.until = c.tick + 30; updateMobility(c, false, true);
+    const corridor = c.governance.challenges.find(x => x.id === 'transit-corridor' && !x.resolved)!; expect(corridor.tileId).not.toBeNull(); expect(corridor.responses.length).toBeGreaterThanOrEqual(3);
+    for (const f of c.mobility.flows) if (f.purpose === 'work') f.minutes = 70; transitChallenges(c);
+    const jobs = c.governance.challenges.find(x => x.id === 'transit-job-access' && !x.resolved)!; expect(jobs.tileId).toBe(130); expect(jobs.description).toContain('45 minutes');
+    const f = transitFixture(); createTransitRoute(f, 'bus', stops(f, [162, 174, 186]), 6); f.tiles[174].services.floodDepth = 100; f.infrastructure.revision++; f.tick++; updateMobility(f, true, true);
+    expect(f.governance.challenges.some(x => x.title.includes('disrupted by flooding'))).toBe(true); expect(f.living.feed.some(e => e.text.includes('flooding'))).toBe(true);
+  });
+  it('records ridership and accessibility milestones once in history and the feed', () => {
+    const c = transitFixture(30000), ids = stops(c, [162, 174, 186], 'brt-station'); expect(createDistrict(c, [130, 131, 162, 163], 'Unity')).toBe(''); expect(buildBrtCorridor(c, [162, 186])).toBe(''); expect(createTransitRoute(c, 'brt', ids, 30)).toBe('');
+    for (let n = 0; n < 3; n++) { c.tick++; updateMobility(c, true, true); }
+    expect(c.milestones).toContain('network-5000'); expect(c.milestones.some(m => m.startsWith('district-access-'))).toBe(true);
+    expect(c.history.some(h => h.includes('Transit accessibility improved in Unity'))).toBe(true);
+    const entries = c.history.length; c.tick++; updateMobility(c, true, true); expect(c.history.length).toBe(entries);
+  });
+  it('reports transit disruption and the busiest hub after time away', () => {
+    const a = transitFixture(); route(a, 'brt'); const report = catchUp(a, a.lastSimulatedTimestamp + 30 * TICK_MS);
+    expect(report.transitBusiestHub).toContain('BRT station'); expect(report.transitDisruptedAfter).toBe(0); expect(Number.isFinite(report.transitRecoveryAfter)).toBe(true);
+  }, 60000);
+  it('keeps default route names readable and unique after a route is retired', () => {
+    const c = transitFixture(); const ids = stops(c, [162, 174, 186]);
+    createTransitRoute(c, 'bus', ids, 1); createTransitRoute(c, 'bus', ids, 1); removeTransitRoute(c, c.transit.routes[0].id);
+    createTransitRoute(c, 'bus', ids, 1); createTransitRoute(c, 'bus', ids, 1); expect(c.transit.routes.map(r => r.name).sort()).toEqual(['Bus 1', 'Bus 2', 'Bus 3']);
+    updateMobility(c, false, true); expect(transitPlanningPanel(c, 'bus', null)).not.toContain('Line transit-');
+  });
+  it('makes road class matter for frontage, walking and upgrade works', () => {
+    const c = transitFixture(); const shop = c.tiles[150], home = c.tiles[151]; shop.zone = 'commercial'; home.zone = 'residential';
+    expect(attractiveness(c, shop).factors.find(f => f.label === 'Major road frontage')!.value).toBeGreaterThan(0);
+    expect(attractiveness(c, home).factors.find(f => f.label === 'Major road frontage')!.value).toBeLessThan(0);
+    for (const t of c.tiles) if (t.road) t.roadClass = 'local'; c.infrastructure.revision++; expect(attractiveness(c, shop).factors.some(f => f.label.includes('frontage'))).toBe(false);
+    const before = c.treasury; applyTool(c, 10, 5, 'major-road'); expect(c.tiles[170].roadClass).toBe('major'); expect(c.treasury).toBeLessThan(before); expect(c.transit.works[170]).toBeGreaterThan(c.tick);
+    expect(ROADS.major.walking).toBeLessThan(ROADS.local.walking);
+  });
+  it('shows accessibility in four bands and summarises diagnostics', () => {
+    expect([accessBand(80), accessBand(50), accessBand(25), accessBand(5)]).toEqual(['Excellent', 'Good', 'Weak', 'Poor']);
+    const c = transitFixture(4000); route(c); const values = new Set(c.transit.local.map((_, id) => transitOverlay(c, id, 'transit-accessibility'))); expect(values.size).toBeLessThanOrEqual(4);
+    const report = transitReport(c); expect(report.routes[0].ridership).toBeGreaterThan(0); expect(report.trips.top.length).toBeGreaterThan(0); expect(report.routes[0].periods).toHaveLength(3);
+    expect(transitReportHtml(c)).toContain('Transfer flows'); expect(transitInspector(c, c.tiles[170])).toContain('People capacity');
+  });
 });
