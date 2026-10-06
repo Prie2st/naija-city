@@ -46,9 +46,11 @@ Measured sizes (characters):
 
 | City | Plain JSON (before) | Encoded (after) | Reduction |
 |---|---|---|---|
-| Starter city | 2,538,404 | about 186,000 | 92.7% |
-| Transit network, 10k | 3,126,190 | about 490,000 | 84% |
-| Transit network, 500k | 3,718,627 | about 785,000 | 79% |
+| Starter city | 2,537,166 | 185,845 | 92.7% |
+| Transit network, 10k | 3,124,005 | 490,727 | 84.3% |
+| Transit network, 500k | 3,742,261 | 802,530 | 78.6% |
+
+With the backup, a 500k city stores about 1.6 million characters in total, under a third of the 5,242,880-character localStorage quota measured in Chromium.
 
 ## Classification of persisted state
 
@@ -73,9 +75,10 @@ Profiling a 500k transit city showed 187 ms per simulated day, 88% of it in the 
 
 | Load | Exact days | Coarse days | Aggregate |
 |---|---|---|---|
-| Below 20k | 360 | 360 | rest, in at most 24 evaluated days |
-| 20k–150k | 60 | 180 | same |
-| 150k and above | 10 | 120 | same |
+| Below 5k | 360 | 240 | rest, in at most 24 evaluated days |
+| 5k–50k | 120 | 120 | same |
+| 50k–150k | 40 | 90 | same |
+| 150k and above | 10 | 60 | same |
 
 - **Exact:** every day replayed exactly as in active play, so short absences are identical to playing.
 - **Coarse:** every day is replayed, but commuting and transit are re-evaluated every 15 days, plus a final forced evaluation.

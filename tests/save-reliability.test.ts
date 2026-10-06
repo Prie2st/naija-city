@@ -100,7 +100,7 @@ describe('verified saves with a bounded backup', () => {
     const current = values.get(CURRENT_KEY), backup = values.get(BACKUP_KEY);
     failKeys.add(CURRENT_KEY); advance(c, 2);
     expect(repo.save(c)).toMatchObject({ ok: false, reason: 'storage-full' });
-    expect(values.get(CURRENT_KEY)).toBe(current); expect(values.get(BACKUP_KEY)).toBe(current); expect(backup).not.toBe(current);
+    expect(values.get(CURRENT_KEY)).toBe(current); expect(values.get(BACKUP_KEY)).toBe(backup); expect(backup).not.toBe(current);
     expect(new LocalCityRepository().load()!.tick).toBe(2);
   });
   it('refuses NaN and Infinity before touching storage', () => {

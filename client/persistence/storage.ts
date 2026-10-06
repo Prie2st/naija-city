@@ -76,7 +76,7 @@ export class LocalCityRepository implements CityRepository {
   /**
    * Validates, writes and verifies a save. Never throws and never overwrites the
    * last good copy with unverified data. Steps:
-   *  1. validate the city, encode it (rejects NaN/Infinity) and, on the first write
+   *  1. encode the city (rejects NaN/Infinity with their path), validate it and, on the first write
    *     of a session or a manual save, decode and validate the encoded string too;
    *  2. copy the verified CURRENT to BACKUP;
    *  3. write CURRENT;
@@ -93,9 +93,10 @@ export class LocalCityRepository implements CityRepository {
     };
     let raw: string;
     try {
+      // Encoding first reports the exact path of any NaN or Infinity; the validators then check everything else.
+      raw = encodeSave(city, savedAt);
       const problem = validateCityState(city);
       if (problem) throw new Error(`This city failed validation: ${problem}.`);
-      raw = encodeSave(city, savedAt);
       // The codec is lossless (tested), so a full decode is needed only to prove it once per session or when asked.
       if (options.fullVerify || this.currentVerified === null) decodeCityWithReport(decodeSave(raw).value);
     } catch (error) {

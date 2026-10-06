@@ -42,18 +42,32 @@ function sameShape(rows: unknown[]): string[] | null {
 const scalar = (v: unknown) => v === null || typeof v !== 'object';
 // Bit-exact little-endian float64 columns in base64: about 11 characters per
 // value, against 16–18 for full-precision decimals in JSON.
+const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+const B64_INDEX = new Uint8Array(128); for (let i = 0; i < 64; i++) B64_INDEX[B64.charCodeAt(i)] = i;
+function base64(bytes: Uint8Array): string {
+  const out: string[] = [];
+  let i = 0;
+  for (; i + 2 < bytes.length; i += 3) { const n = bytes[i] << 16 | bytes[i + 1] << 8 | bytes[i + 2]; out.push(B64[n >> 18 & 63] + B64[n >> 12 & 63] + B64[n >> 6 & 63] + B64[n & 63]); }
+  if (i < bytes.length) { const n = bytes[i] << 16 | (bytes[i + 1] ?? 0) << 8; out.push(B64[n >> 18 & 63] + B64[n >> 12 & 63] + (i + 1 < bytes.length ? B64[n >> 6 & 63] : '=') + '='); }
+  return out.join('');
+}
+function unbase64(text: string): Uint8Array {
+  const pad = text.endsWith('==') ? 2 : text.endsWith('=') ? 1 : 0, bytes = new Uint8Array(text.length / 4 * 3 - pad);
+  for (let i = 0, j = 0; i < text.length; i += 4) {
+    const n = B64_INDEX[text.charCodeAt(i)] << 18 | B64_INDEX[text.charCodeAt(i + 1)] << 12 | B64_INDEX[text.charCodeAt(i + 2)] << 6 | B64_INDEX[text.charCodeAt(i + 3)];
+    bytes[j++] = n >> 16 & 255; if (j < bytes.length) bytes[j++] = n >> 8 & 255; if (j < bytes.length) bytes[j++] = n & 255;
+  }
+  return bytes;
+}
 function floats(values: number[]): string {
   const bytes = new Uint8Array(Float64Array.from(values).buffer);
   if (!LITTLE_ENDIAN) for (let i = 0; i < bytes.length; i += 8) bytes.subarray(i, i + 8).reverse();
-  let binary = '';
-  for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
-  return btoa(binary);
+  return base64(bytes);
 }
 function unfloats(text: string, rows: number): number[] {
-  const binary = atob(text);
-  if (binary.length !== rows * 8) throw new Error('Damaged save number column.');
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  if (text.length % 4 !== 0 || !/^[A-Za-z0-9+/]*={0,2}$/.test(text)) throw new Error('Damaged save number column.');
+  const bytes = unbase64(text);
+  if (bytes.length !== rows * 8) throw new Error('Damaged save number column.');
   if (!LITTLE_ENDIAN) for (let i = 0; i < bytes.length; i += 8) bytes.subarray(i, i + 8).reverse();
   return Array.from(new Float64Array(bytes.buffer));
 }
