@@ -476,5 +476,6 @@ window.addEventListener('pagehide', () => { if (autosaveEnabled && !catchingUp) 
 scene.setRainQuality(rainQuality);
 scene.setActivity(activity);
 renderUI(); if (showIntro) intro.showModal(); else if (lastReport) displayPanel('offline'); else message(initialMessage, 10000);
+if (recoveryNotice) message(recoveryNotice, 20000);
 }
 startGame().catch(error => { document.querySelector('#app')!.textContent = `Could not start the city: ${String(error)}`; });
