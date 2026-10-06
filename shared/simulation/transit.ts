@@ -3,7 +3,7 @@ import type { City } from '../types/city';
 import type { TravelFlow } from '../types/mobility';
 import type { TransitAccessibility, TransitDemand, TransitFacilityKind, TransitMode, TransitNetwork, TransitRoute, TransitStop } from '../types/transit';
 import { adjacent, roadAnchor, roadGraph, roadPath, roadPerformance, waypointPath, invalidateRoadGraph } from './road-network';
-import { accessBand, TRANSIT as C, TRANSIT_ACCESS_BANDS, TRANSIT_COLORS, TRANSIT_FACILITIES, TRANSIT_PERIODS, TRANSIT_VEHICLES } from './transit-config';
+import { accessBand, MOBILITY, TRANSIT as C, TRANSIT_ACCESS_BANDS, TRANSIT_COLORS, TRANSIT_FACILITIES, TRANSIT_PERIODS, TRANSIT_VEHICLES } from './transit-config';
 import { invalidateTransit, transitJourney, walkingReach, stopFacilityCapacity } from './transit-network';
 import { clamp } from './world';
 import { localGovernance } from './governance';
@@ -161,7 +161,7 @@ export function improveJunction(city: City, id: number, kind: 'signal' | 'high-c
 export function prepareTransit(city: City, progress = false) {
   syncLegacyTransit(city);
   const t = city.transit; if (!t) return;
-  const elapsed = progress ? Math.max(1, Math.min(3, city.tick - t.lastTick)) : 0;
+  const elapsed = progress ? Math.max(1, Math.min(MOBILITY.cadence, city.tick - t.lastTick)) : 0;
   t.demand = []; t.transfers = []; periodLoads.delete(city);
   const stationCrowding=new Map(t.stops.map(s=>[s.id,s.crowding]));
   for (const s of t.stops) {
@@ -366,7 +366,7 @@ export function finishTransit(city: City, progress = false) {
   if (progress && city.tick % 30 === 0) { t.history.push({ tick: city.tick, ridership: riders, access: access.access, jobs45: access.jobs45, wait: t.stats.wait, subsidy: finance.subsidy }); t.history = t.history.slice(-C.historyLimit); }
   for (const id of Object.keys(t.works)) if (t.works[id] <= city.tick) delete t.works[id];
 
-  t.lastTick = city.tick;
+  if (progress || t.lastTick < 0) t.lastTick = city.tick;
 }
 export function transitOverlay(city: City, tileId: number, name: string): number | undefined {
   const l = city.transit?.local[tileId]; if (!l) return;

@@ -2,14 +2,16 @@ import type { City } from '../types/city';
 import type { TransitDemand, TransitRoute, TransitStop } from '../types/transit';
 import { roadAnchor, roadGraph, ROADS } from './road-network';
 import { INFORMAL_SERVICE, TRANSIT, TRANSIT_FACILITIES } from './transit-config';
+import { perfNow } from './perf-counters';
 
 interface Node { id: string; tileId: number; kind: string }
 // `at` and `line` are dense node/route indexes so searches key states by number, not string.
 interface Edge { to: string; at: number; route: string; line: number; mode: 'bus' | 'brt' | 'danfo' | 'keke'; minutes: number; fare: number; wait: number; reliability: number }
-interface State { node: string; at: number; route: string; line: number; changes: number; cost: number; minutes: number; legs: TransitDemand['legs']; formal: boolean }
 interface NetworkCache {
   stamp: string; nodes: Map<string, Node>; edges: Map<string, Edge[]>; index: Map<string, number>; lines: number;
-  catchments: Map<number, Map<string, number>>; searches: Map<number, State[]>; transfers: Map<string, { id: string; at: number; minutes: number }[]>;
+  catchments: Map<number, Map<string, number>>; searches: Map<number, Search>; transfers: Map<string, { id: string; at: number; minutes: number }[]>;
+  // Dense per-node views of the graph for the search loop, and its reusable best-cost table.
+  ids?: string[]; kinds?: string[]; byIndex?: Edge[][]; best?: Float64Array; touched?: number[]; pool?: StatePool;
   builds: number; queries: number; expanded: number;
 }
 const caches = new WeakMap<City, NetworkCache>();
@@ -77,6 +79,7 @@ export function buildTransitGraph(city: City) {
     e.at = cache.index.get(e.to)!; e.line = lines.get(e.route)!;
   }
   cache.lines = lines.size;
+  cache.ids = [...cache.nodes.keys()]; cache.kinds = cache.ids.map(id => cache.nodes.get(id)!.kind); cache.byIndex = cache.ids.map(id => cache.edges.get(id) ?? []);
   caches.set(city, cache); return cache;
 }
 function accessNodes(city: City, cache: NetworkCache, origin: number) {
@@ -85,63 +88,118 @@ function accessNodes(city: City, cache: NetworkCache, origin: number) {
   for (const n of cache.nodes.values()) { const steps = roads.get(n.tileId); if (steps !== undefined) access.set(n.id, walkTime(city, n.tileId, steps)); }
   cache.catchments.set(origin, access); return access;
 }
-function search(city: City, origin: number, cache: NetworkCache): State[] {
-  const previous = cache.searches.get(origin); if (previous) return previous;
-  const queue: State[] = [], best = new Map<number, number>(), settled: State[] = [];
-  const key = (at: number, line: number, changes: number) => (at * cache.lines + line) * (TRANSIT.transfers + 1) + changes;
-  const push = (s: State) => {
-    const k = key(s.at, s.line, s.changes);
-    if (s.cost >= (best.get(k) ?? Infinity) || s.minutes > TRANSIT.jobMinutes * 2) return;
-    best.set(k, s.cost); queue.push(s);
-    let i = queue.length - 1; while (i > 0 && queue[(i - 1) >> 1].cost > s.cost) { queue[i] = queue[(i - 1) >> 1]; i = (i - 1) >> 1; } queue[i] = s;
-  };
-  const pop = () => { const top = queue[0], last = queue.pop()!; if (queue.length) { let i = 0; while (2 * i + 1 < queue.length) { let j = 2 * i + 1; if (j + 1 < queue.length && queue[j + 1].cost < queue[j].cost) j++; if (queue[j].cost >= last.cost) break; queue[i] = queue[j]; i = j; } queue[i] = last; } return top; };
-  for (const [id, minutes] of accessNodes(city, cache, origin)) push({ node: id, at: cache.index.get(id)!, route: '', line: 0, changes: 0, cost: minutes * TRANSIT.accessWeight, minutes, legs: [], formal: false });
-  while (queue.length) {
-    const s = pop();
-    if (best.get(key(s.at, s.line, s.changes)) !== s.cost) continue;
-    settled.push(s); cache.expanded++;
-    const kind = cache.nodes.get(s.node)!.kind;
-    for (const edge of cache.edges.get(s.node) ?? []) {
-      const boarding = s.route !== edge.route, changes = s.changes + (boarding && s.route ? 1 : 0);
-      if (changes > TRANSIT.transfers) continue;
-      let penalty = boarding && s.route ? kind === 'transport-interchange' ? TRANSIT.interchangePenalty : kind === 'bus-terminal' ? TRANSIT.terminalPenalty : TRANSIT.transferMinutes : 0;
-      if(boarding&&s.route&&city.transit.integration!=='neutral'&&(edge.mode==='danfo'||edge.mode==='keke'||kind==='informal'))penalty*=city.transit.integration==='support'?.7:.85;
-      const wait = boarding ? edge.wait : 0, minutes = s.minutes + (edge.minutes + wait + penalty);
-      const cost = s.cost + edge.minutes + wait * TRANSIT.waitWeight + penalty + (boarding ? edge.fare * TRANSIT.fareMinutes + (100 - edge.reliability) * TRANSIT.reliabilityMinutes : 0);
-      // Reject before copying legs: most relaxations lose, and the copies dominated large-city searches.
-      if (cost >= (best.get(key(edge.at, edge.line, changes)) ?? Infinity) || minutes > TRANSIT.jobMinutes * 2) continue;
-      // Legs are never mutated after creation, so states share unchanged leg objects.
-      const legs = boarding ? [...s.legs, { routeId: edge.route, mode: edge.mode, from: s.node, to: edge.to }] : [...s.legs.slice(0, -1), { ...s.legs[s.legs.length - 1], to: edge.to }];
-      push({ node: edge.to, at: edge.at, route: edge.route, line: edge.line, changes, minutes, cost, legs, formal: s.formal || edge.mode === 'bus' || edge.mode === 'brt' });
-    }
-    if (!s.route || s.changes >= TRANSIT.transfers) continue;
-    // Walking transfers depend only on the graph, so they are shared by every search on it.
-    let neighbours = cache.transfers.get(s.node);
-    if (!neighbours) {
-      const reach = walkingReach(city, cache.nodes.get(s.node)!.tileId, TRANSIT.transferWalkCells);
-      neighbours = [...cache.nodes.values()].filter(n => n.id !== s.node && reach.has(n.tileId)).map(n => ({ id: n.id, at: cache.index.get(n.id)!, minutes: walkTime(city, n.tileId, reach.get(n.tileId)!) })); cache.transfers.set(s.node, neighbours);
-    }
-    for (const n of neighbours) push({ ...s, node: n.id, at: n.at, minutes: s.minutes + n.minutes, cost: s.cost + n.minutes * TRANSIT.accessWeight });
-  }
-  if (cache.searches.size >= 128) cache.searches.clear(); cache.searches.set(origin, settled); return settled;
+// A leg chain shared between states: each boarding adds one link, so relaxations
+// never copy leg arrays. `to` of the newest leg lives on the state itself.
+interface Leg { routeId: string; mode: Edge['mode']; from: string; prev: Leg | null; prevTo: string }
+interface Settled { at: number; changes: number; cost: number; minutes: number; head: Leg | null; to: string; seq: number }
+interface Search { formal: Settled[][] }
+function legsOf(s: Settled): TransitDemand['legs'] {
+  const legs: TransitDemand['legs'] = []; let to = s.to;
+  for (let leg = s.head; leg; leg = leg.prev) { legs.push({ routeId: leg.routeId, mode: leg.mode, from: leg.from, to }); to = leg.prevTo; }
+  return legs.reverse();
 }
+// Search states live in reusable typed columns (one row per pushed state) so the
+// hot loop allocates nothing but new legs. The heap and relaxation order match the
+// object-based search exactly, so settled states and tie-breaks are unchanged.
+class StatePool {
+  size = 0; cost = new Float64Array(1024); minutes = new Float64Array(1024); at = new Int32Array(1024); line = new Int32Array(1024);
+  changes = new Int8Array(1024); formal = new Uint8Array(1024); to = new Int32Array(1024); head: (Leg | null)[] = []; heap = new Int32Array(1024);
+  grow() {
+    const n = this.cost.length * 2, f = <T extends Float64Array | Int32Array | Int8Array | Uint8Array>(a: T, b: T) => { b.set(a); return b; };
+    this.cost = f(this.cost, new Float64Array(n)); this.minutes = f(this.minutes, new Float64Array(n)); this.at = f(this.at, new Int32Array(n)); this.line = f(this.line, new Int32Array(n));
+    this.changes = f(this.changes, new Int8Array(n)); this.formal = f(this.formal, new Uint8Array(n)); this.to = f(this.to, new Int32Array(n)); this.heap = f(this.heap, new Int32Array(n));
+  }
+}
+function search(city: City, origin: number, cache: NetworkCache): Search {
+  const previous = cache.searches.get(origin); if (previous) return previous;
+  const n = cache.index.size, lines = cache.lines, layers = TRANSIT.transfers + 1, size = n * lines * layers, limit = TRANSIT.jobMinutes * 2;
+  // Dense best-cost table per graph; only touched slots are reset between searches.
+  if (!cache.best || cache.best.length < size) { cache.best = new Float64Array(size).fill(Infinity); cache.touched = []; }
+  const best = cache.best, touched = cache.touched!, kinds = cache.kinds!, edges = cache.byIndex!, ids = cache.ids!;
+  for (const k of touched) best[k] = Infinity; touched.length = 0;
+  const p = cache.pool ??= new StatePool(); p.size = 0; p.head.length = 0;
+  const formal: Settled[][] = Array.from({ length: n }, () => []); let seq = 0, queued = 0;
+  const integration = city.transit.integration, informalFactor = integration === 'support' ? .7 : .85;
+  const push = (cost: number, minutes: number, at: number, line: number, changes: number, head: Leg | null, to: number, isFormal: boolean) => {
+    const k = (at * lines + line) * layers + changes;
+    if (cost >= best[k] || minutes > limit) return;
+    if (best[k] === Infinity) touched.push(k);
+    best[k] = cost;
+    if (p.size === p.cost.length) p.grow();
+    const s = p.size++;
+    p.cost[s] = cost; p.minutes[s] = minutes; p.at[s] = at; p.line[s] = line; p.changes[s] = changes; p.formal[s] = isFormal ? 1 : 0; p.to[s] = to; p.head[s] = head;
+    const heap = p.heap, costs = p.cost;
+    let i = queued++; while (i > 0 && costs[heap[(i - 1) >> 1]] > cost) { heap[i] = heap[(i - 1) >> 1]; i = (i - 1) >> 1; } heap[i] = s;
+  };
+  const pop = () => {
+    const heap = p.heap, costs = p.cost, top = heap[0], last = heap[--queued];
+    if (queued) { const c = costs[last]; let i = 0; while (2 * i + 1 < queued) { let j = 2 * i + 1; if (j + 1 < queued && costs[heap[j + 1]] < costs[heap[j]]) j++; if (costs[heap[j]] >= c) break; heap[i] = heap[j]; i = j; } heap[i] = last; }
+    return top;
+  };
+  for (const [id, minutes] of accessNodes(city, cache, origin)) push(minutes * TRANSIT.accessWeight, minutes, cache.index.get(id)!, 0, 0, null, -1, false);
+  while (queued) {
+    const s = pop(), at = p.at[s], line = p.line[s], changes = p.changes[s], cost = p.cost[s];
+    if (best[(at * lines + line) * layers + changes] !== cost) continue;
+    const minutes = p.minutes[s], head = p.head[s], to = p.to[s], isFormal = p.formal[s] === 1;
+    cache.expanded++; seq++;
+    // Only formal states can answer a journey query, so they are kept per node in settle order.
+    if (isFormal) formal[at].push({ at, changes, cost, minutes, head, to: to < 0 ? '' : ids[to], seq });
+    const kind = kinds[at];
+    for (const edge of edges[at]) {
+      // Line 0 is "not riding"; every route has its own line, so this matches comparing route ids.
+      const boarding = line !== edge.line, next = changes + (boarding && line ? 1 : 0);
+      if (next > TRANSIT.transfers) continue;
+      let penalty = boarding && line ? kind === 'transport-interchange' ? TRANSIT.interchangePenalty : kind === 'bus-terminal' ? TRANSIT.terminalPenalty : TRANSIT.transferMinutes : 0;
+      if(boarding&&line&&integration!=='neutral'&&(edge.mode==='danfo'||edge.mode==='keke'||kind==='informal'))penalty*=informalFactor;
+      const wait = boarding ? edge.wait : 0, total = minutes + (edge.minutes + wait + penalty);
+      const nextCost = cost + edge.minutes + wait * TRANSIT.waitWeight + penalty + (boarding ? edge.fare * TRANSIT.fareMinutes + (100 - edge.reliability) * TRANSIT.reliabilityMinutes : 0);
+      // Reject before allocating: most relaxations lose.
+      if (nextCost >= best[(edge.at * lines + edge.line) * layers + next] || total > limit) continue;
+      push(nextCost, total, edge.at, edge.line, next, boarding ? { routeId: edge.route, mode: edge.mode, from: ids[at], prev: head, prevTo: to < 0 ? '' : ids[to] } : head, edge.at, isFormal || edge.mode === 'bus' || edge.mode === 'brt');
+    }
+    if (!line || changes >= TRANSIT.transfers) continue;
+    // Walking transfers depend only on the graph, so they are shared by every search on it.
+    const node = ids[at];
+    let neighbours = cache.transfers.get(node);
+    if (!neighbours) {
+      const reach = walkingReach(city, cache.nodes.get(node)!.tileId, TRANSIT.transferWalkCells);
+      neighbours = [...cache.nodes.values()].filter(n => n.id !== node && reach.has(n.tileId)).map(n => ({ id: n.id, at: cache.index.get(n.id)!, minutes: walkTime(city, n.tileId, reach.get(n.tileId)!) })); cache.transfers.set(node, neighbours);
+    }
+    for (const n of neighbours) push(cost + n.minutes * TRANSIT.accessWeight, minutes + n.minutes, n.at, line, changes, head, to, isFormal);
+  }
+  const result = { formal };
+  if (cache.searches.size >= 128) cache.searches.clear(); cache.searches.set(origin, result); return result;
+}
+// Time spent answering journeys since the last take, for developer diagnostics.
+let journeyMs = 0;
+export function takeTransitSearchMs() { const ms = journeyMs; journeyMs = 0; return ms; }
 export function transitJourney(city: City, origin: number, destination: number): Omit<TransitDemand, 'flowId' | 'passengers'> | null {
   if (!city.transit?.routes.length) return null;
+  const started = perfNow();
+  try { return journey(city, origin, destination); } finally { journeyMs += perfNow() - started; }
+}
+function journey(city: City, origin: number, destination: number): Omit<TransitDemand, 'flowId' | 'passengers'> | null {
   const cache = buildTransitGraph(city); cache.queries++;
-  const arrival = accessNodes(city, cache, destination);
-  let result: State | null = null, total = Infinity, time = 0, fallback:State|null=null, fallbackCost=Infinity,fallbackTime=0;
-  for (const s of search(city, origin, cache)) {
-    if (!s.formal) continue; const walk = arrival.get(s.node); if (walk === undefined) continue;
+  const arrival = accessNodes(city, cache, destination), found = search(city, origin, cache);
+  // Visit only formal states at stops within walking reach of the destination, in the
+  // order the search settled them, so ties resolve exactly as a full scan would.
+  const candidates: { s: Settled; walk: number }[] = [];
+  for (const [id, walk] of arrival) for (const s of found.formal[cache.index.get(id)!]) candidates.push({ s, walk });
+  candidates.sort((a, b) => a.s.seq - b.s.seq);
+  let result: Settled | null = null, total = Infinity, time = 0, fallback:Settled|null=null, fallbackCost=Infinity,fallbackTime=0;
+  for (const { s, walk } of candidates) {
     const cost = s.cost + walk * TRANSIT.accessWeight;
     if(cost<fallbackCost){fallback=s;fallbackCost=cost;fallbackTime=s.minutes+walk;}
     if (cost >= total) continue;
-    const free=s.legs.every(l=>{const route=city.transit.routes.find(r=>r.id===l.routeId)??city.mobility.routes.find(r=>r.id===l.routeId);return route&&route.capacity>route.ridership;});
+    let free = true;
+    for (let leg = s.head; leg && free; leg = leg.prev) { const route=city.transit.routes.find(r=>r.id===leg.routeId)??city.mobility.routes.find(r=>r.id===leg.routeId); free = !!route && route.capacity>route.ridership; }
     if (free) { result = s; total = cost; time = s.minutes + walk; }
   }
   if(!result){result=fallback;total=fallbackCost;time=fallbackTime;}
-  return result ? { minutes: time, cost: total, transfers: result.changes, legs: result.legs } : null;
+  return result ? { minutes: time, cost: total, transfers: result.changes, legs: legsOf(result) } : null;
 }
+/** Searches only serve one evaluation's queries; drop them so they are not held between days. */
+export function releaseTransitSearches(city: City) { const c = caches.get(city); if (c) { c.searches.clear(); c.pool = undefined; } }
 export function transitNetworkDiagnostics(city: City) {
   const c = caches.get(city); return { builds: c?.builds ?? 0, queries: c?.queries ?? 0, expanded: c?.expanded ?? 0, nodes: c?.nodes.size ?? 0, sources: c?.searches.size ?? 0 };
 }

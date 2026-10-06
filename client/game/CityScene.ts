@@ -54,7 +54,10 @@ export class CityScene extends Phaser.Scene {
   private worldArt!: WorldArt;
   private graphics: GraphicsOptions = graphicsOptions(innerWidth < 600 ? 'medium' : 'high');
   private frameTimes: number[] = [];
+  private lastFrameTime = 0;
   private redrawMs = 0;
+  /** Optional developer timing sink for redraw cost. */
+  onRedrawTimed: ((ms: number) => void) | null = null;
   private cameraKey = '';
   private lastCameraDraw = 0;
   private graphicsDebug!: Phaser.GameObjects.Graphics;
@@ -99,6 +102,9 @@ export class CityScene extends Phaser.Scene {
   constructor(private getCity: () => City, private getTool: () => Tool,
     private selectTile: (x: number, y: number, paint: boolean) => void,
     private previewTile: (x: number, y: number) => void) { super('city'); }
+  private strokeEnd: () => void = () => {};
+  /** Called when the last pointer lifts, so a painted stroke can be settled once. */
+  onStrokeEnd(callback: () => void) { this.strokeEnd = callback; }
   preload() { preloadArchitecture(this); preloadModels(this); }
   // Isolated art-fixture presentation; no city/save fields are added.
   setArtPreviewGround(ground:Map<number,string>) { if(this.worldArt)this.worldArt.previewGround=ground;this.redraw(); }
@@ -151,6 +157,7 @@ export class CityScene extends Phaser.Scene {
     const up = (p: Phaser.Input.Pointer) => {
       if (this.pointers.size === 1 && !this.dragged && this.getTool() === 'inspect') this.pick(p, false);
       this.pointers.delete(p.id); this.pinchDistance = 0;
+      if (!this.pointers.size) this.strokeEnd();
     };
     this.input.on('pointerup', up); this.input.on('pointerupoutside', up);
     this.game.canvas.addEventListener('pointerleave', () => { if (!this.pointers.size) this.hover.clear(); });
@@ -258,7 +265,9 @@ export class CityScene extends Phaser.Scene {
   setOverlay(overlay: Overlay) { this.overlay = overlay; this.redraw(); }
   setRainQuality(quality: 'normal' | 'low' | 'off') { this.rainQuality = quality; this.rain?.clear(); }
   update(time: number, delta: number) {
-    if (delta > 0 && delta < 1000) { this.frameTimes.push(delta); if (this.frameTimes.length > 180) this.frameTimes.shift(); }
+    // Raw frame interval: Phaser's smoothed delta hides stalls longer than 200 ms.
+    const interval = this.lastFrameTime ? time - this.lastFrameTime : 0; this.lastFrameTime = time;
+    if (interval > 0 && interval < 5000) { this.frameTimes.push(interval); if (this.frameTimes.length > 180) this.frameTimes.shift(); }
     const camera = this.cameras.main;
     if(time-this.resolutionCheck>500){this.resolutionCheck=time;this.updateResolution();}
     const next=zoomStep(this.viewZoom,this.targetZoom,delta);
@@ -384,7 +393,7 @@ export class CityScene extends Phaser.Scene {
       if(this.graphics.anchors){this.graphicsDebug.lineStyle(.7,0xf5d578);this.graphicsDebug.lineBetween(x-2,y+12,x+2,y+12);this.graphicsDebug.lineBetween(x,y+10,x,y+14);}
       if(this.graphics.depth){this.graphicsDebug.fillStyle(0xe5ae73,.6);this.graphicsDebug.fillCircle(x,y+12,1+(y/768)*2);}
     }
-    this.worldArt.finish();this.redrawMs=performance.now()-began;
+    this.worldArt.finish();this.redrawMs=performance.now()-began;this.onRedrawTimed?.(this.redrawMs);
     if (this.livingDebug) for (const t of visible) {
       const id = t.y * city.size + t.x, a = this.activity!.tiles[id], x = ORIGIN + (t.x - t.y) * W / 2, y = (t.x + t.y) * H / 2;
       if (this.livingDebug === 'neighborhoods' && t.clusterId !== null) { this.graphicsDebug.lineStyle(1, [0xc8a061,0x789d91,0x9b89b7][t.clusterId % 3], 0.9); this.graphicsDebug.strokePoints(this.diamond(x,y),true); }

@@ -18,10 +18,11 @@ import { ROADS, waypointPath } from '../shared/simulation/road-network';
 import { MOBILITY_DEBUG, mobilityDebug } from '../shared/simulation/mobility-debug';
 import Phaser from 'phaser';
 import { CityScene } from './game/CityScene';
+import { PerfMonitor } from './game/perf-monitor';
 import { gameConfig } from './game/game-config';
 import type { GraphicsQuality } from './game/visual-style';
 import { LocalCityRepository } from './persistence/storage';
-import { advance, applyTool, catchUpInChunks, COSTS, createCity, previewTool, refreshCity, TICK_MS, tileAt } from '../shared/simulation/engine';
+import { advance, applyTool, applyToolBatch, beginToolBatch, catchUpInChunks, COSTS, createCity, endToolBatch, previewTool, refreshCity, settleToolBatch, TICK_MS, tileAt, toolBatchOpen } from '../shared/simulation/engine';
 import type { Tool, Overlay, OfflineReport } from '../shared/types/city';
 import { debugAction, type DebugAction } from '../shared/simulation/debug';
 import { compactMoney, demandHtml, inspectorHtml, money, offlineHtml, statisticsHtml } from './ui/panels';
@@ -38,6 +39,8 @@ async function startGame() {
 
 const repo = new LocalCityRepository();
 let city = createCity(), tool: Tool = 'inspect', speed = 1, selected: number | null = null, accumulator = 0;
+// Developer performance metrics: on in development, or in any build with ?perf in the URL.
+const perf = import.meta.env.DEV || new URLSearchParams(location.search).has('perf') ? new PerfMonitor() : null;
 let preview: { x: number; y: number } | null = null;
 let openPanel: string | null = null, showIntro = true, autosaveEnabled = true;
 let overlay: Overlay = 'none', lastReport: OfflineReport | null = null, transitReportOpen = false;
@@ -123,6 +126,8 @@ const scene = new CityScene(() => city, () => tool, (x, y, paint) => {
     scene.setSelected({ x, y }); scene.setRoutePreview(busDraft); renderPlacement(); return;
   }
   if (paint) {
+    // A drag is one tool batch: tiles change and redraw at once; the city recomputes on release.
+    if (!toolBatchOpen(city)) beginToolBatch(city);
     const error = applyTool(city, x, y, tool);
     if (error) message(error);
     scene.redraw(); renderUI(); renderPlacement();
@@ -137,6 +142,16 @@ const scene = new CityScene(() => city, () => tool, (x, y, paint) => {
   preview = tileAt(city, x, y) ? { x, y } : null;
   renderPlacement();
 });
+const perfOverlay = document.createElement('pre'); perfOverlay.id = 'perf-overlay'; perfOverlay.hidden = true; document.body.append(perfOverlay);
+if (perf) {
+  perf.start(); scene.onRedrawTimed = ms => perf.record('redraw', ms);
+  perfOverlay.hidden = !new URLSearchParams(location.search).has('perf');
+  setInterval(() => { const text = perf.text(); if (!perfOverlay.hidden) perfOverlay.textContent = text; const panel = document.getElementById('perf-text'); if (panel) panel.textContent = text; }, 500);
+  document.addEventListener('visibilitychange', () => perf.resume());
+}
+// Closing a paint stroke runs the deferred city recompute once.
+const endStroke = () => { if (toolBatchOpen(city) && endToolBatch(city)) { scene.redraw(); renderUI(); renderPlacement(); } };
+scene.onStrokeEnd(endStroke); window.addEventListener('blur', endStroke);
 scene.setGraphicsQuality(graphicsQuality);
 new Phaser.Game(gameConfig(scene, graphicsQuality));
 // Development-only probe for browser QA (tap a tile, focus the camera). Vite removes it from builds.
@@ -211,6 +226,7 @@ function renderPanel() {
     if(import.meta.env.DEV)html+=`<details><summary>Governance diagnostics</summary><div class="debug-tools">${GOVERNANCE_OVERLAYS.map(o=>`<button data-overlay="${o}">${o.replaceAll('-',' ')}</button>`).join('')}<button data-governance-tab="Housing">Housing supply / affordability / income</button><button data-governance-tab="Budget">Spending and maintenance</button></div></details>`;
     if(import.meta.env.DEV)html+=`<details><summary>Public service diagnostics</summary><div class="debug-tools">${["education-demand","education-capacity","healthcare-demand","healthcare-capacity","fire-response","waste-generation","waste-collection","park-access","quality-of-life","accessibility","clear"].map(v=>`<button data-public-view="${v}">Show ${v.replaceAll("-"," ")}</button>`).join("")}${['education','healthcare','fire','waste','parks','quality-of-life'].map(o=>`<button data-overlay="${o}">Show ${o}</button>`).join('')}${[['fire','Trigger selected building fire'],['waste','Increase selected waste backlog'],['staff','Fill facility staff for testing'],['repair','Repair facilities'],['access','Show cached service access diagnostics']].map(([a,n])=>`<button data-public-debug="${a}">${n}</button>`).join('')}</div><p class="hint">Education shows seats, healthcare shows visit demand, fire shows response reach, waste shows collection and parks show recreation. Inspector exposes capacity separately.</p></details>`;
 
+    if (perf) html += `<details><summary>Performance diagnostics</summary><pre id="perf-text" class="perf-text">${perf.text()}</pre><div class="debug-tools"><button data-action="perf-overlay">Toggle frame-time overlay</button></div><p class="hint">Frame times come from animation-frame timestamps. Stutters are frames over 50 ms. Open with ?perf to show this on any build.</p></details>`;
     if (import.meta.env.DEV) html += `<details><summary>Living city diagnostics</summary><label class="budget-label">Activity hour <select id="activity-hour"><option value="auto" ${activityHourOverride === null ? 'selected' : ''}>Simulation clock</option>${[0,6,8,13,17,20].map(h => `<option value="${h}" ${activityHourOverride === h ? 'selected' : ''}>${activityTime(h)}</option>`).join('')}</select></label><div class="debug-tools">${[['activity','Show activity scores'],['network','Show pedestrian network'],['od','Show commuter OD'],['traffic','Show vehicle flow'],['mobility','Show transit demand'],['neighborhoods','Show neighborhood boundaries'],['business','Show business health'],['markets','Show market attraction'],['informal','Show informal housing pressure']].map(([view,label])=>`<button data-living-view="${view}">${label}</button>`).join('')}<button data-action="living-count">Representative agent diagnostics</button><button data-living-view="clear">Clear living diagnostics</button></div></details>`;
   }
   document.getElementById('panel-kicker')!.textContent = kicker;
@@ -219,6 +235,10 @@ function renderPanel() {
   if (openPanel === 'data') document.getElementById('journal')!.replaceChildren(...city.history.slice(0, 6).map(text => { const li = document.createElement('li'); li.textContent = text; return li; }));
 }
 function renderUI() {
+  const started = performance.now();
+  try { renderInterface(); } finally { perf?.record('ui', performance.now() - started); }
+}
+function renderInterface() {
   const set = (id: string, value: string) => { document.getElementById(id)!.textContent = value; };
   set('city-name', city.name); set('population', city.population.toLocaleString()); set('treasury', compactMoney(city.treasury));
   set('date', `D${city.tick % 30 + 1} · M${Math.floor(city.tick / 30) + 1} · ${activityTime(activity.hour)}`);
@@ -273,6 +293,7 @@ function setOverlay(next: Overlay) {
   renderPanel();
 }
 function save(silent = false) {
+  settleToolBatch(city);
   try { city.lastSimulatedTimestamp = Date.now(); repo.save(city); autosaveEnabled = true; if (!silent) message('City saved on this device.'); }
   catch { if (!silent) message('Could not save. Device storage may be full or unavailable.'); }
 }
@@ -301,7 +322,7 @@ content.addEventListener('click', async event => {
   if(button.hasAttribute('data-district-draw')){chooseTool('inspect');districtDraft=[];renderPlacement();message('Tap two corners to choose a district area. Drag to pan; no precise tracing needed.');return;}
   if(button.dataset.districtFocus){const d=city.governance.districts.find(d=>d.id===button.dataset.districtFocus);if(d){closePanel();scene.setServicePreview(d.tiles);const t=city.tiles[d.tiles[Math.floor(d.tiles.length/2)]];scene.focusTile(t.x,t.y);}return;}
   if(button.dataset.challenge){const c=city.governance.challenges.find(c=>c.id===button.dataset.challenge);if(c){closePanel();setOverlay(c.overlay);if(c.tileId!==null){selected=c.tileId;scene.setSelected(city.tiles[c.tileId]);scene.focusTile(city.tiles[c.tileId].x,city.tiles[c.tileId].y);}else{governanceTab=c.kind==='budget'?'Budget':c.kind==='housing'||c.kind==='affordability'?'Housing':'Overview';displayPanel('governance');}}return;}
-  if(button.dataset.clearCommunity){const d=city.governance.districts.find(d=>d.id===button.dataset.clearCommunity);if(d){const tiles=d.tiles.filter(id=>city.tiles[id].building?.tenure!=='formal'&&city.tiles[id].building);const residents=tiles.reduce((s,id)=>s+city.tiles[id].building!.occupants,0);if(!confirm(`Clear ${tiles.length} informal properties? ${residents} residents will be displaced and need replacement housing. Clearance costs ${money(tiles.length*COSTS.bulldoze)}. Consider community upgrading instead.`))return;if(city.treasury<tiles.length*COSTS.bulldoze){message('Insufficient treasury for clearance.');return;}for(const id of tiles){const t=city.tiles[id];applyTool(city,t.x,t.y,'bulldoze');}analyzeGovernance(city,false);scene.redraw();renderUI();}return;}
+  if(button.dataset.clearCommunity){const d=city.governance.districts.find(d=>d.id===button.dataset.clearCommunity);if(d){const tiles=d.tiles.filter(id=>city.tiles[id].building?.tenure!=='formal'&&city.tiles[id].building);const residents=tiles.reduce((s,id)=>s+city.tiles[id].building!.occupants,0);if(!confirm(`Clear ${tiles.length} informal properties? ${residents} residents will be displaced and need replacement housing. Clearance costs ${money(tiles.length*COSTS.bulldoze)}. Consider community upgrading instead.`))return;if(city.treasury<tiles.length*COSTS.bulldoze){message('Insufficient treasury for clearance.');return;}applyToolBatch(city,tiles.map(id=>city.tiles[id]),'bulldoze');analyzeGovernance(city,false);scene.redraw();renderUI();}return;}
   if(button.dataset.action==='economy'){displayPanel('economy');return;}
   if(button.dataset.serviceFocus){const id=Number(button.dataset.serviceFocus),t=city.tiles[id];closePanel();selected=id;debugTarget=id;scene.setSelected(t);scene.focusTile(t.x,t.y);displayPanel('inspector');return;}
   if(button.dataset.safetyFocus){const id=Number(button.dataset.safetyFocus);closePanel();selected=id;debugTarget=id;scene.setSelected(city.tiles[id]);scene.focusTile(city.tiles[id].x,city.tiles[id].y);displayPanel('inspector');return;}
@@ -360,6 +381,7 @@ content.addEventListener('click', async event => {
     case 'city-feed': displayPanel('feed'); break;
     case 'living-count': message(scene.graphicsSummary(),20000); break;
     case 'graphics-count': message(scene.graphicsSummary(), 20000); break;
+    case 'perf-overlay': perfOverlay.hidden = !perfOverlay.hidden; break;
     case 'vehicle-count': message(`${scene.representativeVehicleCount} representative vehicles (bounded pool; none saved).`); break;
     case 'bus-build': chooseTool('inspect'); busDraft = []; setOverlay('mobility'); renderPlacement(); message('Tap road tiles: start, optional waypoints, then end.'); break;
     case 'save': save(); break;
@@ -435,6 +457,7 @@ document.addEventListener('visibilitychange', async () => {
   if (document.hidden) { if (autosaveEnabled) save(true); }
   else { const r = await runCatchUp(); lastTime = performance.now(); accumulator = 0; scene.redraw(); renderUI(); renderPlacement(); if (r.ticks) { lastReport = r; chooseTool('inspect'); displayPanel('offline'); } }
 });
+if(import.meta.env.DEV&&perf)Object.assign(window,{naijaPerf:{snapshot:()=>perf.snapshot(),text:()=>perf.text()}});
 if(import.meta.env.DEV)Object.assign(window,{transitQA:{
   snapshot:()=>({ready:scene.sys.isActive(),tick:city.tick,population:city.population,transit:city.transit,mobility:city.mobility.stats,graphics:scene.graphicsSummary(),agents:scene.agentDiagnostics,overlay}),
   setCity:(value:typeof city)=>{city=value;speed=0;scene.setSimulationSpeed(0);showIntro=false;if(intro.open)intro.close();pulse.reset();chooseTool('inspect');updateActivity();scene.home();scene.redraw();renderUI();},

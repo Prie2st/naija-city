@@ -1,4 +1,7 @@
 import type { TransitFacilityKind, TransitMode } from '../types/transit';
+/** Traffic and transit are evaluated every `cadence` days. A relative swing in residents
+ * or jobs above `recheckShare` re-evaluates early; tools and route edits always do. */
+export const MOBILITY = { cadence: 3, recheckShare: .05 } as const;
 export const TRANSIT = {
   routeLimit: 200, stopLimit: 256, stopRouteLimit: 16, fleetLimit: 100, transfers: 2,
   walkCells: 5, walkMinutes: 1.8, walkingSpeed: 4, jobMinutes: 45, serviceHours: 16,

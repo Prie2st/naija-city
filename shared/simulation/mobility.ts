@@ -1,11 +1,13 @@
 import { prepareTransit, finishTransit, updateTransitCityMetrics, transitChoice, boardTransit } from './transit';
+import { releaseTransitSearches, takeTransitSearchMs } from './transit-network';
+import { perfNow, perfRecord } from './perf-counters';
 import { localGovernance } from './governance';
 import { facilityAnchors } from './public-service-access';
 import type { City, Tile } from '../types/city';
 import type { MobilityState, TravelFlow, TravelMode, TransportRoute } from '../types/mobility';
 import { adjacent, emptyMobilityTile, roadAnchor, roadGraph, roadPath, roadPerformance, congestionFor, ROADS, waypointPath, invalidateRoadGraph } from './road-network';
 import { clamp, isOperating } from './world';
-import { INFORMAL_SERVICE, TRANSIT, TRANSIT_VEHICLES } from './transit-config';
+import { INFORMAL_SERVICE, MOBILITY, TRANSIT, TRANSIT_VEHICLES } from './transit-config';
 
 export const MODES: TravelMode[] = ['walk', 'car', 'okada', 'keke', 'danfo', 'bus', 'brt'];
 export const modeCounts = (): Record<TravelMode, number> => ({ walk: 0, car: 0, okada: 0, keke: 0, danfo: 0, bus: 0, brt: 0 });
@@ -130,10 +132,14 @@ function routeFor(city: City, flow: TravelFlow, mode: TransportRoute['mode']): T
     capacity: 0, averageSpeed: 0, minutes: flow.minutes, profitability: 50, netProfit: 0, reliability: 70, congestionImpact: 0,
     age: 0, poorDays: 0, formalized: mode === 'bus', suspended: false, createdAt: city.tick };
 }
+const swung = (before: number, now: number) => Math.abs(now - before) > Math.max(1, before) * MOBILITY.recheckShare;
 export function updateMobility(city: City, progress = true, force = false) {
   const m = city.mobility;
-  if (!force && city.tick % 3 !== 0 && m.lastTick >= 0 && m.sourcePopulation === city.population && m.sourceJobs === city.jobs) return;
-  const elapsed = progress ? Math.max(1, Math.min(3, city.tick - m.lastTick)) : 0;
+  // Traffic is evaluated every third day; days in between keep the last evaluation.
+  // A large swing in residents or jobs, or a tool/route change (force), re-evaluates early.
+  if (!force && city.tick % MOBILITY.cadence !== 0 && m.lastTick >= 0 && !swung(m.sourcePopulation, city.population) && !swung(m.sourceJobs, city.jobs)) return;
+  const started = perfNow(); takeTransitSearchMs();
+  const elapsed = progress ? Math.max(1, Math.min(MOBILITY.cadence, city.tick - m.lastTick)) : 0;
   invalidateRoadGraph(city);
   if (m.debug.until <= city.tick) { m.debug.demandMultiplier = 1; m.debug.loadMultiplier = 1; }
   for (const t of city.tiles) { const old = t.mobility.congestion; t.mobility = emptyMobilityTile(); t.mobility.congestion = old; }
@@ -293,7 +299,12 @@ export function updateMobility(city: City, progress = true, force = false) {
   if(city.transit)updateTransitCityMetrics(city,progress);
   if (m.stats.congestion >= 70) event(city, 'first-congestion', 'A major corridor has become congested. Road capacity and travel alternatives now matter.');
   if (averageCommute > 30) event(city, 'commute-30', 'Average commute exceeded 30 minutes.');
-  m.lastTick = city.tick; m.sourcePopulation = city.population; m.sourceJobs = city.jobs; m.revision++;
+  // Only daily progress moves lastTick, so a tool's re-evaluation never swallows the days
+  // that the next scheduled evaluation must still account for.
+  if (progress || m.lastTick < 0) m.lastTick = city.tick;
+  m.sourcePopulation = city.population; m.sourceJobs = city.jobs; m.revision++;
+  releaseTransitSearches(city);
+  perfRecord('transit-search', takeTransitSearchMs()); perfRecord('traffic', perfNow() - started);
 }
 export function formalizeRoute(city: City, id: string): string {
   const route = city.mobility.routes.find(r => r.id === id);
