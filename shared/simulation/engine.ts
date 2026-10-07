@@ -16,6 +16,7 @@ import { asset, emptyServices, INFRASTRUCTURE, isDrainage, isInfrastructure } fr
 import { initializeInfrastructure, infrastructureEvents, updateInfrastructure } from './infrastructure';
 import { updateFloods, updateWeather } from './weather';
 import { updateNationalEconomy } from './national-economy';
+import { perfNow, perfRecord } from './perf-counters';
 export { tileAt, roadAccess } from './world';
 export { refreshCity, updateDemand, propertyValue } from './economy';
 export { attractiveness } from './development';
@@ -98,7 +99,7 @@ export function applyTool(city: City, x: number, y: number, tool: Tool): string 
   if (placement.status !== 'valid') return placement.status === 'invalid' ? placement.reason : '';
   const tile = tileAt(city, x, y)!;
   const cost = placement.cost;
-  if(isTransitFacility(tool)){const error=placeTransitFacility(city,y*city.size+x,tool);updateMobility(city,false,true);refreshCity(city);return error;}
+  if(isTransitFacility(tool)){const error=placeTransitFacility(city,y*city.size+x,tool);settle(city,'mobility');return error;}
   city.treasury -= cost;
   if(tool==='bulldoze')removeTransitFacility(city,y*city.size+x);
   const wasRoad=tile.road;
@@ -119,13 +120,54 @@ export function applyTool(city: City, x: number, y: number, tool: Tool): string 
   tile.terrain = 'land';
   city.infrastructure.revision++;
   city.developmentQueue = city.developmentQueue.filter(entry => entry.tileId !== y * city.size + x);
-  updateInfrastructure(city, false); updatePublicServices(city,false); updateMobility(city, false, true); refreshCity(city); updateDemand(city);
-  updateSafety(city,false); updateClusters(city); refreshHouseholds(city); updateLivingFeed(city, false);
+  settle(city, 'full');
   return '';
+}
+// Tool batches. A drag paints many tiles; each tile's own change (validation, cost and
+// tile state) applies at once so it can be drawn, but the city-wide recompute below runs
+// once when the batch ends instead of once per tile. step() settles a pending batch first.
+type Pending = 'mobility' | 'full';
+const batches = new WeakMap<City, { depth: number; pending: Pending | null }>();
+function settle(city: City, scope: Pending) {
+  const batch = batches.get(city);
+  if (batch) { if (batch.pending !== 'full') batch.pending = scope; return; }
+  recompute(city, scope);
+}
+function recompute(city: City, scope: Pending) {
+  const started = perfNow();
+  if (scope === 'mobility') { updateMobility(city, false, true); refreshCity(city); }
+  else {
+    updateInfrastructure(city, false); updatePublicServices(city,false); updateMobility(city, false, true); refreshCity(city); updateDemand(city);
+    updateSafety(city,false); updateClusters(city); refreshHouseholds(city); updateLivingFeed(city, false);
+  }
+  perfRecord('tool-recompute', perfNow() - started);
+}
+/** Start (or nest) a batch of tool applications; pair with endToolBatch. */
+export function beginToolBatch(city: City) {
+  const batch = batches.get(city) ?? { depth: 0, pending: null }; batch.depth++; batches.set(city, batch);
+}
+/** Close a batch; the outermost close runs the deferred recompute once. Returns whether it ran. */
+export function endToolBatch(city: City) {
+  const batch = batches.get(city); if (!batch || --batch.depth > 0) return false;
+  batches.delete(city); if (batch.pending) recompute(city, batch.pending);
+  return batch.pending !== null;
+}
+/** Run any deferred recompute now, keeping the batch open (before a tick or a save). */
+export function settleToolBatch(city: City) {
+  const batch = batches.get(city); if (!batch?.pending) return false;
+  const scope = batch.pending; batch.pending = null; recompute(city, scope); return true;
+}
+export function toolBatchOpen(city: City) { return batches.has(city); }
+/** Apply one tool to many tiles with a single recompute. Returns the first error. */
+export function applyToolBatch(city: City, tiles: { x: number; y: number }[], tool: Tool): string {
+  beginToolBatch(city); let error = '';
+  try { for (const t of tiles) { const e = applyTool(city, t.x, t.y, tool); error ||= e; } } finally { endToolBatch(city); }
+  return error;
 }
 
 export function step(city: City) {
-  const previousPopulation = city.population;
+  settleToolBatch(city);
+  const started = perfNow(), previousPopulation = city.population;
   city.tick++;
   updateGovernance(city); updateNationalEconomy(city);
   updateWeather(city); updateInfrastructure(city); updateFloods(city);
@@ -139,6 +181,7 @@ export function step(city: City) {
   city.counters.taxRevenue += city.income / 30;
   recordHistory(city);
   infrastructureEvents(city);
+  perfRecord('sim-day', perfNow() - started);
 }
 export function advance(city: City, ticks: number) {
   for (let i = 0; i < Math.max(0, Math.floor(ticks)); i++) step(city);

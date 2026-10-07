@@ -21,7 +21,8 @@ describe('preserved playable city contracts', () => {
     applyTool(c, 11, 10, 'road'); expect(roadAccess(c, tileAt(c, 10, 10)!)).toBe(true);
     debugAction(c, 'demand-residential'); advance(c, 9);
     expect(tileAt(c, 10, 10)!.building?.openedAt ?? null).toBeNull();
-    advance(c, 15); expect(tileAt(c, 10, 10)!.building?.constructionState).toBe('complete');
+    // Demand reacts to traffic results, which refresh every third day, so allow one cadence of slack.
+    advance(c, 18); expect(tileAt(c, 10, 10)!.building?.constructionState).toBe('complete');
   });
   it('creates job capacity and collects tax automatically', () => {
     const c = createCity(0); applyTool(c, 14, 17, 'commercial'); applyTool(c, 12, 17, 'industrial');

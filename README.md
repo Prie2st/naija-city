@@ -22,6 +22,10 @@ Abandoned homes send residents to look for housing, and long-abandoned shells ar
 
 Balancing values live in `shared/simulation/balance-config.ts`. `tools/balance/` holds the headless bot harness used for the before/after evidence. See [the balance notes](docs/balance.md) and [the balance retest](docs/BALANCE_RETEST.md).
 
+## Milestone 8.3: performance stabilization
+
+Traffic and transit are evaluated every third day (`MOBILITY` in `shared/simulation/transit-config.ts`); days in between keep the last result, and tools, route edits or a resident/job swing above 5% evaluate at once. Journey searches in `transit-network.ts` use reusable typed state columns and answer each query from the stops near its destination, with results identical to a full scan. Drag painting is one tool batch (`beginToolBatch`/`endToolBatch` in `engine.ts`): each tile changes and redraws at once, and the city recomputes once on release; `step()` and saves settle an open batch first. `shared/simulation/perf-counters.ts` reports simulation timings to `client/game/perf-monitor.ts`, which shows frame time (average, p95, p99, max), stutters, long tasks, and day, traffic, transit, tool, redraw and UI cost under Settings → Performance diagnostics in development, or as an overlay on any build opened with `?perf`.
+
 ## Milestone 7: public safety and emergency response
 
 Spatial safety combines structural crime pressure, community prevention, powered road lighting, bounded recent incident memory and effective police response. Employment, stable housing, public services and active streets can support safe neighborhoods without extensive policing; income and informal tenure are never direct crime inputs.
