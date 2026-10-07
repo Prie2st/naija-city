@@ -165,13 +165,14 @@ export function applyToolBatch(city: City, tiles: { x: number; y: number }[], to
   return error;
 }
 
-export function step(city: City) {
+/** One simulated day. Offline coarse replay may skip or force the mobility evaluation; active play always uses 'normal'. */
+export function step(city: City, mobility: 'normal' | 'skip' | 'force' = 'normal') {
   settleToolBatch(city);
   const started = perfNow(), previousPopulation = city.population;
   city.tick++;
   updateGovernance(city); updateNationalEconomy(city);
   updateWeather(city); updateInfrastructure(city); updateFloods(city);
-  refreshCity(city); updateMobility(city); labourAndMigration(city); updatePublicServices(city); updateSafety(city); refreshCity(city); updateDemand(city); operateBusinesses(city);
+  refreshCity(city); if (mobility !== 'skip') updateMobility(city, true, mobility === 'force'); labourAndMigration(city); updatePublicServices(city); updateSafety(city); refreshCity(city); updateDemand(city); operateBusinesses(city);
   if (city.tick % 5 === 0) updateLandValues(city);
   updateBuildings(city); developmentTick(city); refreshCity(city);
   updateLiving(city); refreshCity(city);
@@ -186,9 +187,56 @@ export function step(city: City) {
 export function advance(city: City, ticks: number) {
   for (let i = 0; i < Math.max(0, Math.floor(ticks)); i++) step(city);
 }
+// Offline replay. Short absences replay every day exactly as active play. Longer
+// absences become progressively coarser so a large city never blocks for minutes:
+//   exact      every day, identical to active play;
+//   coarse     every day, but the commuting/transit network (the dominant cost,
+//              ~88% of a large city's day) is re-evaluated every 15 days;
+//   aggregate  the remaining days are spread over at most 24 evaluated days,
+//              aligned to month ends. Skipped days carry the daily budget balance
+//              and tax revenue forward; growth, services, safety and governance
+//              advance at each evaluated day. No per-day events are generated.
+// The plan depends only on the city and the absence, so replay stays deterministic.
+export const OFFLINE = {
+  maxTicks: 17280, mobilityEvery: 15, macroSteps: 24, macroMobilityEvery: 3, yieldEvery: 64, yieldMs: 40,
+  // Active load (residents + jobs) decides how many days can be afforded exactly.
+  tiers: [{ load: 5000, exact: 360, coarse: 240 }, { load: 50000, exact: 120, coarse: 120 }, { load: 150000, exact: 40, coarse: 90 }, { load: Infinity, exact: 10, coarse: 60 }],
+};
+export interface OfflinePlan { ticks: number; exact: number; coarse: number; aggregate: number; macroSteps: number }
+export function planOffline(city: City, ticks: number): OfflinePlan {
+  const load = city.population + city.jobs, tier = OFFLINE.tiers.find(t => load < t.load)!;
+  const exact = Math.min(ticks, tier.exact), coarse = Math.min(ticks - exact, tier.coarse), aggregate = ticks - exact - coarse;
+  return { ticks, exact, coarse, aggregate, macroSteps: aggregate ? Math.min(OFFLINE.macroSteps, Math.ceil(aggregate / 30)) : 0 };
+}
+/** Carries skipped days' daily balance and tax revenue forward without simulating them. */
+function skipDays(city: City, days: number) {
+  if (days <= 0) return;
+  city.tick += days;
+  city.treasury += days * (city.income - city.expenses) / 30;
+  city.counters.taxRevenue += days * city.income / 30;
+}
+/** Yields the number of days completed after each unit of offline work. */
+function* offlineWork(city: City, plan: OfflinePlan): Generator<number> {
+  let done = 0;
+  for (let i = 0; i < plan.exact; i++) { step(city); yield ++done; }
+  for (let i = 0; i < plan.coarse; i++) {
+    const last = i === plan.coarse - 1 && !plan.aggregate;
+    step(city, last ? 'force' : (city.tick + 1) % OFFLINE.mobilityEvery === 0 ? 'normal' : 'skip'); yield ++done;
+  }
+  if (!plan.aggregate) return;
+  const start = city.tick, end = start + plan.aggregate;
+  for (let j = 1; j <= plan.macroSteps; j++) {
+    const target = j === plan.macroSteps ? end : Math.floor((start + plan.aggregate * j / plan.macroSteps) / 30) * 30;
+    if (target <= city.tick) continue;
+    const skipped = target - city.tick - 1;
+    skipDays(city, skipped);
+    step(city, j % OFFLINE.macroMobilityEvery === 0 || j === plan.macroSteps ? 'force' : 'skip');
+    done += skipped + 1; yield done;
+  }
+}
 export function catchUp(city: City, now: number): OfflineReport {
   const report = offlineStart(city, now);
-  advance(city, report.ticks);
+  for (const _ of offlineWork(city, report.plan)) { /* run to completion */ }
   return offlineFinish(city, now, report);
 }
 /** Transit conditions worth reporting after time away: disruptions and the busiest hub. */
@@ -198,17 +246,17 @@ function transitAwaySummary(city: City) {
 }
 function offlineStart(city: City, now: number) {
   const awayMs = Math.max(0, now - city.lastSimulatedTimestamp);
-  const ticks = Math.min(17280, Math.floor(awayMs / TICK_MS));
+  const ticks = Math.min(OFFLINE.maxTicks, Math.floor(awayMs / TICK_MS)), plan = planOffline(city, ticks);
   const populationBefore = city.population, treasury = city.treasury, previous = { ...city.counters }, history = new Set(city.history);
   const gridBefore = city.infrastructure.power.reliability, waterBefore = city.infrastructure.water.reliability;
   const floods = city.infrastructure.floodIncidents, properties = city.infrastructure.floodedProperties, losses = city.infrastructure.economicLoss;
   const commuteBefore = city.mobility.stats.averageCommute, congestionBefore = city.mobility.stats.congestion, routesBefore = city.mobility.routes.length;
-  return { transitRecoveryBefore:city.transit.finance.recovery,transitBefore:city.transit.stats.ridership,transitAccessBefore:city.transit.stats.access,transitJobsBefore:city.transit.stats.jobs45,safetyBefore:city.safety.metrics.publicSafety,safetyTotal:city.safety.totalIncidents,safetySerious:city.safety.seriousIncidents,policeResponseBefore:city.safety.metrics.responseMinutes,rentBefore:city.governance.housing.averageRent,affordabilityBefore:city.governance.housing.affordability,educationBefore:city.publicServices.stats.education.served/Math.max(1,city.publicServices.stats.education.demand)*100,healthcareBefore:city.publicServices.stats.healthcare.served/Math.max(1,city.publicServices.stats.healthcare.demand)*100,wasteBefore:city.publicServices.waste.backlog,qolBefore:city.publicServices.qualityOfLife,firesBefore:city.publicServices.containedFires,commuteBefore, congestionBefore, routesBefore, awayMs, ticks, populationBefore, treasury, previous, history, gridBefore, waterBefore, floods, properties, losses, jobsBefore: city.jobs, marketsBefore: city.living.markets.length };
+  return { transitRecoveryBefore:city.transit.finance.recovery,transitBefore:city.transit.stats.ridership,transitAccessBefore:city.transit.stats.access,transitJobsBefore:city.transit.stats.jobs45,safetyBefore:city.safety.metrics.publicSafety,safetyTotal:city.safety.totalIncidents,safetySerious:city.safety.seriousIncidents,policeResponseBefore:city.safety.metrics.responseMinutes,rentBefore:city.governance.housing.averageRent,affordabilityBefore:city.governance.housing.affordability,educationBefore:city.publicServices.stats.education.served/Math.max(1,city.publicServices.stats.education.demand)*100,healthcareBefore:city.publicServices.stats.healthcare.served/Math.max(1,city.publicServices.stats.healthcare.demand)*100,wasteBefore:city.publicServices.waste.backlog,qolBefore:city.publicServices.qualityOfLife,firesBefore:city.publicServices.containedFires,commuteBefore, congestionBefore, routesBefore, awayMs, ticks, plan, populationBefore, treasury, previous, history, gridBefore, waterBefore, floods, properties, losses, jobsBefore: city.jobs, marketsBefore: city.living.markets.length };
 }
 function offlineFinish(city: City, now: number, snapshot: ReturnType<typeof offlineStart>): OfflineReport {
   const { awayMs, ticks, populationBefore, treasury, previous, history, gridBefore, waterBefore, floods, properties, losses } = snapshot;
   city.lastSimulatedTimestamp = Math.max(city.lastSimulatedTimestamp, now);
-  return { ...transitAwaySummary(city),transitRecoveryBefore:snapshot.transitRecoveryBefore,transitRecoveryAfter:city.transit.finance.recovery,transitBefore:snapshot.transitBefore,transitAfter:city.transit.stats.ridership,transitAccessBefore:snapshot.transitAccessBefore,transitAccessAfter:city.transit.stats.access,transitJobsBefore:snapshot.transitJobsBefore,transitJobsAfter:city.transit.stats.jobs45,safetyBefore:snapshot.safetyBefore,safetyAfter:city.safety.metrics.publicSafety,safetyIncidents:city.safety.totalIncidents-snapshot.safetyTotal,seriousSafetyIncidents:city.safety.seriousIncidents-snapshot.safetySerious,policeResponseBefore:snapshot.policeResponseBefore,policeResponseAfter:city.safety.metrics.responseMinutes,rentBefore:snapshot.rentBefore,rentAfter:city.governance.housing.averageRent,affordabilityBefore:snapshot.affordabilityBefore,affordabilityAfter:city.governance.housing.affordability,displacedResidents:city.governance.housing.displacedResidents,educationBefore:snapshot.educationBefore,educationAfter:city.publicServices.stats.education.served/Math.max(1,city.publicServices.stats.education.demand)*100,healthcareBefore:snapshot.healthcareBefore,healthcareAfter:city.publicServices.stats.healthcare.served/Math.max(1,city.publicServices.stats.healthcare.demand)*100,wasteBefore:snapshot.wasteBefore,wasteAfter:city.publicServices.waste.backlog,qolBefore:snapshot.qolBefore,qolAfter:city.publicServices.qualityOfLife,firesContained:city.publicServices.containedFires-snapshot.firesBefore,commuteBefore: snapshot.commuteBefore, commuteAfter: city.mobility.stats.averageCommute, congestionBefore: snapshot.congestionBefore, congestionAfter: city.mobility.stats.congestion, routesBefore: snapshot.routesBefore, routesAfter: city.mobility.routes.length, ticks, awayMs, simulatedMs: ticks * TICK_MS, populationBefore, populationAfter: city.population, population: city.population - populationBefore,
+  return { ...transitAwaySummary(city),transitRecoveryBefore:snapshot.transitRecoveryBefore,transitRecoveryAfter:city.transit.finance.recovery,transitBefore:snapshot.transitBefore,transitAfter:city.transit.stats.ridership,transitAccessBefore:snapshot.transitAccessBefore,transitAccessAfter:city.transit.stats.access,transitJobsBefore:snapshot.transitJobsBefore,transitJobsAfter:city.transit.stats.jobs45,safetyBefore:snapshot.safetyBefore,safetyAfter:city.safety.metrics.publicSafety,safetyIncidents:city.safety.totalIncidents-snapshot.safetyTotal,seriousSafetyIncidents:city.safety.seriousIncidents-snapshot.safetySerious,policeResponseBefore:snapshot.policeResponseBefore,policeResponseAfter:city.safety.metrics.responseMinutes,rentBefore:snapshot.rentBefore,rentAfter:city.governance.housing.averageRent,affordabilityBefore:snapshot.affordabilityBefore,affordabilityAfter:city.governance.housing.affordability,displacedResidents:city.governance.housing.displacedResidents,educationBefore:snapshot.educationBefore,educationAfter:city.publicServices.stats.education.served/Math.max(1,city.publicServices.stats.education.demand)*100,healthcareBefore:snapshot.healthcareBefore,healthcareAfter:city.publicServices.stats.healthcare.served/Math.max(1,city.publicServices.stats.healthcare.demand)*100,wasteBefore:snapshot.wasteBefore,wasteAfter:city.publicServices.waste.backlog,qolBefore:snapshot.qolBefore,qolAfter:city.publicServices.qualityOfLife,firesContained:city.publicServices.containedFires-snapshot.firesBefore,commuteBefore: snapshot.commuteBefore, commuteAfter: city.mobility.stats.averageCommute, congestionBefore: snapshot.congestionBefore, congestionAfter: city.mobility.stats.congestion, routesBefore: snapshot.routesBefore, routesAfter: city.mobility.routes.length, ticks, exactDays: snapshot.plan.exact, awayMs, simulatedMs: ticks * TICK_MS, populationBefore, populationAfter: city.population, population: city.population - populationBefore,
     revenue: city.treasury - treasury, taxRevenue: city.counters.taxRevenue - previous.taxRevenue,
     buildingsOpened: city.counters.buildingsOpened - previous.buildingsOpened,
     businessesOpened: city.counters.businessesOpened - previous.businessesOpened,
@@ -220,9 +268,12 @@ function offlineFinish(city: City, now: number, snapshot: ReturnType<typeof offl
 }
 export async function catchUpInChunks(city: City, now: number, yieldTick: (completed: number, total: number) => Promise<void>): Promise<OfflineReport> {
   const snapshot = offlineStart(city, now);
-  for (let done = 0; done < snapshot.ticks;) {
-    const count = Math.min(64, snapshot.ticks - done); advance(city, count); done += count;
-    if (done < snapshot.ticks) await yieldTick(done, snapshot.ticks);
+  const clock = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+  let lastYield = clock(), lastYieldDone = 0;
+  for (const done of offlineWork(city, snapshot.plan)) {
+    if (done < snapshot.ticks && (done - lastYieldDone >= OFFLINE.yieldEvery || clock() - lastYield >= OFFLINE.yieldMs)) {
+      await yieldTick(done, snapshot.ticks); lastYield = clock(); lastYieldDone = done;
+    }
   }
   return offlineFinish(city, now, snapshot);
 }

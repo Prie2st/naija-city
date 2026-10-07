@@ -12,7 +12,7 @@ function legacySave() {
 describe('versioned local persistence boundary', () => {
   let values: Map<string, string>;
   beforeEach(() => {
-    values = new Map(); vi.stubGlobal('localStorage', { getItem: (key: string) => values.get(key) ?? null, setItem: (key: string, value: string) => values.set(key, value) });
+    values = new Map(); vi.stubGlobal('localStorage', { getItem: (key: string) => values.get(key) ?? null, setItem: (key: string, value: string) => values.set(key, value), removeItem: (key: string) => values.delete(key) });
   });
   it('returns no city for empty storage and round-trips complete state', () => {
     const repo = new LocalCityRepository(), c = createCity(1234); expect(repo.load()).toBeNull(); repo.save(c); expect(repo.load()).toEqual(c);
@@ -33,15 +33,20 @@ describe('versioned local persistence boundary', () => {
     repo.save(migrated); expect(values.get('naija-city-v1')).toBe(raw); expect(repo.load()).toEqual(migrated);
   });
   it('rejects malformed or unknown saves rather than passing invalid state to the renderer', () => {
-    const repo = new LocalCityRepository(), c = createCity(); c.tiles[0].terrain = 'broken' as typeof c.tiles[0]['terrain']; repo.save(c);
-    expect(() => repo.load()).toThrow('damaged'); values.set('naija-city-v6', '{bad json'); expect(() => repo.load()).toThrow();
+    // Invalid state is refused before it is written; damaged stored copies are rejected on load.
+    const repo = new LocalCityRepository(), c = createCity(); c.tiles[0].terrain = 'broken' as typeof c.tiles[0]['terrain'];
+    expect(repo.save(c)).toMatchObject({ ok: false, reason: 'invalid-state' }); expect(repo.load()).toBeNull();
+    values.set('naija-city-v6', JSON.stringify(c)); expect(() => repo.load()).toThrow('damaged');
+    values.set('naija-city-v6', '{bad json'); expect(() => repo.load()).toThrow();
     values.set('naija-city-v6', JSON.stringify({ ...createCity(), version: 99 })); expect(() => repo.load()).toThrow();
   });
   it('rejects damaged construction, duplicate IDs and missing economic state', () => {
     const repo = new LocalCityRepository();
-    const c = createCity(); c.tiles.find(t => t.building)!.building!.constructionProgress = Infinity; repo.save(c); expect(() => repo.load()).toThrow();
+    const c = createCity(); c.tiles.find(t => t.building)!.building!.constructionProgress = Infinity;
+    expect(repo.save(c)).toMatchObject({ ok: false, reason: 'invalid-state' }); expect(repo.load()).toBeNull();
     const other = createCity(); const buildings = other.tiles.filter(t => t.building); buildings[1].building!.id = buildings[0].building!.id;
-    repo.save(other); expect(() => repo.load()).toThrow();
+    expect(repo.save(other)).toMatchObject({ ok: false, reason: 'invalid-state' });
+    values.set('naija-city-v6', JSON.stringify(other)); expect(() => repo.load()).toThrow();
     const missing = createCity() as unknown as Record<string, unknown>; delete missing.demand;
     values.set('naija-city-v6', JSON.stringify(missing)); expect(() => repo.load()).toThrow();
   });

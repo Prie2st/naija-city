@@ -83,6 +83,8 @@ export interface City {
   transit: TransitNetwork;
 }
 export interface OfflineReport {
+  /** Days replayed exactly; the rest of `ticks` was replayed in coarser offline steps. */
+  exactDays?: number;
   transitBefore:number; transitAfter:number; transitRecoveryBefore:number; transitRecoveryAfter:number; transitDisruptedAfter:number; transitBusiestHub:string; transitHubLoadAfter:number; transitAccessBefore:number; transitAccessAfter:number; transitJobsBefore:number; transitJobsAfter:number;
   safetyBefore:number; safetyAfter:number; safetyIncidents:number; seriousSafetyIncidents:number; policeResponseBefore:number; policeResponseAfter:number;
   rentBefore: number; rentAfter: number; affordabilityBefore: number; affordabilityAfter: number; displacedResidents: number;

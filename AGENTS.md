@@ -20,7 +20,7 @@ Use descriptive names that reflect gameplay responsibilities. Keep modules focus
 
 ## Testing Guidelines
 
-Use Vitest and name tests `*.test.ts`. Test simulation rules without rendering: placement costs, development, population, economy and offline determinism. Persistence changes should cover save round trips and malformed state. No coverage threshold is configured. Include regression tests for gameplay bugs when practical.
+Use Vitest and name tests `*.test.ts`. Test simulation rules without rendering: placement costs, development, population, economy and offline determinism. Persistence changes should cover save round trips and malformed state. Any change to authoritative persisted schema must review whether a save version bump and migration are required (see `docs/persistence.md`). No coverage threshold is configured. Include regression tests for gameplay bugs when practical.
 
 ## Commit & Pull Request Guidelines
 

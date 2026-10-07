@@ -21,7 +21,7 @@ import { CityScene } from './game/CityScene';
 import { PerfMonitor } from './game/perf-monitor';
 import { gameConfig } from './game/game-config';
 import type { GraphicsQuality } from './game/visual-style';
-import { LocalCityRepository } from './persistence/storage';
+import { LocalCityRepository, type LoadResult, type SaveResult } from './persistence/storage';
 import { advance, applyTool, applyToolBatch, beginToolBatch, catchUpInChunks, COSTS, createCity, endToolBatch, previewTool, refreshCity, settleToolBatch, TICK_MS, tileAt, toolBatchOpen } from '../shared/simulation/engine';
 import type { Tool, Overlay, OfflineReport } from '../shared/types/city';
 import { debugAction, type DebugAction } from '../shared/simulation/debug';
@@ -49,8 +49,13 @@ let transportTab = 'overview', selectedRoute: string | null = null, busDraft: nu
 let transitDraft:string[]|null=null, transitMode:'bus'|'brt'='bus', editingTransit:string|null=null, corridorDraft:number[]|null=null;
 let governanceTab='Overview', districtId:string|null=null, districtDraft:number[]|null=null;
 let catchingUp = false;
+let saveFailingSince: number | null = null, lastSaveWarning = 0, recoveryNotice: string | null = null;
+function recoveryText(loaded: LoadResult) {
+  const when = loaded.savedAt ? ` from ${new Date(loaded.savedAt).toLocaleString()}` : '';
+  return `Your latest save could not be read, so the ${loaded.source === 'backup' ? 'backup save' : 'older saved city'}${when} was restored. The unreadable copy is kept for diagnosis.`;
+}
 const pulse = new CityPulseTracker();
-async function runCatchUp() {
+async function runCatchUp(target = city) {
   catchingUp = true;
   const app = document.getElementById('app')!;
   app.inert = true;
@@ -59,7 +64,7 @@ async function runCatchUp() {
   progress.setAttribute('role', 'status');
   progress.textContent = 'Your city kept living. Replaying the time away…';
   document.body.append(progress);
-  try { return await catchUpInChunks(city, Date.now(), async () => { await new Promise<void>(resolve => setTimeout(resolve, 0)); }); }
+  try { return await catchUpInChunks(target, Date.now(), async (done, total) => { progress.textContent = `Your city kept living. Replaying the time away… ${Math.floor(done / Math.max(1, total) * 100)}%`; await new Promise<void>(resolve => setTimeout(resolve, 0)); }); }
   finally { catchingUp = false; app.inert = false; progress.remove(); }
 }
 let rainQuality: 'normal' | 'low' | 'off' = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'off' : innerWidth < 600 ? 'low' : 'normal';
@@ -68,13 +73,14 @@ try { const q=localStorage.getItem('naija-city-graphics-quality'); if(q==='low'|
 let noticeTimer: ReturnType<typeof setTimeout>;
 let initialMessage = 'Welcome, Governor. Extend the road and zone land beside it.';
 try {
-  const saved = repo.load();
+  const loaded = repo.loadWithReport(), saved = loaded?.city;
+  if (loaded?.recovered) recoveryNotice = recoveryText(loaded);
   if (saved) {
     city = saved; showIntro = false;
     document.querySelector('#app')!.innerHTML = '<div class="loading-city glass" role="status">Your city kept living.<br>Simulating infrastructure, weather and development…</div>';
     const report = await runCatchUp();
     if (report.ticks) lastReport = report;
-    initialMessage = report.ticks ? `Welcome back · ${report.ticks} city days progressed. ${report.population.toLocaleString()} new residents; treasury change ${money(report.revenue)}. Catch-up is limited to 24 hours.` : 'Welcome back to Ilu Alafia.';
+    initialMessage = recoveryNotice ?? (report.ticks ? `Welcome back · ${report.ticks} city days progressed. ${report.population.toLocaleString()} new residents; treasury change ${money(report.revenue)}. Catch-up is limited to 24 hours.` : 'Welcome back to Ilu Alafia.');
   }
 } catch {
   autosaveEnabled = false;
@@ -203,7 +209,7 @@ function renderPanel() {
     const transitDebugHtml=`<h3>Transit diagnostics</h3>${TRANSIT_OVERLAYS.map(o=>`<button data-overlay="${o}">${o}</button>`).join('')}${['demand','crowding','congestion','flood','cache','report'].map(a=>`<button data-transit-debug="${a}">${a}</button>`).join('')}${transitReportOpen?transitReportHtml(city):''}`;
     const debugTools: [DebugAction, string][] = [['demand-residential', 'Increase Residential Demand'], ['demand-commercial', 'Increase Commercial Demand'], ['demand-industrial', 'Increase Industrial Demand'], ['development', 'Force Development Tick'], ['complete', 'Complete Construction'], ['upgrade', 'Force Building Upgrade'], ['close-business', 'Force Business Closure'], ['unemployment', 'Create Unemployment'], ['boost', 'Boost Economy'], ['month', 'Advance 1 Month'], ['year', 'Advance 1 Year']];
     const infraTools: [InfrastructureDebug, string][] = [['light-rain', 'Trigger Light Rain'], ['heavy-rain', 'Trigger Heavy Rain'], ['extreme-rain', 'Trigger Extreme Rain'], ['end-rain', 'End Rain'], ['power-demand', 'Set Power Demand +25%'], ['plant-failure', 'Cause Power Plant Failure'], ['restore-power', 'Restore Power Infrastructure'], ['water-demand', 'Set Water Demand +25%'], ['water-shortage', 'Cause Water Shortage'], ['flood-tile', 'Flood Selected Tile'], ['clear-floods', 'Clear Flooding'], ['drainage-capacity', 'Set Drainage Capacity · 1× / 2×'], ['damage-infrastructure', 'Damage Infrastructure'], ['repair-infrastructure', 'Repair Infrastructure']];
-    html = `<div class="settings-actions"><button data-action="save">Save city</button><button data-action="load">Load saved city</button><button data-action="new">New city / reset</button><button data-action="intro">How to play</button></div><label class="budget-label">Graphics quality <select id="graphics-quality">${(['low', 'medium', 'high'] as const).map(q => `<option value="${q}" ${q === graphicsQuality ? 'selected' : ''}>${q}</option>`).join('')}</select></label><label class="budget-label">Rain effects <select id="rain-quality">${(['normal', 'low', 'off'] as const).map(q => `<option value="${q}" ${q === rainQuality ? 'selected' : ''}>${q}</option>`).join('')}</select></label><p class="hint">Version 9 saves. Versions 1/2/3/4/5/6/7/8 migrate with originals retained. Autosave: 15 seconds. Offline catch-up: 24 real hours. Pause only affects active play.</p><details${transitReportOpen?' open':''}><summary>Developer controls</summary>${transitDebugHtml}<div class="debug-tools">${debugTools.map(([action, label]) => `<button class="secondary" data-debug="${action}">${label}</button>`).join('')}${MOBILITY_DEBUG.map(action => `<button class="secondary" data-mobility-debug="${action}">${action}</button>`).join('')}<button data-mobility-view="od">Show OD Demand</button><button data-mobility-view="graph">Show Road Graph</button><button data-mobility-view="capacity">Show Segment Capacity</button><button data-action="vehicle-count">Show Representative Vehicle Count</button>${(['bounds','anchors','depth','lod','shadows','props','vegetation','weather'] as const).map(v => `<button data-graphics-toggle="${v}">Toggle ${v === 'bounds' ? 'tile bounds' : v === 'anchors' ? 'object anchors' : v === 'depth' ? 'depth order' : v === 'lod' ? 'LOD level' : v === 'weather' ? 'weather effects' : v}</button>`).join('')}<button data-action="graphics-count">Show sprite / visible object count</button><button data-action="graphics-count">Show texture atlas usage / performance</button>${infraTools.map(([action, label]) => `<button class="secondary" data-infra-debug="${action}">${label}</button>`).join('')}${(['development', 'land-value', 'occupancy', 'power', 'water', 'drainage', 'flood-risk'] as Overlay[]).map(o => `<button class="secondary" data-overlay="${o}">Show ${o.replaceAll('-', ' ')} overlay</button>`).join('')}<button class="secondary" data-overlay="none">Clear infrastructure overlays</button></div><p class="hint">Flood Selected Tile uses the last inspected tile${debugTarget === null ? ' (none yet)' : ` (${debugTarget % city.size}, ${Math.floor(debugTarget / city.size)})`}. These actions change the saved simulation.</p></details>`;
+    html = `<div class="settings-actions"><button data-action="save">Save city</button><button data-action="load">Load saved city</button><button data-action="new">New city / reset</button><button data-action="intro">How to play</button></div><label class="budget-label">Graphics quality <select id="graphics-quality">${(['low', 'medium', 'high'] as const).map(q => `<option value="${q}" ${q === graphicsQuality ? 'selected' : ''}>${q}</option>`).join('')}</select></label><label class="budget-label">Rain effects <select id="rain-quality">${(['normal', 'low', 'off'] as const).map(q => `<option value="${q}" ${q === rainQuality ? 'selected' : ''}>${q}</option>`).join('')}</select></label><p class="hint">Version 9 saves are compact and verified, with one backup copy. Versions 1–8 migrate automatically. Autosave: 15 seconds. Offline catch-up: 24 real hours, with long absences approximated. Pause only affects active play.</p><p class="hint" id="save-status" role="status"></p><details${transitReportOpen?' open':''}><summary>Developer controls</summary>${transitDebugHtml}<div class="debug-tools">${debugTools.map(([action, label]) => `<button class="secondary" data-debug="${action}">${label}</button>`).join('')}${MOBILITY_DEBUG.map(action => `<button class="secondary" data-mobility-debug="${action}">${action}</button>`).join('')}<button data-mobility-view="od">Show OD Demand</button><button data-mobility-view="graph">Show Road Graph</button><button data-mobility-view="capacity">Show Segment Capacity</button><button data-action="vehicle-count">Show Representative Vehicle Count</button>${(['bounds','anchors','depth','lod','shadows','props','vegetation','weather'] as const).map(v => `<button data-graphics-toggle="${v}">Toggle ${v === 'bounds' ? 'tile bounds' : v === 'anchors' ? 'object anchors' : v === 'depth' ? 'depth order' : v === 'lod' ? 'LOD level' : v === 'weather' ? 'weather effects' : v}</button>`).join('')}<button data-action="graphics-count">Show sprite / visible object count</button><button data-action="graphics-count">Show texture atlas usage / performance</button>${infraTools.map(([action, label]) => `<button class="secondary" data-infra-debug="${action}">${label}</button>`).join('')}${(['development', 'land-value', 'occupancy', 'power', 'water', 'drainage', 'flood-risk'] as Overlay[]).map(o => `<button class="secondary" data-overlay="${o}">Show ${o.replaceAll('-', ' ')} overlay</button>`).join('')}<button class="secondary" data-overlay="none">Clear infrastructure overlays</button></div><p class="hint">Flood Selected Tile uses the last inspected tile${debugTarget === null ? ' (none yet)' : ` (${debugTarget % city.size}, ${Math.floor(debugTarget / city.size)})`}. These actions change the saved simulation.</p></details>`;
   } else if (openPanel === 'offline') {
     title = 'Welcome back'; kicker = 'YOUR CITY KEPT LIVING'; html = lastReport ? offlineHtml(lastReport) : '<p>No offline changes yet.</p>';
   } else if (openPanel === 'inspector') {
@@ -230,7 +236,7 @@ function renderPanel() {
     if (import.meta.env.DEV) html += `<details><summary>Living city diagnostics</summary><label class="budget-label">Activity hour <select id="activity-hour"><option value="auto" ${activityHourOverride === null ? 'selected' : ''}>Simulation clock</option>${[0,6,8,13,17,20].map(h => `<option value="${h}" ${activityHourOverride === h ? 'selected' : ''}>${activityTime(h)}</option>`).join('')}</select></label><div class="debug-tools">${[['activity','Show activity scores'],['network','Show pedestrian network'],['od','Show commuter OD'],['traffic','Show vehicle flow'],['mobility','Show transit demand'],['neighborhoods','Show neighborhood boundaries'],['business','Show business health'],['markets','Show market attraction'],['informal','Show informal housing pressure']].map(([view,label])=>`<button data-living-view="${view}">${label}</button>`).join('')}<button data-action="living-count">Representative agent diagnostics</button><button data-living-view="clear">Clear living diagnostics</button></div></details>`;
   }
   document.getElementById('panel-kicker')!.textContent = kicker;
-  content.innerHTML = html;
+  content.innerHTML = html; if (openPanel === 'settings') renderSaveStatus();
   document.querySelectorAll<HTMLButtonElement>('[data-overlay]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.overlay === overlay)));
   if (openPanel === 'data') document.getElementById('journal')!.replaceChildren(...city.history.slice(0, 6).map(text => { const li = document.createElement('li'); li.textContent = text; return li; }));
 }
@@ -293,9 +299,31 @@ function setOverlay(next: Overlay) {
   renderPanel();
 }
 function save(silent = false) {
+  // Settle an open drag stroke first so the saved city includes every painted tile (M8.3).
   settleToolBatch(city);
-  try { city.lastSimulatedTimestamp = Date.now(); repo.save(city); autosaveEnabled = true; if (!silent) message('City saved on this device.'); }
-  catch { if (!silent) message('Could not save. Device storage may be full or unavailable.'); }
+  city.lastSimulatedTimestamp = Date.now();
+  const result = repo.save(city, Date.now(), { fullVerify: !silent });
+  if (result.ok) {
+    autosaveEnabled = true;
+    if (saveFailingSince !== null) message('Saving works again. Your city is saved on this device.', 8000);
+    else if (!silent) message('City saved on this device.');
+    saveFailingSince = null; lastSaveWarning = 0;
+  } else {
+    // A failed write never replaces the last good copy, so the warning says so and saving retries on the next autosave.
+    saveFailingSince ??= Date.now();
+    if (!silent || Date.now() - lastSaveWarning > 60000) { lastSaveWarning = Date.now(); message(saveFailureText(result), 20000); }
+  }
+  if (openPanel === 'settings') renderSaveStatus();
+  return result.ok;
+}
+function saveFailureText(result: SaveResult) {
+  const why = result.reason === 'storage-full' ? 'browser storage for this site is full' : result.reason === 'storage-unavailable' ? 'browser storage is unavailable (private browsing or blocked site data)' : result.reason === 'invalid-state' ? 'the city failed a safety check before writing' : 'the written save could not be verified';
+  return `⚠ Your city was NOT saved: ${why}. Your last good save is kept and saving will retry automatically.`;
+}
+function renderSaveStatus() {
+  const el = document.getElementById('save-status'); if (!el) return;
+  const last = repo.lastSuccessAt ? new Date(repo.lastSuccessAt).toLocaleTimeString() : null;
+  el.textContent = saveFailingSince !== null && repo.lastSave && !repo.lastSave.ok ? `${saveFailureText(repo.lastSave)}${last ? ` Last successful save: ${last}.` : ''}` : last ? `Last saved ${last}.` : 'Not saved yet this session.';
 }
 document.querySelectorAll<HTMLButtonElement>('[data-category]').forEach(b => b.onclick = () => { const category = b.dataset.category!; if (openPanel === category) closePanel(); else displayPanel(category); });
 document.getElementById('settings')!.onclick = () => openPanel === 'settings' ? closePanel() : displayPanel('settings');
@@ -387,9 +415,11 @@ content.addEventListener('click', async event => {
     case 'save': save(); break;
     case 'load':
       try {
-        const loaded = repo.load(); if (!loaded) { message('No saved city on this device yet.'); break; }
-        city = loaded; pulse.reset(); message('Your city kept living. Calculating offline changes…', 60000); const r = await runCatchUp(); accumulator = 0; lastTime = performance.now(); chooseTool('inspect');
-        scene.redraw(); renderUI(); if (r.ticks) { lastReport = r; displayPanel('offline'); } message(`City loaded · ${r.ticks} days progressed while away.`);
+        const loaded = repo.loadWithReport(); if (!loaded) { message('No saved city on this device yet.'); break; }
+        // Catch up a separate object so a failure leaves the open city untouched.
+        message('Your city kept living. Calculating offline changes…', 60000); const r = await runCatchUp(loaded.city);
+        city = loaded.city; pulse.reset(); accumulator = 0; lastTime = performance.now(); chooseTool('inspect');
+        scene.redraw(); renderUI(); if (r.ticks) { lastReport = r; displayPanel('offline'); } message(loaded.recovered ? recoveryText(loaded) : `City loaded · ${r.ticks} days progressed while away.`, loaded.recovered ? 15000 : 6000);
       } catch { message('Could not load this save. Your current city is still open.'); }
       break;
     case 'new':
@@ -454,7 +484,7 @@ setInterval(() => {
 setInterval(() => { if (!document.hidden && autosaveEnabled && !catchingUp) save(true); }, 15000);
 document.addEventListener('visibilitychange', async () => {
   if (catchingUp) return;
-  if (document.hidden) { if (autosaveEnabled) save(true); }
+  if (document.hidden) { if (autosaveEnabled) save(true); else city.lastSimulatedTimestamp = Date.now(); }
   else { const r = await runCatchUp(); lastTime = performance.now(); accumulator = 0; scene.redraw(); renderUI(); renderPlacement(); if (r.ticks) { lastReport = r; chooseTool('inspect'); displayPanel('offline'); } }
 });
 if(import.meta.env.DEV&&perf)Object.assign(window,{naijaPerf:{snapshot:()=>perf.snapshot(),text:()=>perf.text()}});
@@ -470,5 +500,6 @@ window.addEventListener('pagehide', () => { if (autosaveEnabled && !catchingUp) 
 scene.setRainQuality(rainQuality);
 scene.setActivity(activity);
 renderUI(); if (showIntro) intro.showModal(); else if (lastReport) displayPanel('offline'); else message(initialMessage, 10000);
+if (recoveryNotice) message(recoveryNotice, 20000);
 }
 startGame().catch(error => { document.querySelector('#app')!.textContent = `Could not start the city: ${String(error)}`; });
