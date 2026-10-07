@@ -22,7 +22,7 @@ The simulation is now recoverable, and its archetypes diverge. It does not yet k
   - Policies cost 2–10% of what they did.
   - Low maintenance wears assets down instead of emptying the city.
 - **Power.** Substations share load, and power reliability at year 20 is 46–75% (was 27–40%).
-- **Still open.**
+- **Still open, and deferred to the combined Milestone 8 stabilization gate.**
   - Population plateaus at year 8–12 in every archetype.
   - One sprawl run (seed 731) collapses at year 32 after 25 years of deficit.
   - Crime, rent, informality and waste were not addressed.
@@ -389,9 +389,33 @@ All of these are in `shared/simulation/balance-config.ts` (new), unless marked o
 
 ## Integration notes
 
-- **Milestone 8 (`1333a37`).** This branch is based on it and does not touch mode choice or transit code. The only mobility change is `commuteDestinations` (8 → 14) in `shared/simulation/mobility.ts`.
-- **Milestone 8.3 (traffic every third day).** The flood-unemployment and flood-decline rules read daily `floodedTiles` and accessibility, not traffic, so they should be unaffected. After integration, rerun `tools/balance` for 20 years to confirm.
-- **Milestone 8.1 (offline catch-up).** The road-graph cache now keys on its bucketed inputs, so continuous play and save/reload give identical results here (checked with `tools/balance/det-check.ts`). The catch-up algorithm belongs to 8.1, and this branch did not change it.
+On 2026-10-07 Priest accepted this branch for integration. The open items in "Known remaining issues" (the year 8–12 plateau, the late sprawl collapse, and crime, rent and waste) are deferred to the combined Milestone 8 stabilization gate, because transport, accessibility, commuting and TOD may change their behaviour. No further balance changes are planned on this branch.
+
+### Trial merges
+
+Each trial merge was run locally on 2026-10-07 and was not pushed. Every branch shares the base `1333a37`.
+
+| Merged onto this branch (`1a593bf`) | Textual conflicts | Result |
+|---|---|---|
+| Milestone 8 head `75905b3` (PR #1) | None. Both sides touch `shared/simulation/mobility.ts` in different places and git merges them automatically | 314 tests pass, type check clean |
+| + Milestone 8.3 `9a70d3e` (PR #3) | 3 conflicts, all "keep both sides": the import lines at the top of `shared/simulation/engine.ts` and of `shared/simulation/mobility.ts`, and the new milestone sections in `README.md` | 321 tests pass |
+| Milestone 8 + Milestone 8.1 `2c4de92` (PR #2) | None with this branch | 348 of 349 pass. The one failure is 8.1's "large cities replay far fewer full days" test hitting the default 5 s timeout. It also takes 5.0–5.6 s on 8.1's own branch, and it passes in isolation in both trees, so it needs an explicit timeout rather than a code change |
+| Milestone 8 + Milestone 8.4 `9677e1b` (branch only) | None. Both sides touch `client/ui/governance-panels.ts` and `client/ui/infrastructure-panels.ts`, and git merges them automatically; this branch's fiscal-stage, policy-estimate and flood-event rows survive | 343 tests pass, production build succeeds |
+
+Milestones 8.1 and 8.3 conflict with each other, not with this branch: in `step()` in `shared/simulation/engine.ts` and in `save()` in `client/main.ts`. Milestones 8.1 and 8.4 also conflict in `client/main.ts`.
+
+### Files most likely to need attention
+
+- **`shared/simulation/engine.ts`.** This branch adds one import and one call (`updateNationalEconomy`) after `updateGovernance`. Milestone 8.1 rewrites `step()` and Milestone 8.3 adds perf counters and tool batches there. Keep the call once per simulated day, including coarse offline days.
+- **`shared/simulation/mobility.ts`.** This branch changes one line, `slice(0, 8)` to `slice(0, BALANCE.labour.commuteDestinations)`, and adds one import. Milestone 8 and 8.3 edit the same file elsewhere.
+- **`README.md`.** Every branch adds a milestone section near the top. Keep all of them.
+- **`client/ui/governance-panels.ts` and `client/ui/infrastructure-panels.ts`.** Milestone 8.4 restyles these panels. These merge automatically, but check that the Budget tab still shows the fiscal stage and the policy cost estimates.
+
+### Behaviour to recheck after integration
+
+- **Milestone 8 transit.** These results were measured on `1333a37`. The Milestone 8 head has since added `TRANSIT.slowerSensitivity` (`75905b3`), so transit-share numbers here may shift a little after integration.
+- **Milestone 8.3 (traffic every third day).** The flood-unemployment and flood-decline rules read the daily `floodedTiles`, not traffic, so they should be unaffected. Employment comes from commute assignment in `mobility.ts`, so under 8.3 the employment that drives migration and shop hours can be up to 2 days old. After integration, rerun `tools/balance` for 20 years to confirm.
+- **Milestone 8.1 (offline catch-up).** The road-graph cache now keys on its bucketed inputs, so save/reload and continuous play give identical results (`tools/balance/det-check.ts`). The catch-up algorithm belongs to 8.1. Its coarse and aggregate days should still apply the daily rules this branch changed: national economy, fiscal stages, flood decline and asset ageing.
 - **Saves.** No saved fields were added. Version 9 saves load unchanged.
 
 ## Reproducing
