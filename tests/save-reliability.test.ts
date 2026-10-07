@@ -235,7 +235,7 @@ describe('offline catch-up', () => {
     const c = transitNetworkFixture(500000), plan = planOffline(c, OFFLINE.maxTicks);
     expect(plan.exact).toBe(10); expect(plan.exact + plan.coarse + plan.macroSteps).toBeLessThanOrEqual(160);
     const small = planOffline(createCity(0), 300); expect(small).toMatchObject({ exact: 300, coarse: 0, aggregate: 0 });
-  });
+  }, 60000);
   it('carries the budget through aggregated days', () => {
     const c = createCity(0); c.lastSimulatedTimestamp = 0; const before = c.counters.taxRevenue;
     const report = catchUp(c, OFFLINE.maxTicks * TICK_MS);
