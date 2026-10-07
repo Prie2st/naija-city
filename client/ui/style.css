@@ -235,3 +235,63 @@ dialog ol { padding-left: 18px; color: #62775a; font-size: 12px; line-height: 2;
 #perf-overlay { position: fixed; left: 8px; top: 136px; z-index: 50; margin: 0; padding: 6px 8px; max-width: min(460px, calc(100vw - 16px)); background: rgba(20, 24, 22, .82); color: #e8eadf; font: 11px/1.35 ui-monospace, Menlo, Consolas, monospace; white-space: pre-wrap; border-radius: 6px; pointer-events: none; }
 @media (max-width: 600px) { #perf-overlay { font-size: 9px; top: 128px; max-width: calc(100vw - 84px); opacity: .9; } }
 .perf-text { margin: 0; font: 11px/1.4 ui-monospace, Menlo, Consolas, monospace; white-space: pre-wrap; }
+/* ---- Milestone 8.4 UX stabilization: hierarchy, navigation, mobile sheet, feedback ---- */
+.toolbar button[data-tool-active] { position: relative; }
+.toolbar button[data-tool-active]::after { content: ''; position: absolute; top: 7px; right: calc(50% - 17px); width: 7px; height: 7px; border-radius: 50%; background: #c0793f; box-shadow: 0 0 0 2px #fbfcf1; }
+.service-tabs button[aria-pressed="true"] { background: #264b3c; color: #f7efd8; }
+.transport-tabs { flex-wrap: wrap; }
+.transport-tabs button { flex: 1 0 auto; min-width: 64px; }
+.key-figures { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 10px 0 14px; }
+.key-figure { background: #eef2e4; border-radius: 10px; padding: 9px 11px; min-width: 0; }
+.key-figure small { display: block; font-size: 10px; color: #72836a; font-weight: 600; }
+.key-figure strong { display: block; font: 700 17px Manrope, sans-serif; margin-top: 3px; letter-spacing: -.3px; overflow-wrap: anywhere; }
+.key-figure span { display: block; font-size: 10px; color: #7b8870; margin-top: 2px; }
+.key-figure.bad { background: #f3e5d9; } .key-figure.bad strong { color: #9e4b37; }
+.key-figure.good strong { color: #2f6a4c; }
+details.panel-section { padding-top: 0; margin-top: 6px; }
+details.panel-section > summary { display: flex; align-items: center; gap: 8px; min-height: 46px; font-size: 13px; font-weight: 700; list-style: none; }
+details.panel-section > summary::-webkit-details-marker { display: none; }
+details.panel-section > summary::after { content: '›'; margin-left: auto; font-size: 18px; color: #7b8c70; transition: transform .15s; }
+details.panel-section[open] > summary::after { transform: rotate(90deg); }
+details.panel-section > summary small { font-weight: 500; font-size: 10px; color: #7b8870; }
+.inspector-primary > p:first-child { margin-top: 0; }
+.return-lead { font-size: 13px; color: #3f5a49; }
+.return-attention { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-left: 3px solid #b5654a; background: #f3e5d9; border-radius: 8px; margin: 8px 0; font-size: 12px; }
+.return-attention .secondary { margin: 4px 0 0; background: #fbfcf1; }
+.catch-up { display: grid; gap: 10px; width: min(360px, calc(100% - 40px)); padding: 26px; border-radius: 16px; color: #253e37; text-align: center; }
+.catch-up strong { font: 700 19px Manrope, sans-serif; }
+.catch-up span, .catch-up small { font-size: 12px; color: #6f8066; }
+.catch-up progress { width: 100%; height: 8px; accent-color: #2d6049; }
+.placement { flex-wrap: wrap; }
+.placement > div:first-child { flex: 1 1 200px; min-width: 0; }
+.placement-actions { display: flex; gap: 6px; align-items: center; }
+#placement-result:empty { display: none; }
+#placement-result { font-weight: 600; color: #2f6a4c; }
+#placement-result[data-tone="error"] { color: #a14e3d; }
+#draw-mode[aria-pressed="true"] { background: #c0793f; color: #fff7e6; }
+#sheet-toggle { display: none; }
+@media (max-width: 600px) {
+  .placement { bottom: calc(142px + env(safe-area-inset-bottom)); }
+  .placement > div:first-child { flex-basis: 100%; }
+  .placement-actions { flex: 1; justify-content: flex-end; }
+  .placement-actions button { min-height: 44px; padding: 8px 12px; font-size: 12px; }
+  /* Bottom sheet: chips step aside while a panel is open so the map stays usable. */
+  body[data-panel="open"] .demand-chip, body[data-panel="open"] .weather-chip { display: none; }
+  #sheet-toggle { display: block; width: 44px; font-size: 20px; }
+  .panel-heading { position: relative; padding-top: 8px; touch-action: none; }
+  .panel-heading::before { content: ''; position: absolute; top: -6px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 3px; background: #cfd7c4; }
+  .panel-heading > div { flex: 1; min-width: 0; }
+  body[data-sheet="peek"] .panel { max-height: 36dvh; }
+  body[data-sheet="full"] .panel { max-height: calc(100dvh - 210px - env(safe-area-inset-bottom) - env(safe-area-inset-top)); }
+  body[data-sheet="min"] .panel { max-height: none; overflow: hidden; padding-bottom: 8px; }
+  body[data-sheet="min"] #panel-content { display: none; }
+  body[data-sheet="min"] .panel-heading h2 { font-size: 16px; margin: 2px 0; }
+  /* The legend moves into the space the chips left, above the sheet. */
+  body[data-panel="open"] .overlay-legend { top: calc(max(10px, env(safe-area-inset-top)) + 112px); bottom: auto; }
+  body[data-panel="open"] .notice { top: calc(max(10px, env(safe-area-inset-top)) + 172px); }
+  .key-figure strong { font-size: 15px; }
+}
+/* Touch targets: camera and speed controls at least 44px. */
+.camera-controls button { width: 44px; }
+.clock button { width: 44px; }
+@media (max-width: 600px) { .camera-controls button { width: 44px; } .clock button { width: 44px; min-height: 44px; } }

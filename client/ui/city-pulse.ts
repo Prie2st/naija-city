@@ -1,5 +1,7 @@
 import type { City, Overlay, Tile } from '../../shared/types/city';
-import { escapeHtml } from './panels';
+import { compactMoney, escapeHtml } from './panels';
+/** Simulation text prints raw naira amounts ("-9414265 naira"); show them the way the HUD does ("₦-9.4M"). */
+export const readableMoney = (text: string) => text.replace(/(-?\d{4,}) naira/g, (_, n: string) => compactMoney(Number(n)));
 
 export interface CityPulse {
   id: string; type: 'problem' | 'opportunity'; severity: 'critical' | 'warning' | 'notice' | 'opportunity';
@@ -65,7 +67,8 @@ export function detectCityPulse(city: City): CityPulse[] {
     if (zone === 'commercial' && capacity > 0 && jobs / capacity < 0.4 && businesses.some(t => t.building!.age > 20)) add('commercial-vacancy', 'warning', 'Commercial space is underused', 'Many shop and office jobs remain vacant. Check demand, workforce and local services.', 'occupancy', location(businesses, t => 1 - t.building!.occupancy));
     if (zone === 'industrial' && struggling.length) add('industrial-decline', 'warning', 'Industrial businesses are struggling', `${struggling.length} workshops or factories face prolonged poor conditions.`, 'occupancy', location(struggling, t => t.building!.poorDays));
   }
-  if (city.income < city.expenses) add('budget', city.treasury < city.expenses * 3 ? 'critical' : 'warning', 'Monthly budget deficit', 'Operating and maintenance expenses exceed tax revenue. Check the Economy and Services budgets.');
+  // The governance 'Persistent budget deficit' challenge already covers a long deficit; show one card, not two.
+  if (city.income < city.expenses && !city.governance?.challenges.some(c => !c.resolved && c.kind === 'budget')) add('budget', city.treasury < city.expenses * 3 ? 'critical' : 'warning', 'Monthly budget deficit', 'Operating and maintenance expenses exceed tax revenue. Check the Economy and Services budgets.');
   for (const [zone, label] of [['residential', 'Residential'], ['commercial', 'Commercial'], ['industrial', 'Industrial']] as const) if (city.demand[zone] >= 65) {
     const parcels = city.tiles.filter(t => t.zone === zone && !t.building && !t.road);
     add(`demand-${zone}`, 'opportunity', `Strong ${label.toLowerCase()} demand`, `${city.demand[zone]}/100 demand. Well-connected, serviced parcels can attract private investment.`, 'development', location(parcels.length ? parcels : developed.filter(t => t.zone === zone), t => t.attractiveness));
@@ -89,7 +92,7 @@ export function detectCityPulse(city: City): CityPulse[] {
     else if (!r.formalized && r.ridership >= 100 && r.profitability >= 50) add(`route-formalize-${r.id}`, 'opportunity', 'A corridor is ready for formalization', `${r.originName} ↔ ${r.destinationName} has a sustained passenger base. Recognized stops can improve reliability and boarding.`, 'mobility', tile, r.path);
   }
   if (city.mobility.hubs.length) { const hub = city.mobility.hubs[0]; add('transport-hub', 'opportunity', 'An organic transport hub is active', `${hub.routes.length} routes converge at ${hub.name}. Passenger activity can support nearby shops.`, 'mobility', city.tiles[hub.tileId]); }
-  for(const c of city.governance?.challenges.filter(c=>!c.resolved)??[]){if(['power','water','flood','traffic','employment','school','health','waste','commute'].includes(c.kind))continue;add(`governance-${c.id}`,c.severity,c.title,c.description,c.overlay,c.tileId!==null?city.tiles[c.tileId]:undefined);}
+  for(const c of city.governance?.challenges.filter(c=>!c.resolved)??[]){if(['power','water','flood','traffic','employment','school','health','waste','commute'].includes(c.kind))continue;add(`governance-${c.id}`,c.severity,c.title,readableMoney(c.description),c.overlay,c.tileId!==null?city.tiles[c.tileId]:undefined);}
   return pulses.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity] || a.id.localeCompare(b.id));
 }
 
@@ -114,6 +117,6 @@ export class CityPulseTracker {
 }
 
 export function pulseHtml(tracker: CityPulseTracker) {
-  const cards = tracker.active.map(p => `<button class="pulse-card ${p.severity}" data-pulse="${escapeHtml(p.id)}"><small>${p.severity} · Day ${p.timestamp + 1}</small><b>${escapeHtml(p.title)}</b><span>${escapeHtml(p.description)}</span><em>${p.tileId !== null ? 'Find this area ↗' : p.id === 'budget' ? 'Review economy ↗' : 'Review city data ↗'}</em></button>`).join('');
+  const cards = tracker.active.map(p => `<button class="pulse-card ${p.severity}" data-pulse="${escapeHtml(p.id)}"><small>${p.severity} · Day ${p.timestamp + 1}</small><b>${escapeHtml(p.title)}</b><span>${escapeHtml(p.description)}</span><em>${p.tileId !== null ? 'Find this area ↗' : p.id === 'budget' ? 'Review economy ↗' : p.id.startsWith('governance-') ? 'Open Govern ↗' : 'Review city data ↗'}</em></button>`).join('');
   return `<p>Problems and opportunities from your city’s current conditions. Select an item to investigate.</p>${cards || '<p class="pulse-empty">No pressing problems or strong opportunities right now. Keep watching your city.</p>'}${tracker.history.length ? `<details><summary>Recently resolved · ${tracker.history.length}</summary>${tracker.history.slice(0, 6).map(p => `<p>Resolved · ${escapeHtml(p.title)}</p>`).join('')}</details>` : ''}`;
 }

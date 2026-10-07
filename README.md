@@ -10,13 +10,19 @@ Requires Node.js 20.19+ or 22.12+ and npm.
 
 Saves are verified before they count. The city is validated, encoded losslessly into a compact columnar format (about 80–93% smaller than plain JSON), written, then read back. A last-known-good backup copy is kept, and legacy `naija-city-v*` keys are retired once two verified copies exist, so storage no longer fills up with old backups. A failed save never replaces the last good copy, and the game warns the player instead of failing silently. Unreadable saves fall back to the backup and the player is told. Missing derived fields get safe defaults; missing authoritative state is rejected by name. Long offline absences replay the first days exactly and the rest in progressively coarser steps, so a large city returns in seconds rather than minutes. City saves remain version 9. See [persistence and offline catch-up](docs/persistence.md), including the rule for schema changes.
 
+## Milestone 8.4: UX stabilization
+
+The toolbar has a first-class **Govern** button. Economy, Data and inspectors open on key figures, with detail in collapsible sections. On phones panels are bottom sheets (peek, full, heading only) that shrink when a map overlay is switched on. On touch, dragging always moves the map; building needs a second tap on the previewed tile, Build, or the Draw toggle. Mouse controls are unchanged. Developer tools appear in Settings only in `npm run dev` builds.
+
+`client/game/gesture-policy.ts` holds the pointer rules, `client/ui/interaction.ts` the toolbar, sheet states, stroke feedback and calendar text, `client/ui/panel-layout.ts` the Economy, Data, inspector and Settings layouts, `client/ui/welcome-back.ts` the Welcome Back summary and `client/ui/dev-panels.ts` the development-only tools. `tests/ux-stabilization.test.ts` covers them.
+
 ## Milestone 8: metropolitan transit
 
 Formal buses and BRT share ordered stops, connected walking catchments, bounded transfers, real OD ridership, fleet/depot capacity, frequency, crowding and monthly finance. Danfo/Keke remain organic and can feed or compete with planned routes. Dedicated corridors trade general road capacity for reliable person throughput.
 
 Use **Transport → Bus / BRT / Network** to place stops/stations/depots, create and govern services, inspect accessibility and compare districts. Junction treatments, temporary works, transit overlays, City Pulse, actual waiting activity and pooled representative buses expose consequences. Current saves are version 9 with versions 1–8 migrated and original keys retained. See [transit architecture, balance and validation](docs/transit.md). Rail/metro and Milestone 9 remain excluded.
 
-Ridership is split into rush, daytime and evening periods, so crowding reflects the busiest period and poor night safety thins evening travel. Road inspectors compare people moved with people capacity, the Network tab compares districts' access, commutes and mode share, and access is banded Poor/Weak/Good/Excellent. Travellers compare every mode door to door, including parking and hailing time, so a BRT that beats a congested road shortens commutes. `shared/simulation/transit-metrics.ts` derives these views; Settings → Developer controls → Transit diagnostics → report shows demand, boardings, transfers and mode share. `transitNetworkFixture` in `shared/simulation/transit-fixtures.ts` builds the drained 10k/100k/500k test city used by `tests/transit-long-run.test.ts`. `tools/check-transit-browser.cjs` checks route creation, inspectors and overlays at 390×844, 430×932 and 1440×900 against `npm run dev`.
+Ridership is split into rush, daytime and evening periods, so crowding reflects the busiest period and poor night safety thins evening travel. Road inspectors compare people moved with people capacity, the Network tab compares districts' access, commutes and mode share, and access is banded Poor/Weak/Good/Excellent. Travellers compare every mode door to door, including parking and hailing time, so a BRT that beats a congested road shortens commutes. `shared/simulation/transit-metrics.ts` derives these views; Settings → Developer tools (development builds) → Transit diagnostics → report shows demand, boardings, transfers and mode share. `transitNetworkFixture` in `shared/simulation/transit-fixtures.ts` builds the drained 10k/100k/500k test city used by `tests/transit-long-run.test.ts`. `tools/check-transit-browser.cjs` checks route creation, inspectors and overlays at 390×844, 430×932 and 1440×900 against `npm run dev`.
 
 ## Milestone 8.2: simulation rebalancing and recovery
 
@@ -89,7 +95,7 @@ For a phone, open the computer's LAN IP on port 5173 on the same network. The ho
 
 The map fills the viewport. The compact HUD shows population, treasury, calendar, satisfaction and residential/commercial/industrial demand. Drag to pan; pinch, scroll or use buttons to zoom. Tap buildings or zoned parcels to inspect them. Contextual panels close to restore map space; mobile inspectors are bottom sheets.
 
-Open Roads or Zones, then select a tool. Desktop hover previews placement; touch users can tap to preview and press Build tile, or deliberately drag to paint. Done returns to exploration. Escape closes panels. Clearing costs ₦50,000 and removes occupants immediately.
+Open Roads or Zones, then select a tool. Desktop hover previews placement; touch users tap to preview, then tap again or press Build tile; switch on Draw to paint by dragging. Done returns to exploration. Escape closes panels. Clearing costs ₦50,000 and removes occupants immediately.
 
 Extend roads and zone a mix of homes and employment near existing development. Zoning never creates an instant building. Developers assess road access, demand, nearby development/employment, land value, occupancy and spare capacity. Inspector explanations identify barriers. Interest builds over repeated evaluations; the queue starts one parcel every three city days, with at most three active construction sites. Site preparation becomes visible construction, then a completed building. Residential/commercial construction takes nine days; industrial construction takes twelve.
 
@@ -97,7 +103,7 @@ Residents move into actual housing when jobs and satisfaction support migration.
 
 Economy shows automatic residential, commercial and industrial taxes, road upkeep and monthly balance. Data contains housing, employment, demand, land value, satisfaction, trends and milestones. Select Land Value, Development or Occupancy overlays there. Profitability is a normalized health score: 50 means break-even; the inspector also shows actual net profit.
 
-Start with 500 residents, ₦500M, and a small diesel/substation/borehole/tower network. Pause/1×/2×/4× control active play; one city day takes five seconds at 1×. Settings contains Save, Load, New City, rain-effect quality and collapsible developer tools. Transport contains mobility overview, road hierarchy, informal corridor governance and public bus planning.
+Start with 500 residents, ₦500M, and a small diesel/substation/borehole/tower network. Pause/1×/2×/4× control active play; one city day takes five seconds at 1×. Settings contains Save, Load, New City, graphics and rain-effect quality; development builds add developer tools. Transport contains mobility overview, road hierarchy, informal corridor governance and public bus planning.
 
 ## Infrastructure and resilience
 

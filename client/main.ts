@@ -27,6 +27,10 @@ import type { Tool, Overlay, OfflineReport } from '../shared/types/city';
 import { debugAction, type DebugAction } from '../shared/simulation/debug';
 import { compactMoney, demandHtml, inspectorHtml, money, offlineHtml, statisticsHtml } from './ui/panels';
 import './ui/style.css';
+import { economyPanelHtml, dataPanelHtml, inspectorPanelHtml, settingsPanelHtml, withoutLeadingHeading } from './ui/panel-layout';
+import { developerSettingsHtml } from './ui/dev-panels';
+import { TOOLBAR, toolCategory, sheetAfter, strokeSummary, isFundsError, placementHint, calendarLabel, type SheetState, type StrokeResult } from './ui/interaction';
+import { welcomeBackHtml, awayText, simulatedSpan } from './ui/welcome-back';
 import { INFRASTRUCTURE } from '../shared/simulation/infrastructure-config';
 import { updateInfrastructure } from '../shared/simulation/infrastructure';
 import { infrastructureDebug, type InfrastructureDebug } from '../shared/simulation/infrastructure-debug';
@@ -61,10 +65,15 @@ async function runCatchUp(target = city) {
   app.inert = true;
   const progress = document.createElement('div');
   progress.className = 'offline-progress';
-  progress.setAttribute('role', 'status');
-  progress.textContent = 'Your city kept living. Replaying the time away…';
+  progress.innerHTML = '<div class="catch-up glass" role="status"><strong>Your city kept living</strong><span>Replaying the time you were away…</span><progress max="1" value="0" aria-label="Catch-up progress"></progress><small aria-live="off"></small></div>';
   document.body.append(progress);
-  try { return await catchUpInChunks(target, Date.now(), async (done, total) => { progress.textContent = `Your city kept living. Replaying the time away… ${Math.floor(done / Math.max(1, total) * 100)}%`; await new Promise<void>(resolve => setTimeout(resolve, 0)); }); }
+  const bar = progress.querySelector('progress')!, counter = progress.querySelector('small')!;
+  let shown = 0;
+  try { return await catchUpInChunks(target, Date.now(), async (done, total) => {
+    // Presentation only: report the replay's own progress; the replay itself is unchanged.
+    if (performance.now() - shown > 120) { shown = performance.now(); bar.max = total; bar.value = done; counter.textContent = `Month ${Math.ceil(done / 30).toLocaleString()} of ${Math.ceil(total / 30).toLocaleString()}`; }
+    await new Promise<void>(resolve => setTimeout(resolve, 0));
+  }); }
   finally { catchingUp = false; app.inert = false; progress.remove(); }
 }
 let rainQuality: 'normal' | 'low' | 'off' = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'off' : innerWidth < 600 ? 'low' : 'normal';
@@ -77,10 +86,9 @@ try {
   if (loaded?.recovered) recoveryNotice = recoveryText(loaded);
   if (saved) {
     city = saved; showIntro = false;
-    document.querySelector('#app')!.innerHTML = '<div class="loading-city glass" role="status">Your city kept living.<br>Simulating infrastructure, weather and development…</div>';
     const report = await runCatchUp();
     if (report.ticks) lastReport = report;
-    initialMessage = recoveryNotice ?? (report.ticks ? `Welcome back · ${report.ticks} city days progressed. ${report.population.toLocaleString()} new residents; treasury change ${money(report.revenue)}. Catch-up is limited to 24 hours.` : 'Welcome back to Ilu Alafia.');
+    initialMessage = recoveryNotice ?? (report.ticks ? `Welcome back · ${simulatedSpan(report.ticks)} passed in ${awayText(report.awayMs)}.` : 'Welcome back to Ilu Alafia.');
   }
 } catch {
   autosaveEnabled = false;
@@ -88,7 +96,11 @@ try {
 }
 
 const toolButton = (value: Tool, label: string, description: string, icon: string) => `<button class="tool ${value}" data-tool="${value}" aria-pressed="${tool === value}"><span>${icon}</span><div><b>${label}</b><small>${description}</small></div></button>`;
-const categories = [['roads', '╋', 'Roads'], ['zones', '▧', 'Zones'], ['services', '⌂', 'Services'], ['transport', '⇄', 'Transport'], ['economy', '₦', 'Economy'], ['data', '▥', 'Data']];
+const categories = TOOLBAR;
+let sheet: SheetState = 'peek', drawMode = false, stroke: StrokeResult = { built: 0, spent: 0, errors: [] }, buildResult: ReturnType<typeof strokeSummary> = { text: '', tone: 'none' };
+let lastPanelKey = '';
+const compactLayout = () => innerWidth <= 600;
+const touchInput = matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
 let activity = cityActivity(city, 6), activityHourOverride: number | null = null;
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
@@ -107,8 +119,8 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div class="camera-controls glass" aria-label="Map camera"><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="home" aria-label="Frame developed city" title="Home · frame developed city">⌖</button></div>
   <div class="clock glass" aria-label="Simulation speed"><button data-speed="0" aria-label="Pause" aria-pressed="false">Ⅱ</button><button data-speed="1" aria-pressed="true">1×</button><button data-speed="2" aria-pressed="false">2×</button><button data-speed="4" aria-pressed="false">4×</button></div>
   <div id="notice" class="notice" role="status" hidden></div>
-  <div id="placement" class="placement glass" hidden><div><strong id="tool-name"></strong><small id="placement-description"></small></div><button id="commit" hidden>Build tile</button><button id="explore" aria-label="Exit construction mode">Done</button></div>
-  <section id="panel" class="panel glass" aria-labelledby="panel-title" hidden><div class="panel-heading"><div><small id="panel-kicker"></small><h2 id="panel-title"></h2></div><button id="close-panel" class="icon-button" aria-label="Close panel">×</button></div><div id="panel-content"></div></section>
+  <div id="placement" class="placement glass" hidden><div><strong id="tool-name"></strong><small id="placement-description"></small><small id="placement-result" role="status"></small></div><div class="placement-actions"><button id="draw-mode" aria-pressed="false" hidden title="Drag to paint tiles">✎ Draw</button><button id="commit" hidden>Build tile</button><button id="explore" aria-label="Exit construction mode">Done</button></div></div>
+  <section id="panel" class="panel glass" aria-labelledby="panel-title" hidden><div class="panel-heading"><div><small id="panel-kicker"></small><h2 id="panel-title"></h2></div><button id="sheet-toggle" class="icon-button" aria-label="Expand panel" aria-expanded="false">⌃</button><button id="close-panel" class="icon-button" aria-label="Close panel">×</button></div><div id="panel-content"></div></section>
   <nav class="toolbar glass" aria-label="Game tools">${categories.map(([value, icon, label]) => `<button data-category="${value}" aria-expanded="false" aria-controls="panel"><span>${icon}</span><b>${label}</b></button>`).join('')}</nav>
   <dialog id="intro"><span class="eyebrow">ILU ALAFIA · YOUR FIRST CHAPTER</span><h1>A city of its own.</h1><p>You plan and govern. Your city develops itself.</p><ol><li>Extend roads and zone homes, shops and workshops.</li><li>Balance housing and jobs; watch private construction.</li><li>Provide power, water and drainage as the city grows.</li></ol><p class="intro-controls">Drag to explore · scroll or pinch to zoom.<br>Inspect parcels to learn why they develop or wait.<br>On touch, preview a tile and confirm, or drag to paint.</p><button id="start" class="primary">Let's build a city <span>↗</span></button></dialog>`;
 
@@ -132,17 +144,14 @@ const scene = new CityScene(() => city, () => tool, (x, y, paint) => {
     scene.setSelected({ x, y }); scene.setRoutePreview(busDraft); renderPlacement(); return;
   }
   if (paint) {
-    // A drag is one tool batch: tiles change and redraw at once; the city recomputes on release.
+    // A stroke is one tool batch (M8.3): tiles change and redraw at once; the city recomputes once on release.
     if (!toolBatchOpen(city)) beginToolBatch(city);
-    const error = applyTool(city, x, y, tool);
-    if (error) message(error);
-    scene.redraw(); renderUI(); renderPlacement();
-    return;
+    build(x, y); return;
   }
   const t = tileAt(city, x, y);
   if (t && (city.transit.stops.some(s=>s.tileId===y*city.size+x) || t.publicFacility || t.building || t.zone || t.road || t.infrastructure || city.living.markets.some(m => m.tileId === y * city.size + x) || overlay !== 'none')) {
     debugTarget = y * city.size + x;
-    selected = y * city.size + x; scene.setSelected({ x, y }); displayPanel('inspector');
+    selected = y * city.size + x; scene.setSelected({ x, y }); displayPanel('inspector'); scene.ensureVisible(x, y);
   } else closePanel();
 }, (x, y) => {
   preview = tileAt(city, x, y) ? { x, y } : null;
@@ -157,86 +166,106 @@ if (perf) {
 }
 // Closing a paint stroke runs the deferred city recompute once.
 const endStroke = () => { if (toolBatchOpen(city) && endToolBatch(city)) { scene.redraw(); renderUI(); renderPlacement(); } };
-scene.onStrokeEnd(endStroke); window.addEventListener('blur', endStroke);
+scene.onPointersReleased(endStroke); window.addEventListener('blur', endStroke);
 scene.setGraphicsQuality(graphicsQuality);
+scene.onStrokeEnd(finishStroke);
+/** Applies the active tool to one tile and records the outcome for the stroke summary. */
+function build(x: number, y: number) {
+  const before = city.treasury, error = applyTool(city, x, y, tool);
+  if (error) stroke.errors.push(error); else { stroke.built++; stroke.spent += Math.max(0, before - city.treasury); }
+  scene.redraw(); renderUI(); renderPlacement();
+}
+/** One summary per stroke (click, confirmed tap or drag), shown in the construction bar. */
+function finishStroke() {
+  buildResult = strokeSummary(stroke);
+  // Only money problems and fully failed strokes also raise a notice; everything else stays in the bar.
+  if (!stroke.built && stroke.errors.length) message(stroke.errors[0], 4000);
+  else if (stroke.errors.some(isFundsError)) message('Treasury too low: some tiles were not built.', 4000);
+  stroke = { built: 0, spent: 0, errors: [] }; renderPlacement();
+}
 new Phaser.Game(gameConfig(scene, graphicsQuality));
 // Development-only probe for browser QA (tap a tile, focus the camera). Vite removes it from builds.
 if (import.meta.env.DEV) Object.assign(window, { naijaQA: { tileScreen: (x: number, y: number) => scene.tileScreen(x, y), focusTile: (x: number, y: number) => scene.focusTile(x, y), city: () => city } });
 
 function clearSelection() { selected = null; scene.setSelected(null); }
 function closePanel() {
-  openPanel = null; panel.hidden = true; scene.setServicePreview([]); clearSelection(); syncCategories();
+  openPanel = null; lastPanelKey = ''; panel.hidden = true; scene.setServicePreview([]); clearSelection(); syncCategories(); applySheet();
+}
+/** Mobile bottom-sheet height and the map area panels cover (for camera focusing and legend placement). */
+function setSheet(next: SheetState | 'closed') { if (next === 'closed') { closePanel(); return; } sheet = next; applySheet(); }
+function applySheet() {
+  const open = !panel.hidden;
+  document.body.dataset.panel = open ? 'open' : 'closed';
+  document.body.dataset.sheet = open ? sheet : 'closed';
+  const toggle = document.getElementById('sheet-toggle')!;
+  toggle.textContent = sheet === 'full' ? '⌄' : '⌃';
+  toggle.setAttribute('aria-label', sheet === 'full' ? 'Collapse panel' : 'Expand panel');
+  toggle.setAttribute('aria-expanded', String(sheet === 'full'));
+  const r = panel.getBoundingClientRect();
+  scene.setViewInsets(!open ? { right: 0, bottom: 0 } : compactLayout() ? { right: 0, bottom: Math.max(0, innerHeight - r.top) } : { right: innerWidth - r.left, bottom: 0 });
 }
 function syncCategories() {
-  document.querySelectorAll<HTMLButtonElement>('[data-category]').forEach(b => b.setAttribute('aria-expanded', String(b.dataset.category === openPanel || b.dataset.category === 'services' && openPanel?.startsWith('services-'))));
+  document.querySelectorAll<HTMLButtonElement>('[data-category]').forEach(b => { b.setAttribute('aria-expanded', String(b.dataset.category === openPanel || b.dataset.category === 'services' && !!openPanel?.startsWith('services-'))); b.toggleAttribute('data-tool-active', b.dataset.category === toolCategory(tool)); });
   document.getElementById('settings')!.setAttribute('aria-expanded', String(openPanel === 'settings'));
   document.getElementById('pulse-chip')!.setAttribute('aria-expanded', String(openPanel === 'pulse'));
 }
 function displayPanel(category: string) {
   if (category !== 'inspector') clearSelection();
-  openPanel = category; panel.hidden = false; renderPanel(); syncCategories();
+  const wasOpen = !panel.hidden;
+  openPanel = category; panel.hidden = false;
+  if (!wasOpen) sheet = sheetAfter(sheet, 'open', compactLayout()) as SheetState;
+  renderPanel(); syncCategories(); applySheet();
 }
 function renderPanel() {
   if (!openPanel) return;
   let title = '', kicker = 'GOVERNOR’S DESK', html = '';
   if (openPanel === 'roads') {
     title = 'Connect your city'; kicker = 'ROADS';
-    html = transportPanel(city, 'roads', null) + toolButton('bulldoze', 'Clear tile', money(COSTS.bulldoze), '×');
+    // Roads shows road building only; bus, BRT and network planning live under Transport.
+    html = transportPanel(city, 'roads', null).replace(/^<div class="transport-tabs">[\s\S]*?<\/div>/, '') + toolButton('bulldoze', 'Clear tile', money(COSTS.bulldoze), '×') + '<button class="secondary" data-transport-tab="overview">Junctions, buses and BRT · Transport ›</button>';
   } else if (openPanel === 'zones') {
     title = 'Make room to grow'; kicker = 'ZONING';
     html = `${demandHtml(city)}<p>Zone land, then watch. Demand and local conditions attract developers; construction takes 9–12 days after queueing.</p>${toolButton('residential', 'Residential', `Homes & compound housing · ${money(COSTS.residential)}`, '⌂')}${toolButton('commercial', 'Commercial', `Shops & businesses · ${money(COSTS.commercial)}`, '▤')}${toolButton('industrial', 'Industrial', `Workshops & factories · ${money(COSTS.industrial)}`, '▥')}`;
   } else if (openPanel.startsWith('services')) {
-    title = openPanel === 'services' ? 'Infrastructure' : openPanel.slice(9); kicker = 'SERVICES & RESILIENCE'; html = servicePanel(city, openPanel);
+    title = openPanel === 'services' ? 'Services' : openPanel.slice(9); kicker = 'SERVICES & RESILIENCE'; html = servicePanel(city, openPanel);
   } else if (openPanel === 'weather') {
     title = 'Weather & warnings'; kicker = 'RESILIENCE'; html = weatherPanel(city);
   } else if (openPanel === 'pulse') {
     title = 'City Pulse'; kicker = 'PROBLEMS & OPPORTUNITIES'; html = pulseHtml(pulse);
   } else if (openPanel === 'transport') {
-    title = 'The living street'; kicker = 'TRANSPORT'; html = transportPanel(city, transportTab, selectedRoute);
-  } else if(openPanel==='governance'){title='City governance';kicker='PLAN & GOVERN';html=governancePanel(city,governanceTab,districtId);
+    title = 'Transport'; kicker = 'THE LIVING STREET'; html = transportPanel(city, transportTab, selectedRoute);
+  } else if(openPanel==='governance'){title='Govern';kicker='BUDGET · TAXES · POLICIES · DISTRICTS';html=governancePanel(city,governanceTab,districtId);
   } else if (openPanel === 'economy') {
-    title = 'City treasury'; kicker = 'ECONOMY';
-    const costs = {...city.infrastructure.costs,...city.publicServices.costs};
-    html = transitSummary(city) + `<p>Taxes arrive automatically. Infrastructure has fuel, operating and maintenance costs. Rates are per 30-day month.</p><dl><div><dt>Treasury</dt><dd>${money(city.treasury)}</dd></div>${(['residential', 'commercial', 'industrial'] as const).map(z => `<div><dt>${z} tax</dt><dd>${compactMoney(city.taxes[z])}</dd></div>`).join('')}<div><dt>Monthly revenue</dt><dd>${compactMoney(city.income)}</dd></div>${Object.entries(costs).map(([name, cost]) => `<div><dt>${name} operations / maintenance</dt><dd>${compactMoney(cost)}</dd></div>`).join('')}<div><dt>Public bus fares</dt><dd>${compactMoney(city.mobility.costs.fares)}</dd></div><div><dt>Bus operations</dt><dd>${compactMoney(city.mobility.costs.buses)}</dd></div><div><dt>Corridor administration</dt><dd>${compactMoney(city.mobility.costs.administration)}</dd></div><div><dt>Monthly expenses</dt><dd>${compactMoney(city.expenses)}</dd></div><div class="net"><dt>Monthly balance</dt><dd>${compactMoney(city.income - city.expenses)}</dd></div><div><dt>Monthly private output</dt><dd>${compactMoney(city.economicOutput)}</dd></div></dl><label class="budget-label">Road maintenance <select data-budget="roads">${[0, 50, 100, 150].map(v => `<option value="${v}" ${city.infrastructure.maintenance.roads === v ? 'selected' : ''}>${v}%</option>`).join('')}</select></label>`;
+    title = 'City treasury'; kicker = 'ECONOMY'; html = economyPanelHtml(city);
   } else if (openPanel === 'data') {
-    title = 'Your city’s story'; kicker = 'DATA';
-    html = transitSummary(city) + safetySummary(city) + publicOverlayButtons() + publicSummary(city) + infrastructureOverlayButtons() + statisticsHtml(city, lastReport) + infrastructureSummary(city) + mobilitySummary(city) + '<button data-overlay="traffic">Traffic</button><button data-overlay="mobility">Mobility / routes</button>';
-    html += `<div id="living-content">${livingSummary(city, activity)}</div>`;
+    title = 'City data'; kicker = 'YOUR CITY’S STORY'; html = dataPanelHtml(city, lastReport, activity);
   } else if (openPanel === 'feed') {
     title = 'City Feed'; kicker = 'PLACES & PEOPLE'; html = feedHtml(city);
   } else if (openPanel === 'settings') {
     title = 'City settings'; kicker = 'SAVE & PLAY';
-    const transitDebugHtml=`<h3>Transit diagnostics</h3>${TRANSIT_OVERLAYS.map(o=>`<button data-overlay="${o}">${o}</button>`).join('')}${['demand','crowding','congestion','flood','cache','report'].map(a=>`<button data-transit-debug="${a}">${a}</button>`).join('')}${transitReportOpen?transitReportHtml(city):''}`;
-    const debugTools: [DebugAction, string][] = [['demand-residential', 'Increase Residential Demand'], ['demand-commercial', 'Increase Commercial Demand'], ['demand-industrial', 'Increase Industrial Demand'], ['development', 'Force Development Tick'], ['complete', 'Complete Construction'], ['upgrade', 'Force Building Upgrade'], ['close-business', 'Force Business Closure'], ['unemployment', 'Create Unemployment'], ['boost', 'Boost Economy'], ['month', 'Advance 1 Month'], ['year', 'Advance 1 Year']];
-    const infraTools: [InfrastructureDebug, string][] = [['light-rain', 'Trigger Light Rain'], ['heavy-rain', 'Trigger Heavy Rain'], ['extreme-rain', 'Trigger Extreme Rain'], ['end-rain', 'End Rain'], ['power-demand', 'Set Power Demand +25%'], ['plant-failure', 'Cause Power Plant Failure'], ['restore-power', 'Restore Power Infrastructure'], ['water-demand', 'Set Water Demand +25%'], ['water-shortage', 'Cause Water Shortage'], ['flood-tile', 'Flood Selected Tile'], ['clear-floods', 'Clear Flooding'], ['drainage-capacity', 'Set Drainage Capacity · 1× / 2×'], ['damage-infrastructure', 'Damage Infrastructure'], ['repair-infrastructure', 'Repair Infrastructure']];
-    html = `<div class="settings-actions"><button data-action="save">Save city</button><button data-action="load">Load saved city</button><button data-action="new">New city / reset</button><button data-action="intro">How to play</button></div><label class="budget-label">Graphics quality <select id="graphics-quality">${(['low', 'medium', 'high'] as const).map(q => `<option value="${q}" ${q === graphicsQuality ? 'selected' : ''}>${q}</option>`).join('')}</select></label><label class="budget-label">Rain effects <select id="rain-quality">${(['normal', 'low', 'off'] as const).map(q => `<option value="${q}" ${q === rainQuality ? 'selected' : ''}>${q}</option>`).join('')}</select></label><p class="hint">Version 9 saves are compact and verified, with one backup copy. Versions 1–8 migrate automatically. Autosave: 15 seconds. Offline catch-up: 24 real hours, with long absences approximated. Pause only affects active play.</p><p class="hint" id="save-status" role="status"></p><details${transitReportOpen?' open':''}><summary>Developer controls</summary>${transitDebugHtml}<div class="debug-tools">${debugTools.map(([action, label]) => `<button class="secondary" data-debug="${action}">${label}</button>`).join('')}${MOBILITY_DEBUG.map(action => `<button class="secondary" data-mobility-debug="${action}">${action}</button>`).join('')}<button data-mobility-view="od">Show OD Demand</button><button data-mobility-view="graph">Show Road Graph</button><button data-mobility-view="capacity">Show Segment Capacity</button><button data-action="vehicle-count">Show Representative Vehicle Count</button>${(['bounds','anchors','depth','lod','shadows','props','vegetation','weather'] as const).map(v => `<button data-graphics-toggle="${v}">Toggle ${v === 'bounds' ? 'tile bounds' : v === 'anchors' ? 'object anchors' : v === 'depth' ? 'depth order' : v === 'lod' ? 'LOD level' : v === 'weather' ? 'weather effects' : v}</button>`).join('')}<button data-action="graphics-count">Show sprite / visible object count</button><button data-action="graphics-count">Show texture atlas usage / performance</button>${infraTools.map(([action, label]) => `<button class="secondary" data-infra-debug="${action}">${label}</button>`).join('')}${(['development', 'land-value', 'occupancy', 'power', 'water', 'drainage', 'flood-risk'] as Overlay[]).map(o => `<button class="secondary" data-overlay="${o}">Show ${o.replaceAll('-', ' ')} overlay</button>`).join('')}<button class="secondary" data-overlay="none">Clear infrastructure overlays</button></div><p class="hint">Flood Selected Tile uses the last inspected tile${debugTarget === null ? ' (none yet)' : ` (${debugTarget % city.size}, ${Math.floor(debugTarget / city.size)})`}. These actions change the saved simulation.</p></details>`;
+    html = settingsPanelHtml(graphicsQuality, rainQuality);
+    if (import.meta.env.DEV) html += developerSettingsHtml({ city, debugTarget, transitReportOpen, activityHourOverride });
+    // Developer frame-time diagnostics (M8.3): development builds, or any build opened with ?perf.
+    if (perf) html += `<details><summary>Performance diagnostics</summary><pre id="perf-text" class="perf-text">${perf.text()}</pre><div class="debug-tools"><button data-action="perf-overlay">Toggle frame-time overlay</button></div><p class="hint">Frame times come from animation-frame timestamps. Stutters are frames over 50 ms. Open with ?perf to show this on any build.</p></details>`;
   } else if (openPanel === 'offline') {
-    title = 'Welcome back'; kicker = 'YOUR CITY KEPT LIVING'; html = lastReport ? offlineHtml(lastReport) : '<p>No offline changes yet.</p>';
+    title = 'Welcome back'; kicker = 'YOUR CITY KEPT LIVING'; html = lastReport ? welcomeBackHtml(lastReport) : '<p>No offline changes yet.</p>';
   } else if (openPanel === 'inspector') {
     const t = selected === null ? null : city.tiles[selected];
     if (!t) { closePanel(); return; }
     kicker = `TILE ${t.x}, ${t.y}`;
     title = t.publicFacility ? city.publicServices.facilities.find(f=>f.id===t.publicFacility)!.name : t.building ? t.building.name : t.infrastructure ? INFRASTRUCTURE[t.infrastructure.kind].name : t.road ? ROADS[t.roadClass ?? 'local'].name : t.zone ? `${t.zone} parcel` : 'Land & resilience';
-    html = transitInspector(city, city.tiles[selected!]) + safetyInspector(city,t) + publicInspector(city,t) + (t.publicFacility?'':inspectorHtml(city, t)) + infrastructureInspector(city, t) + mobilityInspector(city, t);
-    html += `<div id="living-content">${livingInspector(city, t, activity)}</div>`;
-    html += `<button class="secondary" data-tool="bulldoze">Clear tool · ${money(COSTS.bulldoze)}</button>`;
+    html = inspectorPanelHtml(city, t, activity);
+    html += `<button class="secondary" data-tool="bulldoze">Switch to the Clear tool · ${money(COSTS.bulldoze)} per tile</button>`;
   }
   document.getElementById('panel-title')!.textContent = title;
   if (openPanel === 'transport' && transportTab === 'overview') html += `<div id="living-content">${livingSummary(city, activity)}</div>`;
-  if (openPanel === 'economy' || openPanel === 'data' || openPanel === 'settings') html = '<button data-governance-tab="Overview">City governance · budget, policies & districts</button>'+html;
-  if (openPanel === 'inspector' && selected!==null) html+=governanceInspector(city,city.tiles[selected]);
-  if (openPanel === 'economy') html += publicBudgets(city);
-  if (openPanel === 'economy') html += `<h3>Informal livelihoods</h3><p>${city.living.informal.employed} workers · ${compactMoney(city.living.informal.output)} monthly output. Small formal tax contributions are included in commercial revenue.</p>`;
-  if (openPanel === 'settings') {
-    if(import.meta.env.DEV)html+=`<details><summary>Safety diagnostics</summary><div class="debug-tools">${SAFETY_OVERLAYS.map(o=>`<button data-overlay="${o}">Show ${o.replaceAll('-',' ')}</button>`).join('')}${['minor','moderate','serious'].map(v=>`<button data-safety-debug="${v}">Force ${v} incident at selected tile</button>`).join('')}</div><p>Seeded incident generation · ${city.safety.totalIncidents} total · ${city.safety.seriousIncidents} serious · ${city.safety.resolvedIncidents} resolved · ${city.safety.metrics.incidents30Days} during the last 30 days.</p></details>`;
-    if(import.meta.env.DEV)html+=`<details><summary>Governance diagnostics</summary><div class="debug-tools">${GOVERNANCE_OVERLAYS.map(o=>`<button data-overlay="${o}">${o.replaceAll('-',' ')}</button>`).join('')}<button data-governance-tab="Housing">Housing supply / affordability / income</button><button data-governance-tab="Budget">Spending and maintenance</button></div></details>`;
-    if(import.meta.env.DEV)html+=`<details><summary>Public service diagnostics</summary><div class="debug-tools">${["education-demand","education-capacity","healthcare-demand","healthcare-capacity","fire-response","waste-generation","waste-collection","park-access","quality-of-life","accessibility","clear"].map(v=>`<button data-public-view="${v}">Show ${v.replaceAll("-"," ")}</button>`).join("")}${['education','healthcare','fire','waste','parks','quality-of-life'].map(o=>`<button data-overlay="${o}">Show ${o}</button>`).join('')}${[['fire','Trigger selected building fire'],['waste','Increase selected waste backlog'],['staff','Fill facility staff for testing'],['repair','Repair facilities'],['access','Show cached service access diagnostics']].map(([a,n])=>`<button data-public-debug="${a}">${n}</button>`).join('')}</div><p class="hint">Education shows seats, healthcare shows visit demand, fire shows response reach, waste shows collection and parks show recreation. Inspector exposes capacity separately.</p></details>`;
-
-    if (perf) html += `<details><summary>Performance diagnostics</summary><pre id="perf-text" class="perf-text">${perf.text()}</pre><div class="debug-tools"><button data-action="perf-overlay">Toggle frame-time overlay</button></div><p class="hint">Frame times come from animation-frame timestamps. Stutters are frames over 50 ms. Open with ?perf to show this on any build.</p></details>`;
-    if (import.meta.env.DEV) html += `<details><summary>Living city diagnostics</summary><label class="budget-label">Activity hour <select id="activity-hour"><option value="auto" ${activityHourOverride === null ? 'selected' : ''}>Simulation clock</option>${[0,6,8,13,17,20].map(h => `<option value="${h}" ${activityHourOverride === h ? 'selected' : ''}>${activityTime(h)}</option>`).join('')}</select></label><div class="debug-tools">${[['activity','Show activity scores'],['network','Show pedestrian network'],['od','Show commuter OD'],['traffic','Show vehicle flow'],['mobility','Show transit demand'],['neighborhoods','Show neighborhood boundaries'],['business','Show business health'],['markets','Show market attraction'],['informal','Show informal housing pressure']].map(([view,label])=>`<button data-living-view="${view}">${label}</button>`).join('')}<button data-action="living-count">Representative agent diagnostics</button><button data-living-view="clear">Clear living diagnostics</button></div></details>`;
-  }
   document.getElementById('panel-kicker')!.textContent = kicker;
+  // Re-renders of the same panel keep which sections are open; a different panel or tile starts at the top.
+  const key = `${openPanel}:${openPanel === 'inspector' ? selected : openPanel === 'governance' ? governanceTab : openPanel === 'transport' ? transportTab : ''}`;
+  const openSections = new Map(Array.from(content.querySelectorAll<HTMLDetailsElement>('details[data-section]')).map(d => [d.dataset.section!, d.open]));
   content.innerHTML = html; if (openPanel === 'settings') renderSaveStatus();
+  content.querySelectorAll<HTMLDetailsElement>('details[data-section]').forEach(d => { const was = openSections.get(d.dataset.section!); if (was !== undefined) d.open = was; });
+  if (key !== lastPanelKey) { panel.scrollTop = 0; lastPanelKey = key; }
   document.querySelectorAll<HTMLButtonElement>('[data-overlay]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.overlay === overlay)));
   if (openPanel === 'data') document.getElementById('journal')!.replaceChildren(...city.history.slice(0, 6).map(text => { const li = document.createElement('li'); li.textContent = text; return li; }));
 }
@@ -247,7 +276,7 @@ function renderUI() {
 function renderInterface() {
   const set = (id: string, value: string) => { document.getElementById(id)!.textContent = value; };
   set('city-name', city.name); set('population', city.population.toLocaleString()); set('treasury', compactMoney(city.treasury));
-  set('date', `D${city.tick % 30 + 1} · M${Math.floor(city.tick / 30) + 1} · ${activityTime(activity.hour)}`);
+  set('date', calendarLabel(city.tick, activityTime(activity.hour)));
   set('satisfaction', `${Math.round(city.satisfaction)}%`);
   pulse.update(city);
   set('pulse-count', String(pulse.active.length));
@@ -276,6 +305,9 @@ function renderPlacement() {
     document.getElementById('placement-description')!.textContent = valid ? 'Tap more roads for waypoints, or establish the service.' : 'Tap start and end roads on one connected network.';
     const commit = document.getElementById('commit')!; commit.hidden = !valid; commit.textContent = 'Establish · ₦24M+'; return;
   }
+  const drawButton = document.getElementById('draw-mode')!, result = document.getElementById('placement-result')!;
+  drawButton.hidden = tool === 'inspect' || !touchInput; drawButton.setAttribute('aria-pressed', String(drawMode));
+  result.textContent = tool === 'inspect' ? '' : buildResult.text; result.dataset.tone = buildResult.tone;
   if (tool === 'inspect') return;
   const names = { road: 'Local road', 'dirt-road': 'Dirt road', avenue: 'Avenue', 'major-road': 'Major road', residential: 'Residential zone', commercial: 'Commercial zone', industrial: 'Industrial zone', bulldoze: 'Clear tile', ...Object.fromEntries(Object.entries(TRANSIT_FACILITIES).map(([k,d])=>[k,d.name])), ...Object.fromEntries(Object.entries(INFRASTRUCTURE).map(([k, d]) => [k, d.name])),...Object.fromEntries(Object.entries(PUBLIC_SERVICES).map(([k,d])=>[k,d.name])) } as Record<Exclude<Tool, 'inspect'>, string>;
   document.getElementById('tool-name')!.textContent = names[tool];
@@ -284,17 +316,24 @@ function renderPlacement() {
   const reached=preview&&isPublicService(tool)&&check?.status==='valid'?serviceTravelMap(city,makeFacility(city,preview.y*city.size+preview.x,tool)):null;
   scene.setServicePreview(reached?city.tiles.flatMap((_t,id)=>reached[id]<PUBLIC_SERVICES[tool as keyof typeof PUBLIC_SERVICES].minutes?[id]:[]):[]);
   const estimate=reached?city.tiles.reduce((sum,t,id)=>sum+(reached[id]<PUBLIC_SERVICES[tool as keyof typeof PUBLIC_SERVICES].minutes?(t.building?.occupants??0):0),0):null;
-  document.getElementById('placement-description')!.textContent = check ? `${check.reason} ${estimate!==null?`${estimate.toLocaleString()} residents in travel reach. `:""}${check.cost ? money(check.cost) : ''}` : 'Tap to preview and confirm, or drag to paint.';
+  document.getElementById('placement-description')!.textContent = check ? `${check.reason} ${estimate!==null?`${estimate.toLocaleString()} residents in travel reach. `:""}${check.cost ? money(check.cost) : ''}${touchInput && check.status === 'valid' ? ' · Tap again to build.' : ''}` : placementHint(touchInput, drawMode);
   const commit = document.getElementById('commit')!; commit.hidden = !preview || check?.status !== 'valid'; commit.textContent = 'Build tile';
 }
 function chooseTool(next: Tool) {
-  transitDraft=null;corridorDraft=null;editingTransit=null;districtDraft=null;scene.setServicePreview([]);busDraft = null; scene.setRoutePreview(null); tool = next; preview = null; closePanel(); scene.clearPreview(); renderPlacement();
+  const cancelling = next === 'inspect' && tool !== 'inspect';
+  transitDraft=null;corridorDraft=null;editingTransit=null;districtDraft=null;scene.setServicePreview([]);busDraft = null; scene.setRoutePreview(null); tool = next; preview = null;
+  drawMode = false; scene.setDrawMode(false); buildResult = { text: '', tone: 'none' }; stroke = { built: 0, spent: 0, errors: [] };
+  closePanel(); scene.clearPreview(); renderPlacement(); syncCategories();
+  if (cancelling) message('Construction tool closed. Tap the map to inspect.', 2500);
 }
 function setOverlay(next: Overlay) {
   overlay = next;scene.setPublicServiceDebug(null); scene.setDebugVisual(null); scene.setOverlay(next);
   const legend = document.getElementById('overlay-legend')!; legend.hidden = next === 'none';
-  document.getElementById('overlay-name')!.textContent = next === 'transit-accessibility' ? 'transit access · poor, weak, good, excellent' : next.replaceAll('-', ' ');
+  document.getElementById('overlay-name')!.textContent = next === 'transit-accessibility' ? 'Transit access · poor, weak, good, excellent' : next.charAt(0).toUpperCase() + next.slice(1).replaceAll('-', ' ');
   document.getElementById('legend-low')!.textContent = next === 'transit-accessibility' ? 'Poor' : next === 'jobs-accessible' ? 'Few jobs' : next === 'crime-pressure' ? 'High pressure' : next === 'response-time' ? 'Slow / none' : next === 'mobility' ? 'Routes / stops' : ['housing-pressure','cost-of-living'].includes(next) ? 'High burden' : next === 'traffic' ? 'Busy' : next === 'flood-risk' ? 'High risk' : ['power', 'water', 'drainage'].includes(next) ? 'None' : 'Low';
+  // Make the result visible: on phones the panel shrinks to its heading; everywhere a short notice confirms it.
+  if (next !== 'none' && !panel.hidden) setSheet(sheetAfter(sheet, 'overlay', compactLayout()));
+  if (next !== 'none') message(`${next === 'transit-accessibility' ? 'Transit access' : next.charAt(0).toUpperCase() + next.slice(1).replaceAll('-', ' ')} map on. Close it from the legend.`, 2500);
   document.getElementById('legend-high')!.textContent = next === 'transit-accessibility' ? 'Excellent' : next === 'jobs-accessible' ? 'Many jobs' : next === 'crime-pressure' ? 'Low pressure' : next === 'response-time' ? 'Prompt' : next === 'mobility' ? 'Hubs' : ['housing-pressure','cost-of-living'].includes(next) ? 'Low burden' : next === 'traffic' ? 'Free flow' : next === 'flood-risk' ? 'Low risk' : ['power', 'water', 'drainage'].includes(next) ? 'Good' : 'High';
   renderPanel();
 }
@@ -325,12 +364,27 @@ function renderSaveStatus() {
   const last = repo.lastSuccessAt ? new Date(repo.lastSuccessAt).toLocaleTimeString() : null;
   el.textContent = saveFailingSince !== null && repo.lastSave && !repo.lastSave.ok ? `${saveFailureText(repo.lastSave)}${last ? ` Last successful save: ${last}.` : ''}` : last ? `Last saved ${last}.` : 'Not saved yet this session.';
 }
-document.querySelectorAll<HTMLButtonElement>('[data-category]').forEach(b => b.onclick = () => { const category = b.dataset.category!; if (openPanel === category) closePanel(); else displayPanel(category); });
+document.querySelectorAll<HTMLButtonElement>('[data-category]').forEach(b => b.onclick = () => { const category = b.dataset.category!; if (openPanel === category) closePanel(); else { if (category === 'governance' && openPanel !== 'governance') governanceTab = 'Overview'; displayPanel(category); } });
 document.getElementById('settings')!.onclick = () => openPanel === 'settings' ? closePanel() : displayPanel('settings');
 document.getElementById('pulse-chip')!.onclick = () => openPanel === 'pulse' ? closePanel() : displayPanel('pulse');
 document.getElementById('demand-chip')!.onclick = () => displayPanel('data');
 document.getElementById('weather-chip')!.onclick = () => displayPanel('weather');
 document.getElementById('close-panel')!.onclick = closePanel;
+document.getElementById('sheet-toggle')!.onclick = () => setSheet(sheetAfter(sheet, 'toggle', compactLayout()));
+document.getElementById('draw-mode')!.onclick = () => { drawMode = !drawMode; scene.setDrawMode(drawMode); preview = null; scene.clearPreview(); renderPlacement(); };
+// Swipe the panel heading on phones: up to expand, down to shrink, down again to close. Tap a shrunk heading to reopen.
+{
+  const heading = panel.querySelector<HTMLElement>('.panel-heading')!;
+  let start: number | null = null;
+  heading.addEventListener('pointerdown', e => { if (!(e.target as HTMLElement).closest('button')) start = e.clientY; });
+  heading.addEventListener('pointerup', e => {
+    if (start === null || !compactLayout()) { start = null; return; }
+    const dy = e.clientY - start; start = null;
+    setSheet(sheetAfter(sheet, dy < -30 ? 'swipe-up' : dy > 30 ? 'swipe-down' : 'tap-heading', true));
+  });
+  heading.addEventListener('pointercancel', () => { start = null; });
+}
+addEventListener('resize', () => applySheet());
 document.getElementById('clear-overlay')!.onclick = () => setOverlay('none');
 document.getElementById('explore')!.onclick = () => chooseTool('inspect');
 document.getElementById('commit')!.onclick = () => {
@@ -338,7 +392,7 @@ document.getElementById('commit')!.onclick = () => {
   if(corridorDraft){const error=buildBrtCorridor(city,corridorDraft);if(error){message(error);return;}corridorDraft=null;scene.setRoutePreview(null);updateMobility(city,false,true);refreshCity(city);scene.redraw();renderPlacement();renderUI();message('Dedicated lanes built. General road capacity is reduced during and after works.');return;}
   if(districtDraft){const error=createDistrict(city,districtArea(),`District ${city.governance.nextDistrictId}`);if(error){message(error);return;}districtId=city.governance.districts.at(-1)!.id;chooseTool('inspect');governanceTab='Districts';displayPanel('governance');scene.redraw();return;}
   if (busDraft) { const error = establishBus(city, busDraft); if (error) { message(error); return; } chooseTool('inspect'); transportTab = 'bus'; displayPanel('transport'); refreshCity(city); scene.redraw(); renderUI(); message('Public bus service established.'); return; }
-  if (preview) { const error = applyTool(city, preview.x, preview.y, tool); if (error) message(error); scene.redraw(); renderUI(); renderPlacement(); }
+  if (preview) { build(preview.x, preview.y); finishStroke(); }
 };
 content.addEventListener('click', async event => {
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button'); if (!button) return;
@@ -354,7 +408,7 @@ content.addEventListener('click', async event => {
   if(button.dataset.action==='economy'){displayPanel('economy');return;}
   if(button.dataset.serviceFocus){const id=Number(button.dataset.serviceFocus),t=city.tiles[id];closePanel();selected=id;debugTarget=id;scene.setSelected(t);scene.focusTile(t.x,t.y);displayPanel('inspector');return;}
   if(button.dataset.safetyFocus){const id=Number(button.dataset.safetyFocus);closePanel();selected=id;debugTarget=id;scene.setSelected(city.tiles[id]);scene.focusTile(city.tiles[id].x,city.tiles[id].y);displayPanel('inspector');return;}
-  if(button.dataset.safetyDebug){if(debugTarget!==null){triggerSafetyIncident(city,debugTarget,button.dataset.safetyDebug as 'minor'|'moderate'|'serious');updateSafety(city,false);renderUI();scene.redraw();}return;}
+  if(button.dataset.safetyDebug&&import.meta.env.DEV){if(debugTarget!==null){triggerSafetyIncident(city,debugTarget,button.dataset.safetyDebug as 'minor'|'moderate'|'serious');updateSafety(city,false);renderUI();scene.redraw();}return;}
   if(button.dataset.serviceActive){const f=city.publicServices.facilities.find(f=>f.id===button.dataset.serviceActive);if(f){f.active=!f.active;updatePublicServices(city,false);updateSafety(city,false);updateMobility(city,false,true);refreshCity(city);renderUI();scene.redraw();}return;}
   if(button.dataset.publicView&&import.meta.env.DEV){const view=button.dataset.publicView;closePanel();setOverlay('none');scene.setPublicServiceDebug(view==='clear'?null:view);message(`Public service diagnostic: ${view.replaceAll('-',' ')}. Green indicates larger values; inspect tiles for capacity and demand.`,10000);return;}
   if(button.dataset.publicDebug&&import.meta.env.DEV){const action=button.dataset.publicDebug;
@@ -365,8 +419,8 @@ content.addEventListener('click', async event => {
     if(action==='access')message(JSON.stringify(serviceCacheDiagnostics(city)),14000);
     updatePublicServices(city,false);updateSafety(city,false);refreshCity(city);scene.redraw();renderUI();return;}
   if (button.hasAttribute('data-feed-tile')) { const value=button.dataset.feedTile; if(value){const t=city.tiles[Number(value)]; closePanel(); selected=Number(value); scene.setSelected(t); scene.focusTile(t.x,t.y); } return; }
-  if (button.dataset.livingView) { const view=button.dataset.livingView; closePanel(); if(view==='od'){scene.setDebugVisual('od');setOverlay('mobility');scene.setDebugVisual('od');} else if(view==='traffic'||view==='mobility')setOverlay(view); else scene.setLivingDebug(view==='clear'?null:view); return; }
-  if (button.dataset.graphicsToggle) { const key=button.dataset.graphicsToggle as 'bounds'|'anchors'|'depth'|'lod'|'shadows'|'props'|'vegetation'|'weather'; const enabled=scene.toggleGraphics(key); message(`${key}: ${enabled ? 'on' : 'off'}. ${scene.graphicsSummary()}`, 14000); return; }
+  if (button.dataset.livingView && import.meta.env.DEV) { const view=button.dataset.livingView; closePanel(); if(view==='od'){scene.setDebugVisual('od');setOverlay('mobility');scene.setDebugVisual('od');} else if(view==='traffic'||view==='mobility')setOverlay(view); else scene.setLivingDebug(view==='clear'?null:view); return; }
+  if (button.dataset.graphicsToggle && import.meta.env.DEV) { const key=button.dataset.graphicsToggle as 'bounds'|'anchors'|'depth'|'lod'|'shadows'|'props'|'vegetation'|'weather'; const enabled=scene.toggleGraphics(key); message(`${key}: ${enabled ? 'on' : 'off'}. ${scene.graphicsSummary()}`, 14000); return; }
   if (button.dataset.pulse) {
     const item = pulse.active.find(p => p.id === button.dataset.pulse); if (!item) return;
     closePanel(); tool = 'inspect'; renderPlacement();
@@ -388,7 +442,7 @@ content.addEventListener('click', async event => {
   if(button.dataset.junction){message(improveJunction(city,selected??-1,button.dataset.junction as 'signal'|'high-capacity'|'roundabout')||'Junction construction started.');updateMobility(city,false,true);refreshCity(city);scene.redraw();renderUI();return;}
   if(button.dataset.transitFleet||button.hasAttribute('data-transit-suspend')||button.hasAttribute('data-transit-remove')){const r=city.transit.routes.find(r=>r.id===selectedRoute);if(!r)return;if(button.hasAttribute('data-transit-remove')){removeTransitRoute(city,r.id);selectedRoute=null;}else message(editTransitRoute(city,r.id,button.dataset.transitFleet?{vehicles:r.vehicles+Number(button.dataset.transitFleet)}:{suspended:!r.suspended})||'Service updated.');updateMobility(city,false,true);refreshCity(city);scene.redraw();renderUI();return;}
   if(button.hasAttribute('data-transit-edit')){const r=city.transit.routes.find(r=>r.id===selectedRoute);if(r){chooseTool('inspect');editingTransit=r.id;transitMode=r.mode;transitDraft=[];closePanel();renderPlacement();}return;}
-  if(button.dataset.transitDebug){const action=button.dataset.transitDebug;const r=city.transit.routes.find(r=>r.id===selectedRoute)||city.transit.routes[0];if(action==='crowding'&&r){r.demand=Math.max(100,r.capacity*3);r.crowding=3;}else if(action==='congestion'){city.mobility.debug.loadMultiplier=20;city.mobility.debug.until=city.tick+30;updateMobility(city,false,true);}else if(action==='flood'&&selected!==null){city.tiles[selected].services.floodDepth=100;city.infrastructure.revision++;updateMobility(city,false,true);}else if(action==='demand'){city.mobility.debug.demandMultiplier=5;city.mobility.debug.until=city.tick+30;updateMobility(city,false,true);}else if(action==='report'){transitReportOpen=!transitReportOpen;renderPanel();return;}else message(JSON.stringify(transitNetworkDiagnostics(city)),14000);scene.redraw();renderUI();return;}
+  if(button.dataset.transitDebug&&import.meta.env.DEV){const action=button.dataset.transitDebug;const r=city.transit.routes.find(r=>r.id===selectedRoute)||city.transit.routes[0];if(action==='crowding'&&r){r.demand=Math.max(100,r.capacity*3);r.crowding=3;}else if(action==='congestion'){city.mobility.debug.loadMultiplier=20;city.mobility.debug.until=city.tick+30;updateMobility(city,false,true);}else if(action==='flood'&&selected!==null){city.tiles[selected].services.floodDepth=100;city.infrastructure.revision++;updateMobility(city,false,true);}else if(action==='demand'){city.mobility.debug.demandMultiplier=5;city.mobility.debug.until=city.tick+30;updateMobility(city,false,true);}else if(action==='report'){transitReportOpen=!transitReportOpen;renderPanel();return;}else message(JSON.stringify(transitNetworkDiagnostics(city)),14000);scene.redraw();renderUI();return;}
   if (button.dataset.transportTab) { transportTab = button.dataset.transportTab; displayPanel('transport'); return; }
   if (button.dataset.route) { selectedRoute = button.dataset.route; transportTab = city.mobility.routes.find(r => r.id === selectedRoute)?.mode === 'bus' ? 'bus' : 'informal'; displayPanel('transport'); return; }
   if (button.dataset.routeFocus) { const r = city.mobility.routes.find(r => r.id === button.dataset.routeFocus); if (r) { closePanel(); setOverlay('mobility'); scene.setFocusedRoute(r.id); const t = city.tiles[r.path[Math.floor(r.path.length / 2)]]; if (t) scene.focusTile(t.x, t.y); } return; }
@@ -396,13 +450,13 @@ content.addEventListener('click', async event => {
   if (button.dataset.formalize) { message(formalizeRoute(city, button.dataset.formalize) || 'Corridor formalized. Designated stops improve boarding and reliability.'); refreshCity(city); scene.redraw(); renderUI(); return; }
   if (button.dataset.fleet) { message(changeBusFleet(city, selectedRoute ?? '', Number(button.dataset.fleet)) || 'Bus fleet updated.'); refreshCity(city); scene.redraw(); renderUI(); return; }
   if (button.hasAttribute('data-bus-suspend')) { const r = city.mobility.routes.find(r => r.id === selectedRoute); if (r) { r.suspended = !r.suspended; updateMobility(city, false, true); refreshCity(city); scene.redraw(); renderUI(); } return; }
-  if (button.dataset.mobilityView) { closePanel(); setOverlay(button.dataset.mobilityView === 'capacity' ? 'traffic' : 'mobility'); scene.setDebugVisual(button.dataset.mobilityView as 'od' | 'graph' | 'capacity'); return; }
-  if (button.dataset.mobilityDebug) { message(mobilityDebug(city, button.dataset.mobilityDebug, debugTarget, selectedRoute)); refreshCity(city); scene.redraw(); renderUI(); return; }
+  if (button.dataset.mobilityView && import.meta.env.DEV) { closePanel(); setOverlay(button.dataset.mobilityView === 'capacity' ? 'traffic' : 'mobility'); scene.setDebugVisual(button.dataset.mobilityView as 'od' | 'graph' | 'capacity'); return; }
+  if (button.dataset.mobilityDebug && import.meta.env.DEV) { message(mobilityDebug(city, button.dataset.mobilityDebug, debugTarget, selectedRoute)); refreshCity(city); scene.redraw(); renderUI(); return; }
   if (button.dataset.tool) { chooseTool(button.dataset.tool as Tool); return; }
   if (button.dataset.overlay) { setOverlay(button.dataset.overlay as Overlay); return; }
   if (button.dataset.service) { displayPanel(`services-${button.dataset.service}`); return; }
-  if (button.dataset.infraDebug) { message(infrastructureDebug(city, button.dataset.infraDebug as InfrastructureDebug, debugTarget)); updateMobility(city, false, true); refreshCity(city); scene.redraw(); renderUI(); return; }
-  if (button.dataset.debug) { message(debugAction(city, button.dataset.debug as DebugAction, debugTarget)); scene.redraw(); renderUI(); renderPlacement(); return; }
+  if (button.dataset.infraDebug && import.meta.env.DEV) { message(infrastructureDebug(city, button.dataset.infraDebug as InfrastructureDebug, debugTarget)); updateMobility(city, false, true); refreshCity(city); scene.redraw(); renderUI(); return; }
+  if (button.dataset.debug && import.meta.env.DEV) { message(debugAction(city, button.dataset.debug as DebugAction, debugTarget)); scene.redraw(); renderUI(); renderPlacement(); return; }
   switch (button.dataset.action) {
     case 'transit-plan': chooseTool('inspect');transitMode=button.dataset.transitMode==='brt'?'brt':'bus';transitDraft=[];closePanel();renderPlacement();message('Tap existing stops/stations in journey order.');break;
     case 'brt-corridor': chooseTool('inspect');corridorDraft=[];closePanel();renderPlacement();break;
@@ -426,9 +480,10 @@ content.addEventListener('click', async event => {
       if (!confirm('Start a new city? This replaces the saved city on this device.')) break;
       city = createCity(); pulse.reset(); debugTarget = null; lastReport = null; accumulator = 0; lastTime = performance.now(); chooseTool('inspect'); setOverlay('none'); scene.home(); scene.redraw(); renderUI(); save(true); intro.showModal(); break;
     case 'intro': closePanel(); intro.showModal(); break;
-    case 'advance': advance(city, 30); scene.redraw(); renderUI(); renderPlacement(); message('Developer control: advanced 30 city days.'); break;
+    case 'advance': if (!import.meta.env.DEV) break; advance(city, 30); scene.redraw(); renderUI(); renderPlacement(); message('Developer control: advanced 30 city days.'); break;
     case 'zones': displayPanel('zones'); break;
     case 'last-return': displayPanel('offline'); break;
+    case 'pulse': displayPanel('pulse'); break;
   }
 });
 content.addEventListener('change', event => {
@@ -465,12 +520,12 @@ function updateActivity() {
   const elapsed = document.hidden || intro.open || catchingUp ? 0 : Math.max(0, performance.now() - lastTime) * speed;
   const hour = activityHourOverride ?? (6 + (accumulator + elapsed) / TICK_MS * 24) % 24;
   activity = cityActivity(city, hour); scene.setActivity(activity);
-  document.getElementById('date')!.textContent = `D${city.tick % 30 + 1} · M${Math.floor(city.tick / 30) + 1} · ${activityTime(activity.hour)}`;
+  document.getElementById('date')!.textContent = calendarLabel(city.tick, activityTime(activity.hour));
   const living = document.getElementById('living-content');
   if (living && performance.now() - lastActivityPanel >= 500) {
     lastActivityPanel = performance.now();
     const open = Array.from(living.querySelectorAll('details')).map(d => d.open), scroll = content.scrollTop;
-    living.innerHTML = openPanel === 'inspector' && selected !== null ? livingInspector(city, city.tiles[selected], activity) : livingSummary(city, activity);
+    living.innerHTML = withoutLeadingHeading(openPanel === 'inspector' && selected !== null ? livingInspector(city, city.tiles[selected], activity) : livingSummary(city, activity));
     living.querySelectorAll('details').forEach((d,i) => { d.open = open[i] ?? d.open; }); content.scrollTop = scroll;
   }
 }
