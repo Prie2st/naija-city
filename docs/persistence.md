@@ -92,3 +92,7 @@ The plan depends only on the city and the absence, so `catchUp` and the chunked 
 - If Milestone 8 adds **derived** transport fields (per-stop or per-tile metrics recomputed each evaluation), add their records to `repairDerivedState` so older v9 saves load.
 - If it adds **authoritative** transport state (new player-built objects or accumulated values), bump the save version and add an explicit migration step, per the rule above.
 - `step(city, mobility)` gained an optional mobility mode used only by offline replay. Active play calls `step(city)` unchanged.
+
+## Integration result (2026-10-07)
+
+The integration gate kept the city at version 9: no workstream added authoritative state after `b345c7f`. Real saves written by the M8 (`175fd99`) and M8.1 (`2c4de92`) builds load on the integrated build (`tests/integration-saves.test.ts`). Offline catch-up with M8.3's three-day traffic cadence takes 1.4–2.2 s for any absence. The offline time scale (48 city years for a 24-hour absence, of which only the first 240–600 days develop the city) is measured and discussed in `docs/M8_INTEGRATION_REPORT.md`, section G.

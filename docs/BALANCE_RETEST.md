@@ -431,3 +431,8 @@ node exp-report.mjs before=<dir> after=<dir>
 ```
 
 Full tables, with all 30 metrics for every run and seed, are in the project file `balance/retest-data/full-tables.md`.
+
+
+## Milestone 8 integration addendum (2026-10-07)
+
+Added by the integration gate; nothing above was changed. On the integrated branch (`claude/m8-integration-stabilization-wzgiv1`) the same bot ran every archetype plus flood-prone, services-heavy and transit-dense for 50 years on seed 731 and 20 years on seeds 1009 and 4242. All 24 twenty-year runs survive and are within 10% of the tables above except dense on 1009 (+13%). At 50 years, car, high-service and transit end in deficit where this report had them positive; a rerun on each merge step traced that to M8.3's three-day traffic cadence, not to transport or saves. Sprawl still empties around year 30. Details: `docs/M8_INTEGRATION_REPORT.md`, section J.
