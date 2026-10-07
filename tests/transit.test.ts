@@ -1,4 +1,4 @@
-import { transitFixture } from '../shared/simulation/transit-fixtures';
+import { transitFixture, transitNetworkFixture } from '../shared/simulation/transit-fixtures';
 import { initializeLiving } from '../shared/simulation/living-city';
 import { describe, expect, it } from 'vitest';
 import { advance, applyTool, catchUp, createCity, refreshCity, TICK_MS } from '../shared/simulation/engine';
@@ -213,6 +213,19 @@ describe('Milestone 8 completion behaviours', () => {
     const flat = run(TRANSIT.timeSensitivity), steep = run(TRANSIT.slowerSensitivity);
     expect(steep.riders).toBeLessThan(flat.riders * .85); expect(steep.riders).toBeGreaterThan(0);
     expect(steep.commute).toBeLessThan(flat.commute - .5); expect(steep.commute).toBeGreaterThan(base.mobility.stats.averageCommute);
+  });
+  it('keeps short trips on foot when transit takes several times longer than walking', () => {
+    const base = transitNetworkFixture(10000);
+    const run = (floor: number) => {
+      const config = TRANSIT as { timeFloor: number }, previous = config.timeFloor; config.timeFloor = floor;
+      try {
+        const c = decodeCity(JSON.parse(JSON.stringify(base))); updateMobility(c, false, true);
+        const slowShort = c.transit.demand.reduce((n, d) => { const f = c.mobility.flows.find(f => f.id === d.flowId)!; return n + (f.distance < 1.2 && d.minutes > 3 * f.distance / TRANSIT.walkingSpeed * 60 ? d.passengers : 0); }, 0);
+        return { slowShort, riders: c.transit.demand.reduce((n, d) => n + d.passengers, 0), commute: c.mobility.stats.averageCommute };
+      } finally { config.timeFloor = previous; }
+    };
+    const loose = run(.1), current = run(TRANSIT.timeFloor);
+    expect(current.slowShort).toBeLessThan(loose.slowShort * .6); expect(current.riders).toBeGreaterThan(0); expect(current.commute).toBeLessThan(loose.commute);
   });
   it('moves commercial development toward useful stations', () => {
     const parcels = [200, 202, 204, 208, 210, 212, 214, 218];

@@ -20,8 +20,9 @@ export const TRANSIT = {
   // Door-to-door minutes added to private trips: finding parking, or hailing and waiting for an Okada.
   carAccess: 3, okadaWait: 3,
   // How strongly planned-transit appeal follows its time against the private or walking alternative, and its bounds.
-  // Journeys slower than the alternative use the steeper exponent, so slow buses do not keep most of their riders.
-  timeSensitivity: 1, slowerSensitivity: 2, timeFloor: .1, timeCeiling: 2,
+  // Journeys slower than the alternative use the steeper exponent, so slow buses do not keep most of their riders;
+  // the floor lets a journey many times slower than walking keep only a sliver of its price-based appeal.
+  timeSensitivity: 1, slowerSensitivity: 2, timeFloor: .02, timeCeiling: 2,
   networkMilestones: [5000, 20000, 50000, 100000], routeMilestones: [1000, 10000],
   corridorCongestion: 80, corridorTrips: 600, jobAccessShare: .5, jobAccessTrips: 120,
 } as const;
