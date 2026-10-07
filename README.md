@@ -14,6 +14,14 @@ Use **Transport → Bus / BRT / Network** to place stops/stations/depots, create
 
 Ridership is split into rush, daytime and evening periods, so crowding reflects the busiest period and poor night safety thins evening travel. Road inspectors compare people moved with people capacity, the Network tab compares districts' access, commutes and mode share, and access is banded Poor/Weak/Good/Excellent. Travellers compare every mode door to door, including parking and hailing time, so a BRT that beats a congested road shortens commutes. `shared/simulation/transit-metrics.ts` derives these views; Settings → Developer controls → Transit diagnostics → report shows demand, boardings, transfers and mode share. `transitNetworkFixture` in `shared/simulation/transit-fixtures.ts` builds the drained 10k/100k/500k test city used by `tests/transit-long-run.test.ts`. `tools/check-transit-browser.cjs` checks route creation, inspectors and overlays at 390×844, 430×932 and 1440×900 against `npm run dev`.
 
+## Milestone 8.2: simulation rebalancing and recovery
+
+A stabilization pass on the balance audit's root causes, without new saved fields. Substations share the load of the parcels they jointly reach, so extra substations raise reliability and unlock density. Migrants weigh their chance of finding work: arrivals taper as unemployment rises and departures grow smoothly with low satisfaction or persistent unemployment, so a town settles at a size its jobs support. Shops short of customers shorten staff hours instead of closing, and while floodwater disrupts a city decline toward closure or abandonment counts more slowly.
+
+Abandoned homes send residents to look for housing, and long-abandoned shells are cleared for new development. Storm spells taper, flood memory fades over about a year, and city flooding is graded nuisance, significant or severe. Municipal finance moves through surplus, balanced, deficit, fiscal-stress and severe-fiscal-stress stages, with capped interest on debt and reduced service funding under stress. Higher tax rates lose some collection, policies are priced by what they serve (roads, residents, jobs or facilities), ageing assets cost more to run, and a deterministic national cycle moves business demand and fuel prices over decades.
+
+Balancing values live in `shared/simulation/balance-config.ts`. `tools/balance/` holds the headless bot harness used for the before/after evidence. See [the balance notes](docs/balance.md) and [the balance retest](docs/BALANCE_RETEST.md).
+
 ## Milestone 7: public safety and emergency response
 
 Spatial safety combines structural crime pressure, community prevention, powered road lighting, bounded recent incident memory and effective police response. Employment, stable housing, public services and active streets can support safe neighborhoods without extensive policing; income and informal tenure are never direct crime inputs.
@@ -115,6 +123,7 @@ Light/heavy/extreme rain increases bounded screen-space strokes. Terrain and roa
 - `client/ui/`: responsive styles and inspection/statistics presentation; `client/main.ts` wires controls.
 - `client/persistence/`: replaceable `CityRepository` with localStorage implementation.
 - `tests/`: Vitest `*.test.ts` rule, integration and migration tests.
+- `tools/balance/`: headless bot, recovery-shock and diagnostic scripts for long-run balance testing (bundled with esbuild; output is not committed).
 - `public/`: web manifest groundwork.
 
 Use two-space indentation, strict TypeScript, PascalCase classes and camelCase functions/variables. `.editorconfig` defines whitespace. No separate formatter or ESLint is configured. See `GAME_SPEC.md` for scope and `AGENTS.md` for contribution rules.

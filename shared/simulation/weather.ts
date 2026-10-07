@@ -1,5 +1,6 @@
 import type { City, Tile, WeatherKind } from '../types/city';
-import { clamp, stableHash } from './world';
+import { clamp, neighbourhoods, stableHash } from './world';
+import { BALANCE } from './balance-config';
 export const RAINFALL: Record<WeatherKind, number> = { clear: 0, cloudy: 0, 'light-rain': 8, 'heavy-rain': 32, 'extreme-rain': 65 };
 export function setWeather(city: City, kind: WeatherKind, days = 4) {
   city.weather.kind = kind; city.weather.rainfall = RAINFALL[kind] * city.weather.climate.intensity; city.weather.remaining = days;
@@ -9,7 +10,15 @@ export function updateWeather(city: City) {
   w.season = day >= w.climate.rainyStart && day < w.climate.rainyEnd ? 'rainy' : 'dry';
   // A representative intraday load/solar sample rotates across days, retaining the existing daily clock.
   w.hour = [6, 12, 18, 0][city.tick % 4];
-  if (--w.remaining > 0) return;
+  if (--w.remaining > 0) {
+    // Storm spells peak and then ease: a heavy or extreme day is followed by lighter rain, rather than
+    // repeating the peak intensity for up to a week (which tripled realistic seasonal rainfall).
+    if (w.kind === 'heavy-rain' || w.kind === 'extreme-rain') {
+      w.rainfall = Math.max(BALANCE.weather.lightRain * w.climate.intensity, w.rainfall * BALANCE.weather.stormDecay);
+      w.kind = w.rainfall >= RAINFALL['extreme-rain'] * w.climate.intensity ? 'extreme-rain' : w.rainfall >= RAINFALL['heavy-rain'] * w.climate.intensity ? 'heavy-rain' : 'light-rain';
+    }
+    return;
+  }
   const roll = stableHash(city.seed + 9187, city.tick) / 4294967295;
   const chance = w.season === 'rainy' ? w.climate.wetRainChance : w.climate.dryRainChance;
   const storm = stableHash(city.seed + 335, city.tick) / 4294967295;
@@ -40,13 +49,42 @@ export function floodIndicators(city: City, t: Tile) {
 export function refreshFloodIndicators(city: City) {
   for (const t of city.tiles) if (t.terrain !== 'water') floodIndicators(city, t);
 }
+/** Nearby vegetation and wetland absorb part of the runoff; built-over land loses that sponge. */
+export function greenDischarge(city: City, t: Tile) {
+  let green = 0;
+  for (const id of neighbourhoods(city.size)[t.y * city.size + t.x]) { const n = city.tiles[id]; if (n.terrain === 'wetland' || n.terrain === 'vegetation') green++; }
+  return Math.min(BALANCE.weather.greenDischargeCap, green * BALANCE.weather.greenDischarge);
+}
+/**
+ * Whether today's losses count towards abandonment or closure. While any part of the city is flooded,
+ * blocked commutes and waterlogged streets depress trade and mood city-wide; that decline still counts,
+ * but only one day in `floodDeclineInterval`, so a long wet season wears a town down without erasing it.
+ */
+export function floodDeclineDay(city: City) {
+  return city.infrastructure.floodedTiles === 0 || city.tick % BALANCE.recovery.floodDeclineInterval === 0;
+}
+export type FloodSeverity = 'none' | 'nuisance' | 'significant' | 'severe';
+/**
+ * City-wide flood severity from the share of developed parcels at each stage: nuisance flooding
+ * (waterlogged streets), significant flooding (minor flooding of properties) and severe flooding
+ * (major depths that close businesses and utilities).
+ */
+export function floodSeverity(city: City): { level: FloodSeverity; waterlogged: number; flooded: number; major: number } {
+  const S = BALANCE.weather.severity, developed = city.tiles.filter(t => t.building || t.road || t.infrastructure || t.publicFacility);
+  const n = Math.max(1, developed.length);
+  const waterlogged = developed.filter(t => t.services.floodDepth >= 12).length / n, flooded = developed.filter(t => t.services.floodDepth >= 35).length / n, major = developed.filter(t => t.services.floodDepth >= 90).length / n;
+  const level = flooded >= S.severeShare || major >= S.severeMajorShare ? 'severe' : flooded >= S.significantShare ? 'significant' : waterlogged > 0 ? 'nuisance' : 'none';
+  return { level, waterlogged, flooded, major };
+}
 export function updateFloods(city: City) {
   let flooded = 0, properties = 0;
   for (const t of city.tiles) {
     const s = t.services, oldStage = s.floodStage;
     if (t.terrain === 'water') continue;
     floodIndicators(city, t);
-    const natural = (t.terrain === 'vegetation' ? 13 : 7) + s.elevation * 1.3;
+    const natural = (t.terrain === 'vegetation' ? 13 : 7) + s.elevation * 1.3 + greenDischarge(city, t);
+    // Flood memory fades over time; repeated flooding keeps it high.
+    s.floodEvents = Math.max(0, s.floodEvents * (1 - BALANCE.weather.floodMemoryDecay));
     const discharge = natural + s.drainageCapacity;
     s.floodDepth = Math.round(clamp(s.floodDepth + s.runoff - discharge, 0, 220) * 10) / 10;
     s.floodStage = floodStage(s.floodDepth);

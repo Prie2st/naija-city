@@ -6,14 +6,23 @@ import { ROADS } from './road-network';
 import type { Building, City, Tile } from '../types/city';
 import { asset, emptyServices, INFRASTRUCTURE, infrastructureState, weatherState } from './infrastructure-config';
 import { clamp, isOperating, neighbourhoods, stableHash } from './world';
+import { BALANCE } from './balance-config';
 import { initializeGeography, refreshFloodIndicators } from './weather';
 
 type Reach = { id: number; strength: number }[];
 const reachCache = new WeakMap<City, { revision: number; reaches: Map<number, Reach> }>();
+/** Older assets cost more to keep in service (parts, repairs, rehabilitation), up to a cap. */
+export function assetAgeFactor(city: Pick<City, 'tick'>, builtAt: number) {
+  return 1 + Math.min(BALANCE.ageing.maximum, Math.max(0, city.tick - builtAt) / 360 * BALANCE.ageing.yearlyGrowth);
+}
 export function maintainedCondition(condition: number, budget: number) {
   // Normal maintenance settles at good working condition, rather than making every asset fail during a long offline absence.
   const target = budget > 100 ? 100 : 92;
-  return clamp(condition + (budget >= 100 ? (target - condition) * 0.0015 : -(0.006 + (100 - budget) * 0.001)));
+  if (budget >= 100) return clamp(condition + (target - condition) * 0.0015);
+  // Deferred upkeep wears assets down to a condition in proportion to the upkeep still funded, rather than
+  // towards zero at any shortfall: a 60% budget leaves worn, failure-prone assets; no upkeep lets them fail.
+  const floor = target * budget / 100;
+  return condition > floor ? Math.max(floor, clamp(condition - (0.006 + (100 - budget) * 0.001))) : clamp(condition + (floor - condition) * 0.0015);
 }
 function reaches(city: City) {
   const cached = reachCache.get(city);
@@ -96,6 +105,26 @@ export function infrastructureEvents(city: City) {
   }
   i.alerts = alerts;
 }
+type Substation = { covered: Reach; quality: number; capacity: number };
+/**
+ * Substations share the load of the tiles they jointly reach. Each tile's demand is split between the
+ * operating substations covering it (by signal strength), so a second substation in a busy area adds
+ * distribution capacity. Previously every substation compared its capacity with the whole local load
+ * and tiles took the best single ratio, which capped dense areas no matter how many were built.
+ * A tile reached by one substation is unchanged by this rule.
+ */
+export function distributeSubstationLoad(city: City, substations: Substation[]) {
+  const reach = new Float64Array(city.tiles.length);
+  for (const sub of substations) for (const e of sub.covered) reach[e.id] += e.strength;
+  for (const sub of substations) {
+    const load = sub.covered.reduce((sum, e) => sum + city.tiles[e.id].services.powerDemand * e.strength / Math.max(1, reach[e.id]), 0);
+    const served = Math.min(1, sub.capacity / Math.max(0.01, load));
+    for (const e of sub.covered) {
+      const s = city.tiles[e.id].services;
+      s.powerCoverage = Math.min(100, s.powerCoverage + e.strength * sub.quality * 100 * served / Math.max(1, reach[e.id]));
+    }
+  }
+}
 export function updateInfrastructure(city: City, progress = true) {
   const i = city.infrastructure, reach = reaches(city);
   let demand = 0, waterDemand = 0, supply = 0, production = 0;
@@ -115,6 +144,7 @@ export function updateInfrastructure(city: City, progress = true) {
       if (progress) s.roadCondition = maintainedCondition(s.roadCondition, budget);
     }
   }
+  const substations: Substation[] = [];
   for (const [id, covered] of reach) {
     const t = city.tiles[id], a = t.infrastructure!, def = INFRASTRUCTURE[a.kind], budget = maintenanceBudget(city,def.group,t);
     if (progress && a.failedUntil <= city.tick) a.failedUntil = 0;
@@ -122,21 +152,21 @@ export function updateInfrastructure(city: City, progress = true) {
     if (progress && city.governance && !a.failedUntil && a.condition < GOVERNANCE.maintenance.failureCondition && stableHash(city.seed+city.tick,id)%1000 < GOVERNANCE.maintenance.failureChance) a.failedUntil=city.tick+GOVERNANCE.maintenance.failureDays;
     const quality = a.failedUntil > city.tick || t.services.floodDepth >= 90 && def.group !== 'drainage' ? 0 : a.condition / 100;
     const fuel = a.kind === 'diesel' ? i.fuelPrice : a.kind === 'gas' ? 0.6 + i.fuelPrice * 0.4 : 1;
-    i.costs[def.group] += def.operatingCost * fuel * (0.65 + budget / 100 * 0.35);
+    i.costs[def.group] += def.operatingCost * fuel * (0.65 + budget / 100 * 0.35) * assetAgeFactor(city, a.builtAt);
     if (a.kind === 'diesel' || a.kind === 'gas') supply += def.capacity * quality * (a.kind === 'diesel' ? clamp(1.1 - i.fuelPrice * 0.1, 0.5, 1) : 1);
     if (a.kind === 'solar') {
       const daylight = Math.max(0, Math.sin((city.weather.hour - 6) / 12 * Math.PI));
       supply += def.capacity * quality * daylight * (city.weather.kind === 'clear' ? 1 : city.weather.kind === 'cloudy' ? 0.65 : city.weather.kind === 'light-rain' ? 0.45 : 0.2);
     }
-    const localLoad = covered.reduce((sum, e) => sum + city.tiles[e.id].services.powerDemand * e.strength, 0);
+    if (a.kind === 'substation' && quality > 0) substations.push({ covered, quality, capacity: def.capacity });
     for (const e of covered) {
       const s = city.tiles[e.id].services;
-      if (a.kind === 'substation') s.powerCoverage = Math.max(s.powerCoverage, e.strength * quality * 100 * Math.min(1, def.capacity / Math.max(0.01, localLoad)));
       if (def.group === 'water') s.waterCoverage = Math.max(s.waterCoverage, e.strength * quality * 100);
       if (def.group === 'drainage') s.drainageCapacity += def.capacity * quality * e.strength * i.debug.drainageMultiplier;
       s.pollution += def.pollution * quality * e.strength;
     }
   }
+  distributeSubstationLoad(city, substations);
   const powerRatio = Math.min(1, supply / Math.max(0.001, demand) * 0.92);
   for (const t of city.tiles) t.services.powerReliability = Math.round(t.services.powerCoverage * powerRatio * (t.services.floodDepth >= 90 ? 0.35 : t.services.floodDepth >= 35 ? 0.75 : 1));
   for (const [id] of reach) {

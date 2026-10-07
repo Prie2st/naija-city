@@ -148,7 +148,10 @@ describe('land, property, upgrades and business health', () => {
     const c = createCity(0), t = tileAt(c, 14, 14)!, b = t.building!;
     b.business!.profitability = 0;
     for (let i = 0; i < 89; i++) { c.tick++; updateBuildings(c); }
-    expect(b.abandoned).toBe(false); c.tick++; updateBuildings(c); expect(b.abandoned).toBe(true);
+    // Owners hold on for 90 days plus a per-building share of the spread, so a shared shock is staggered.
+    expect(b.abandoned).toBe(false); let days = 89;
+    while (!b.abandoned && days < 200) { c.tick++; updateBuildings(c); days++; }
+    expect(b.abandoned).toBe(true); expect(days).toBeGreaterThanOrEqual(90); expect(days).toBeLessThanOrEqual(150);
     refreshCity(c); expect(b.taxContribution).toBe(0); expect(b.business!.state).toBe('closed');
     c.tick += 30; c.demand.commercial = 100; t.landValue = 70; updateBuildings(c);
     expect(b.constructionState).toBe('redevelopment'); finishConstruction(c, b); refreshCity(c);

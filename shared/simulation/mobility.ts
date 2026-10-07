@@ -1,4 +1,5 @@
 import { prepareTransit, finishTransit, updateTransitCityMetrics, transitChoice, boardTransit } from './transit';
+import { BALANCE } from './balance-config';
 import { localGovernance } from './governance';
 import { facilityAnchors } from './public-service-access';
 import type { City, Tile } from '../types/city';
@@ -144,7 +145,7 @@ export function updateMobility(city: City, progress = true, force = false) {
   const flows: TravelFlow[] = [], targets: Record<string, number> = {}; let reachableWorkers = 0, totalWorkers = 0, accessSum = 0;
   for (const home of homes) {
     totalWorkers += home.capacity;
-    const destinations = employers.map(a => ({ area: a, route: connection(city, home, a) })).filter(a => a.route).sort((a, b) => a.route!.minutes - b.route!.minutes || a.area.id - b.area.id).slice(0, 8);
+    const destinations = employers.map(a => ({ area: a, route: connection(city, home, a) })).filter(a => a.route).sort((a, b) => a.route!.minutes - b.route!.minutes || a.area.id - b.area.id).slice(0, BALANCE.labour.commuteDestinations);
     let workers = home.capacity, reached = 0;
     // Allocate in rounds so nearer employers are preferred without one destination absorbing every commuter.
     for (let pass = 0; pass < 2 && workers > 0; pass++) for (const { area, route } of destinations) {
