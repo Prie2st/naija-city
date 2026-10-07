@@ -30,7 +30,8 @@ export interface Strategy {
   transit: boolean; brt: boolean; subsidy: number;
   car: boolean;                       // road upgrades and junctions
   stopAfter?: number;                 // stop all player actions after this tick (neglect test)
-  utilityInfill?: boolean;            // when no free site exists, clear a low-rise home for utilities (experiment)
+  utilityInfill?: boolean;
+  fiscalResponse?: boolean;           // false: never adjust taxes in response to debt (single-change experiments)            // when no free site exists, clear a low-rise home for utilities (experiment)
   zonesPerMonth: number;
 }
 const BASE: Strategy = { name: 'balanced', mix: { residential: .55, commercial: .2, industrial: .25 }, layout: 'mixed', maxRadius: 16, radiusStep: 1, road: 'road',
@@ -118,6 +119,7 @@ export class Bot {
     const c = this.city, monthly = Math.max(1, c.expenses), zones = ['residential', 'commercial', 'industrial'] as Zone[];
     const ceiling: Record<Zone, number> = { residential: .45, commercial: 6, industrial: 5.5 }, step: Record<Zone, number> = { residential: .05, commercial: .5, industrial: .5 };
     this.taxes ??= { ...this.s.taxes };
+    if (this.s.fiscalResponse === false) return;
     let next: Record<Zone, number> | null = null;
     if (this.s.name !== 'low-tax' && -c.treasury > 3 * monthly && c.income < c.expenses * 1.1) next = Object.fromEntries(zones.map(z => [z, Math.min(Math.max(ceiling[z], this.s.taxes[z]), this.taxes![z] + step[z])])) as Record<Zone, number>;
     else if (c.treasury > 12 * monthly) next = Object.fromEntries(zones.map(z => [z, Math.max(this.s.taxes[z], this.taxes![z] - step[z])])) as Record<Zone, number>;

@@ -59,6 +59,10 @@ export const BALANCE = {
     demandPenalty: 30, demandBonus: 14,
     /** Share of the above-base tax that firms bear as a cost after shifting part to customers. */
     businessIncidence: 1.6,
+    /** Satisfaction lost at the maximum rate: households pay residential tax directly and business taxes partly through prices. */
+    residentBurden: 10, businessBurden: 6,
+    /** Share of that effect gained back as goodwill when rates are cut below the base (cuts please less than rises anger). */
+    reliefShare: 0.3,
   },
   /** Municipal finance stages and bounded debt service. */
   fiscal: {

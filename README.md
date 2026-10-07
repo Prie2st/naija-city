@@ -20,7 +20,7 @@ A stabilization pass on the balance audit's root causes, without new saved field
 
 Abandoned homes send residents to look for housing, and long-abandoned shells are cleared for new development. Storm spells taper, flood memory fades over about a year, and city flooding is graded nuisance, significant or severe. Municipal finance moves through surplus, balanced, deficit, fiscal-stress and severe-fiscal-stress stages, with capped interest on debt and reduced service funding under stress. Higher tax rates lose some collection, policies are priced by what they serve (roads, residents, jobs or facilities), ageing assets cost more to run, and a deterministic national cycle moves business demand and fuel prices over decades.
 
-Balancing values live in `shared/simulation/balance-config.ts`. `tools/balance/` holds the headless bot harness used for the before/after evidence in [the balance notes](docs/balance.md).
+Balancing values live in `shared/simulation/balance-config.ts`. `tools/balance/` holds the headless bot harness used for the before/after evidence. See [the balance notes](docs/balance.md) and [the balance retest](docs/BALANCE_RETEST.md).
 
 ## Milestone 7: public safety and emergency response
 

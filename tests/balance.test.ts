@@ -3,7 +3,7 @@ import { advance, createCity, step } from '../shared/simulation/engine';
 import { distributeSubstationLoad, assetAgeFactor, maintainedCondition } from '../shared/simulation/infrastructure';
 import { migrationBalance, persistentUnemployment, refreshCity, shopHours, underemployment } from '../shared/simulation/economy';
 import { closeBuilding, updateBuildings } from '../shared/simulation/development';
-import { debtService, fiscalFunding, fiscalStage, policyEstimate, taxCompliance } from '../shared/simulation/governance';
+import { debtService, fiscalFunding, fiscalStage, policyEstimate, taxCompliance, taxSatisfaction } from '../shared/simulation/governance';
 import { setWeather, updateWeather, updateFloods, floodSeverity } from '../shared/simulation/weather';
 import { nationalEconomy } from '../shared/simulation/national-economy';
 import { BALANCE } from '../shared/simulation/balance-config';
@@ -113,6 +113,14 @@ describe('municipal finance', () => {
     expect(taxCompliance(c, 'commercial')).toBeLessThanOrEqual(1);
     const base = revenue(t.base), max = revenue(t.max);
     expect(max).toBeGreaterThan(base); expect(max / base).toBeLessThan(t.max / t.base * 0.75);
+  });
+  it('makes high taxes cost satisfaction, and cuts win back less than rises lose', () => {
+    const c = createCity(0), set = (r: number, co: number, i: number) => Object.assign(c.governance.taxes.effective, { residential: r, commercial: co, industrial: i });
+    set(.25, 3.5, 2.5); expect(taxSatisfaction(c)).toBeCloseTo(0);
+    set(.6, 8, 8); const max = taxSatisfaction(c);
+    expect(max).toBeCloseTo(-(BALANCE.taxes.residentBurden + BALANCE.taxes.businessBurden));
+    set(.1, 1, 1); const min = taxSatisfaction(c);
+    expect(min).toBeGreaterThan(0); expect(min).toBeLessThan(-max / 2);
   });
   it('prices policies by what they serve: lighting by road, community programmes by resident', () => {
     const c = createCity(0); refreshCity(c);

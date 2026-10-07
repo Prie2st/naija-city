@@ -16,7 +16,8 @@ if (variant === 'make-base' || !existsSync(basePath)) {
   if (variant === 'make-base') process.exit(0);
 }
 const saved = JSON.parse(readFileSync(basePath, 'utf8'));
-const strategy = { ...STRATEGIES.balanced };
+// Hold taxes fixed after the change, so each experiment measures one lever rather than the bot's fiscal response.
+const strategy = { ...STRATEGIES.balanced, fiscalResponse: false };
 bot = new Bot(strategy, +seed); bot.city = saved.city; bot.radius = saved.radius;
 const c = bot.city;
 const policies: PolicyId[] = ['street-lighting', 'community-safety', 'commercial-patrol', 'hub-safety', 'density', 'affordable', 'infill', 'commerce', 'industry', 'business', 'transit', 'pedestrian', 'drainage', 'waste', 'green', 'integration', 'community-upgrade', 'formalization'];

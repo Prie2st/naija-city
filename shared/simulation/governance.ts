@@ -27,6 +27,15 @@ export function taxCompliance(city: City, zone: Zone) {
   const t=G.taxes[zone], above=clamp((taxRate(city,zone)-t.base)/(t.max-t.base),0,1);
   return 1-BALANCE.taxes.complianceLoss*Math.pow(above,BALANCE.taxes.complianceExponent);
 }
+/**
+ * Satisfaction effect of the tax burden. Without it, raising taxes on a mature, fully housed city cost
+ * nothing (demand only steers new development), so maximum rates were close to free money.
+ */
+export function taxSatisfaction(city: City) {
+  if(!city.governance)return 0;
+  const T=BALANCE.taxes, side=(z: Zone)=>{const t=G.taxes[z],r=taxRate(city,z);return r>=t.base?-clamp((r-t.base)/(t.max-t.base),0,1):clamp((t.base-r)/(t.base-t.min),0,1)*T.reliefShare;};
+  return side('residential')*T.residentBurden+(side('commercial')+side('industrial'))/2*T.businessBurden;
+}
 export type FiscalStage = 'surplus' | 'balanced' | 'deficit' | 'stress' | 'severe';
 /** Municipal finance stage, from reserves or debt measured in months of spending and the monthly balance. */
 export function fiscalStage(city: City): FiscalStage {

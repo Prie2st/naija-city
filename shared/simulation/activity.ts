@@ -4,7 +4,7 @@ import type { CityActivity, SentimentFactor } from '../types/living';
 import { clamp, isOperating } from './world';
 import { roadPerformance, congestionFor, roadAnchor } from './road-network';
 import { effectiveServices } from './infrastructure';
-import { fiscalSatisfaction } from './governance';
+import { fiscalSatisfaction, taxSatisfaction } from './governance';
 import { persistentUnemployment } from './economy';
 
 const unit = (n: number) => clamp(n, 0, 1);
@@ -57,6 +57,7 @@ export function sentimentFactors(city: City): SentimentFactor[] {
     { label: 'Jobs accessible by transport', value: (m.jobAccessibility - 65) * 0.06 },
     { label: 'Commute and traffic delays', value: -Math.min(8, Math.max(0, m.averageCommute - 15) * 0.18) },
     { label:'Municipal finances', value: -fiscalSatisfaction(city) },
+    { label:'Tax burden', value: taxSatisfaction(city) },
     { label:'Planned transit crowding',value:-Math.min(2,Math.max(0,(city.transit?.stats.crowding??0)-1)) },
     { label: 'Crowded shared transport', value: -Math.min(4, city.mobility.routes.reduce((sum, r) => sum + Math.max(0, r.demand * m.sharedUsage / 100 - r.capacity), 0) / Math.max(1, city.population) * 8) },
   ];
