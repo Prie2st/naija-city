@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { advance, createCity, step } from '../shared/simulation/engine';
-import { distributeSubstationLoad, assetAgeFactor } from '../shared/simulation/infrastructure';
+import { distributeSubstationLoad, assetAgeFactor, maintainedCondition } from '../shared/simulation/infrastructure';
 import { migrationBalance, persistentUnemployment, refreshCity, shopHours, underemployment } from '../shared/simulation/economy';
 import { closeBuilding, updateBuildings } from '../shared/simulation/development';
 import { debtService, fiscalFunding, fiscalStage, policyEstimate, taxCompliance } from '../shared/simulation/governance';
@@ -23,6 +23,11 @@ describe('power distribution', () => {
     expect(one).toBeCloseTo(50, 5); // 12 MW against 24 MW of demand
     reset(); distributeSubstationLoad(c, [{ covered, quality: 1, capacity: 12 }, { covered, quality: 1, capacity: 12 }]);
     expect(c.tiles[100].services.powerCoverage).toBeCloseTo(100, 5);
+  });
+  it('lets underfunded upkeep wear assets down to a condition in proportion to funding, not to zero', () => {
+    let reduced = 92, none = 92, restored = 40;
+    for (let day = 0; day < 360 * 20; day++) { reduced = maintainedCondition(reduced, 60); none = maintainedCondition(none, 0); restored = maintainedCondition(restored, 100); }
+    expect(reduced).toBeCloseTo(92 * 0.6, 1); expect(none).toBe(0); expect(restored).toBeCloseTo(92, 0);
   });
   it('raises operating costs gradually as assets age, up to a cap', () => {
     expect(assetAgeFactor({ tick: 0 }, 0)).toBe(1);

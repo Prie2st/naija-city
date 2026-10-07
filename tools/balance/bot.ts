@@ -2,6 +2,7 @@
 // (applyTool, setTax, togglePolicy, transit tools, funding/priority settings), never edits internals.
 import { createCity, applyTool, step, previewTool } from '../../shared/simulation/engine';
 import { setTax, togglePolicy, setPriority } from '../../shared/simulation/governance';
+import * as governance from '../../shared/simulation/governance';
 import { placeTransitFacility, createTransitRoute, editTransitRoute, buildBrtCorridor, improveJunction } from '../../shared/simulation/transit';
 import { updateMobility } from '../../shared/simulation/mobility';
 import { invalidateTransit } from '../../shared/simulation/transit-network';
@@ -29,6 +30,7 @@ export interface Strategy {
   transit: boolean; brt: boolean; subsidy: number;
   car: boolean;                       // road upgrades and junctions
   stopAfter?: number;                 // stop all player actions after this tick (neglect test)
+  utilityInfill?: boolean;            // when no free site exists, clear a low-rise home for utilities (experiment)
   zonesPerMonth: number;
 }
 const BASE: Strategy = { name: 'balanced', mix: { residential: .55, commercial: .2, industrial: .25 }, layout: 'mixed', maxRadius: 16, radiusStep: 1, road: 'road',
@@ -109,7 +111,21 @@ export class Bot {
   inMap(x: number, y: number) { return x >= 0 && y >= 0 && x < 32 && y < 32; }
   t(x: number, y: number) { return this.city.tiles[y * 32 + x]; }
   dry(x: number, y: number) { const t = this.t(x, y); return t.terrain !== 'water' && t.terrain !== 'wetland'; }
+  // A prudent player answers sustained debt (more than three months of spending) with higher taxes, up to
+  // the 'high' rates, and eases back to the strategy's own rates once reserves cover a year. Low-tax never raises.
+  taxes: Record<Zone, number> | null = null;
+  fiscal() {
+    const c = this.city, monthly = Math.max(1, c.expenses), zones = ['residential', 'commercial', 'industrial'] as Zone[];
+    const ceiling: Record<Zone, number> = { residential: .45, commercial: 6, industrial: 5.5 }, step: Record<Zone, number> = { residential: .05, commercial: .5, industrial: .5 };
+    this.taxes ??= { ...this.s.taxes };
+    let next: Record<Zone, number> | null = null;
+    if (this.s.name !== 'low-tax' && -c.treasury > 3 * monthly && c.income < c.expenses * 1.1) next = Object.fromEntries(zones.map(z => [z, Math.min(Math.max(ceiling[z], this.s.taxes[z]), this.taxes![z] + step[z])])) as Record<Zone, number>;
+    else if (c.treasury > 12 * monthly) next = Object.fromEntries(zones.map(z => [z, Math.max(this.s.taxes[z], this.taxes![z] - step[z])])) as Record<Zone, number>;
+    if (!next) return;
+    for (const z of zones) if (Math.abs(next[z] - this.taxes[z]) > 1e-9 && setTax(c, z, +next[z].toFixed(2)) === '') { this.taxes[z] = +next[z].toFixed(2); this.log.push(`${c.tick}:tax:${z}:${this.taxes[z]}`); }
+  }
   month() {
+    this.fiscal();
     this.policies(); this.roads(); this.zoning(); this.power(); this.water(); this.drainage(); this.services();
     if (this.s.transit) this.transit();
     if (this.s.car) this.carRoads();
@@ -119,7 +135,9 @@ export class Bot {
     const c = this.city;
     for (const id of this.s.policies) {
       const def = POLICIES.find(p => p.id === id)!, state = c.governance.policies.find(p => p.id === id && p.districtId === null);
-      const on = !!state?.enabled, cost = def.cost * c.population + 25000;
+      // Uses the game's own monthly estimate where it exists (8.2 prices policies by basis); older code charged per resident.
+      const estimate = (governance as Record<string, unknown>).policyEstimate as ((city: City, id: PolicyId, district: null) => number) | undefined;
+      const on = !!state?.enabled, cost = estimate ? estimate(c, id, null) : def.cost * c.population + 25000;
       const balance = c.income - c.expenses;
       if (!on && balance > cost * 1.2 && c.treasury > 20e6) { togglePolicy(c, id, null); this.policyLog.push(`${c.tick}:on:${id}`); }
       else if (on && balance < 0 && c.treasury < 50e6 && state!.strength >= 1) { togglePolicy(c, id, null); this.policyLog.push(`${c.tick}:off:${id}`); }
@@ -156,6 +174,14 @@ export class Bot {
     const needed = (['residential', 'commercial', 'industrial'] as Zone[]).some(want);
     if (needed && candidates.filter(c => want(c.z)).length < 3 && this.radius < this.s.maxRadius) this.radius = Math.min(this.s.maxRadius, this.radius + this.s.radiusStep);
   }
+  // With utility infill, a full map no longer blocks utilities: the lowest-rise home nearest the need is cleared.
+  utilitySite(near: [number, number], maxDist: number, allowEdge = false): [number, number] | null {
+    const free = this.freeSite(1, near, maxDist, allowEdge); if (free || !this.s.utilityInfill) return free;
+    const c = this.city, homes = c.tiles.filter(t => t.building && t.building.type === 'residential' && t.building.level <= 2 && Math.hypot(t.x - near[0], t.y - near[1]) <= maxDist)
+      .sort((a, b) => a.building!.level - b.building!.level || Math.hypot(a.x - near[0], a.y - near[1]) - Math.hypot(b.x - near[0], b.y - near[1]));
+    const t = homes[0]; if (!t || !this.tool(t.x, t.y, 'bulldoze')) return null;
+    return [t.x, t.y];
+  }
   freeSite(size: number, near: [number, number], maxDist = 99, allowEdge = false): [number, number] | null {
     const c = this.city; let best: [number, number] | null = null, bestD = Infinity;
     for (let y = 0; y + size <= 32; y++) for (let x = 0; x + size <= 32; x++) {
@@ -181,11 +207,11 @@ export class Bot {
     if (p.supply < p.peakDemand * margin) {
       const essential = c.infrastructure.power.reliability < 60;
       const kind = this.s.utilities === 'cheap' ? 'diesel' : this.afford(90e6, 1.4e6, essential) ? 'gas' : 'diesel';
-      const site = this.freeSite(1, [0, 31], 99, true); if (site) this.tool(site[0], site[1], kind, essential);
+      const site = this.utilitySite([0, 31], 99, true); if (site) this.tool(site[0], site[1], kind, essential);
     }
     // Substations where buildings lack coverage.
     const weak = this.centroid(t => !!t.building && isOperating(t.building) && t.services.powerCoverage < (this.s.utilities === 'cheap' ? 40 : 70));
-    if (weak) { const site = this.freeSite(1, weak, 10); if (site) this.tool(site[0], site[1], 'substation', true); }
+    if (weak) { const site = this.utilitySite(weak, 10); if (site) this.tool(site[0], site[1], 'substation', true); }
   }
   water() {
     const c = this.city, w = c.infrastructure.water;
@@ -193,10 +219,10 @@ export class Bot {
     if (w.production < w.demand * margin) {
       const kind = this.s.utilities !== 'cheap' && c.treasury > 120e6 && w.demand > 400 ? 'treatment' : 'borehole';
       const near = this.centroid(t => !!t.building) ?? [CX, CY];
-      const site = this.freeSite(1, near); if (site) this.tool(site[0], site[1], kind, w.reliability < 60);
+      const site = this.utilitySite(near, 99); if (site) this.tool(site[0], site[1], kind, w.reliability < 60);
     }
     const weak = this.centroid(t => !!t.building && isOperating(t.building) && t.services.waterCoverage < (this.s.utilities === 'cheap' ? 40 : 70));
-    if (weak) { const site = this.freeSite(1, weak, 10); if (site) this.tool(site[0], site[1], this.s.utilities === 'cheap' ? 'borehole' : 'water-tower', true); }
+    if (weak) { const site = this.utilitySite(weak, 10); if (site) this.tool(site[0], site[1], this.s.utilities === 'cheap' ? 'borehole' : 'water-tower', true); }
   }
   drainage() {
     if (this.s.drainage === 'none') return;

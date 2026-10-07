@@ -18,7 +18,11 @@ export function assetAgeFactor(city: Pick<City, 'tick'>, builtAt: number) {
 export function maintainedCondition(condition: number, budget: number) {
   // Normal maintenance settles at good working condition, rather than making every asset fail during a long offline absence.
   const target = budget > 100 ? 100 : 92;
-  return clamp(condition + (budget >= 100 ? (target - condition) * 0.0015 : -(0.006 + (100 - budget) * 0.001)));
+  if (budget >= 100) return clamp(condition + (target - condition) * 0.0015);
+  // Deferred upkeep wears assets down to a condition in proportion to the upkeep still funded, rather than
+  // towards zero at any shortfall: a 60% budget leaves worn, failure-prone assets; no upkeep lets them fail.
+  const floor = target * budget / 100;
+  return condition > floor ? Math.max(floor, clamp(condition - (0.006 + (100 - budget) * 0.001))) : clamp(condition + (floor - condition) * 0.0015);
 }
 function reaches(city: City) {
   const cached = reachCache.get(city);

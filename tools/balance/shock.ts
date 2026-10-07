@@ -22,7 +22,7 @@ const SHOCKS: Shock[] = [
 const metrics = (c: City) => ({ pop: c.population, employed: c.employed, jobs: c.jobs, sat: c.satisfaction, treasury: c.treasury, businesses: c.tiles.filter(t => isOperating(t.building) && t.building!.business?.closedAt === null).length });
 function cloneBot(source: Bot) {
   const b = new Bot(STRATEGIES.balanced, seed);
-  Object.assign(b, structuredClone({ radius: source.radius, stops: source.stops, depot: source.depot, brtBuilt: source.brtBuilt, policyLog: source.policyLog }));
+  Object.assign(b, structuredClone({ radius: source.radius, stops: source.stops, depot: source.depot, brtBuilt: source.brtBuilt, policyLog: source.policyLog, taxes: source.taxes }));
   b.city = structuredClone(source.city);
   if (!respond) b.s = { ...b.s, stopAfter: b.city.tick };
   return b;

@@ -32,6 +32,10 @@ else if (variant === 'funding-50') for (const g of Object.keys(c.publicServices.
 else if (variant === 'maint-low') for (const g of ['power', 'water', 'drainage', 'roads'] as const) setPriority(c, g, 'low');
 else if (variant === 'maint-high') for (const g of ['power', 'water', 'drainage', 'roads'] as const) setPriority(c, g, 'high');
 else if (variant === 'freeze') strategy.stopAfter = 0; // stop building entirely
+else if (variant === 'no-drain') strategy.drainage = 'none'; // stop adding drains (existing drains stay)
+else if (variant === 'drain-proactive') strategy.drainage = 'proactive';
+else if (variant === 'road-upgrade') strategy.car = true; // road upgrades and junction treatments
+else if (variant === 'utility-infill') strategy.utilityInfill = true; // clear low-rise homes for substations, plants and towers
 else if (variant === 'transit-net' || variant === 'transit-sub') {
   // Clear one low-value parcel near the centre for a depot (players bulldoze when the map is full).
   const site = c.tiles.filter(t => t.building && t.building.level <= 2 && t.building.type === 'residential').sort((a, b) => Math.hypot(a.x - 13, a.y - 13) - Math.hypot(b.x - 13, b.y - 13))[0];
