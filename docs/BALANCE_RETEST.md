@@ -393,11 +393,11 @@ On 2026-10-07 Priest accepted this branch for integration. The open items in "Kn
 
 ### Trial merges
 
-Each trial merge was run locally on 2026-10-07 and was not pushed. Every branch shares the base `1333a37`.
+Each trial merge was run locally on 2026-10-07 and was not pushed. Every branch shares the base `1333a37`. The rows that add 8.3, 8.1 or 8.4 were run on the Milestone 8 head `75905b3`.
 
 | Merged onto this branch (`1a593bf`) | Textual conflicts | Result |
 |---|---|---|
-| Milestone 8 head `75905b3` (PR #1) | None. Both sides touch `shared/simulation/mobility.ts` in different places and git merges them automatically | 314 tests pass, type check clean |
+| Milestone 8 head `175fd99` (PR #1) | None. Both sides touch `shared/simulation/mobility.ts` in different places and git merges them automatically | 315 tests pass, type check clean, production build succeeds. At the earlier head `75905b3`: 314 pass |
 | + Milestone 8.3 `9a70d3e` (PR #3) | 3 conflicts, all "keep both sides": the import lines at the top of `shared/simulation/engine.ts` and of `shared/simulation/mobility.ts`, and the new milestone sections in `README.md` | 321 tests pass |
 | Milestone 8 + Milestone 8.1 `2c4de92` (PR #2) | None with this branch | 348 of 349 pass. The one failure is 8.1's "large cities replay far fewer full days" test hitting the default 5 s timeout. It also takes 5.0–5.6 s on 8.1's own branch, and it passes in isolation in both trees, so it needs an explicit timeout rather than a code change |
 | Milestone 8 + Milestone 8.4 `9677e1b` (branch only) | None. Both sides touch `client/ui/governance-panels.ts` and `client/ui/infrastructure-panels.ts`, and git merges them automatically; this branch's fiscal-stage, policy-estimate and flood-event rows survive | 343 tests pass, production build succeeds |
@@ -413,7 +413,7 @@ Milestones 8.1 and 8.3 conflict with each other, not with this branch: in `step(
 
 ### Behaviour to recheck after integration
 
-- **Milestone 8 transit.** These results were measured on `1333a37`. The Milestone 8 head has since added `TRANSIT.slowerSensitivity` (`75905b3`), so transit-share numbers here may shift a little after integration.
+- **Milestone 8 transit.** These results were measured on `1333a37`. The Milestone 8 head has since added `TRANSIT.slowerSensitivity` (`75905b3`) and lowered `timeFloor` to keep short trips on foot (`175fd99`), so transit and walking shares here may shift a little after integration.
 - **Milestone 8.3 (traffic every third day).** The flood-unemployment and flood-decline rules read the daily `floodedTiles`, not traffic, so they should be unaffected. Employment comes from commute assignment in `mobility.ts`, so under 8.3 the employment that drives migration and shop hours can be up to 2 days old. After integration, rerun `tools/balance` for 20 years to confirm.
 - **Milestone 8.1 (offline catch-up).** The road-graph cache now keys on its bucketed inputs, so save/reload and continuous play give identical results (`tools/balance/det-check.ts`). The catch-up algorithm belongs to 8.1. Its coarse and aggregate days should still apply the daily rules this branch changed: national economy, fiscal stages, flood decline and asset ageing.
 - **Saves.** No saved fields were added. Version 9 saves load unchanged.
