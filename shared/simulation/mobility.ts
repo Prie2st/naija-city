@@ -79,7 +79,9 @@ export function chooseModes(city: City, flow: TravelFlow, wealth: number): Recor
   // Travellers compare door-to-door time: the road trip plus hailing or parking, or walking for short trips.
   const privateMinutes = flow.minutes + Math.min(TRANSIT.carAccess, TRANSIT.okadaWait), walkMinutes = km / 4 * 60;
   const alternative = km <= 1.2 ? Math.min(privateMinutes, walkMinutes) : privateMinutes;
-  const competitive = transit ? Math.min(TRANSIT.timeCeiling, Math.max(TRANSIT.timeFloor, (alternative / Math.max(1, transit.minutes)) ** TRANSIT.timeSensitivity)) : 0;
+  // Journeys slower than the alternative lose riders faster than quicker ones gain them.
+  const ratio = transit ? alternative / Math.max(1, transit.minutes) : 0;
+  const competitive = transit ? Math.min(TRANSIT.timeCeiling, Math.max(TRANSIT.timeFloor, ratio ** (ratio < 1 ? TRANSIT.slowerSensitivity : TRANSIT.timeSensitivity))) : 0;
   weights[plannedMode] += planned * competitive;
   const sum = Object.values(weights).reduce((s, w) => s + w, 0);
   let remaining = flow.trips;

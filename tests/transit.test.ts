@@ -94,7 +94,7 @@ describe('planned aggregate metropolitan transit', () => {
     for (const x of [10, 11, 12]) { c.tiles[192 + x].road = true; c.tiles[192 + x].roadClass = 'local'; } c.tiles[171].services.floodDepth = 100; c.infrastructure.revision++; updateMobility(c, false, true); expect(r.path).not.toContain(171); expect(r.status).toBe('active');
   });
   it('bounds TOD support, explains it and does not bypass organic construction', () => {
-    const c = transitFixture(), r = route(c); const id = 131, tile = c.tiles[id]; tile.zone = 'residential';
+    const c = transitFixture(4000), r = route(c); const id = 131, tile = c.tiles[id]; tile.zone = 'residential';
     for (let n = 0; n < 40; n++) { c.tick++; updateMobility(c, true, true); }
     expect(c.transit.local[id].tod).toBeGreaterThan(0); expect(c.transit.local[id].tod).toBeLessThanOrEqual(TRANSIT.todMaximum); expect(tile.building).toBeNull(); expect(attractiveness(c, tile).factors.some(f => f.label.includes('transit') && f.value > 0)).toBe(true);
     const other = decodeCity(JSON.parse(JSON.stringify(c))); other.transit.local[id].tod = 0; updateLandValues(c); updateLandValues(other); expect(tile.landValue).toBeGreaterThan(other.tiles[id].landValue); expect(r.ridership).toBeGreaterThan(0);
@@ -166,7 +166,7 @@ describe('Milestone 8 completion behaviours', () => {
     expect(r.crowding).toBeLessThan(1); expect(r.wait).toBeLessThan(wait); expect(r.ridership).toBeGreaterThan(ridership); totals(c);
   });
   it('fills rush hours before the daily total, so crowding is felt at peak', () => {
-    const c = transitFixture(7000); createTransitRoute(c, 'bus', stops(c, [162, 186]), 3); updateMobility(c, false, true); updateMobility(c, false, true);
+    const c = transitFixture(7000); createTransitRoute(c, 'bus', stops(c, [162, 186]), 2); updateMobility(c, false, true); updateMobility(c, false, true);
     const r = c.transit.routes[0], load = transitPeriodLoads(c, r.id)!;
     expect(r.capacity).toBeGreaterThan(r.demand); expect(r.ridership).toBeLessThan(r.demand); expect(r.crowding).toBeGreaterThan(1);
     expect(load.riders[0]).toBeCloseTo(r.capacity * 4 / TRANSIT.serviceHours, 0); expect(load.demand[0]).toBeGreaterThan(load.riders[0]);
@@ -202,6 +202,17 @@ describe('Milestone 8 completion behaviours', () => {
       expect(brt.averageCommute).toBeLessThan(without.averageCommute - 1);
       expect(brt.modes.car + brt.modes.okada).toBeLessThan((without.modes.car + without.modes.okada) / 2);
     }
+  });
+  it('lets journeys slower than the road lose riders faster, so a slow route adds less commute time', () => {
+    const run = (slower: number) => {
+      const config = TRANSIT as { slowerSensitivity: number }, previous = config.slowerSensitivity; config.slowerSensitivity = slower;
+      try { const c = transitFixture(4000); createTransitRoute(c, 'bus', stops(c, [162, 174, 186]), 2); updateMobility(c, false, true); updateMobility(c, false, true); return { commute: c.mobility.stats.averageCommute, riders: c.transit.routes[0].ridership }; }
+      finally { config.slowerSensitivity = previous; }
+    };
+    const base = transitFixture(4000); updateMobility(base, false, true); updateMobility(base, false, true);
+    const flat = run(TRANSIT.timeSensitivity), steep = run(TRANSIT.slowerSensitivity);
+    expect(steep.riders).toBeLessThan(flat.riders * .85); expect(steep.riders).toBeGreaterThan(0);
+    expect(steep.commute).toBeLessThan(flat.commute - .5); expect(steep.commute).toBeGreaterThan(base.mobility.stats.averageCommute);
   });
   it('moves commercial development toward useful stations', () => {
     const parcels = [200, 202, 204, 208, 210, 212, 214, 218];
