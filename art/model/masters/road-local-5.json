@@ -1,0 +1,43 @@
+{
+  "id": "road-local-5",
+  "type": "road",
+  "level": 0,
+  "variant": 0,
+  "sourceScale": 24.01722726110029,
+  "originPixels": [
+    442.49931424856186,
+    154.4488434791565
+  ],
+  "tileTopOffset": 12,
+  "metresPerTile": 20,
+  "floorHeightMetres": 3.2,
+  "floors": 0,
+  "footprint": "road-local-5",
+  "sockets": {
+    "generator": {
+      "x": -7,
+      "y": 18
+    },
+    "tank": {
+      "x": 9,
+      "y": 14
+    },
+    "pump": {
+      "x": 10,
+      "y": 17
+    }
+  },
+  "windowMaterial": "glass",
+  "lighting": "northwest warm daylight / ambient sky",
+  "camera": {
+    "projection": "orthographic",
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

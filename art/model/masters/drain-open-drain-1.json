@@ -1,0 +1,43 @@
+{
+  "id": "drain-open-drain-1",
+  "type": "drain",
+  "level": 0,
+  "variant": 0,
+  "sourceScale": 24.03424194384414,
+  "originPixels": [
+    108.11146378517151,
+    70.70844054222107
+  ],
+  "tileTopOffset": 12,
+  "metresPerTile": 20,
+  "floorHeightMetres": 3.2,
+  "floors": 0,
+  "footprint": "drain-open-drain-1",
+  "sockets": {
+    "generator": {
+      "x": -7,
+      "y": 18
+    },
+    "tank": {
+      "x": 9,
+      "y": 14
+    },
+    "pump": {
+      "x": 10,
+      "y": 17
+    }
+  },
+  "windowMaterial": "glass",
+  "lighting": "northwest warm daylight / ambient sky",
+  "camera": {
+    "projection": "orthographic",
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

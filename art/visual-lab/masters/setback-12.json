@@ -1,0 +1,36 @@
+{
+  "id": "setback-12",
+  "type": "building",
+  "footprint": [
+    26,
+    19
+  ],
+  "floors": 12,
+  "heightMetres": 37.8,
+  "sourceScale": 24.009145444847647,
+  "originPixels": [
+    661.4991720020771,
+    1591.0546606779099
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      9.5
+    ],
+    "service": [
+      -13.0,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

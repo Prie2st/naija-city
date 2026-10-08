@@ -1,0 +1,43 @@
+{
+  "id": "road-avenue-10",
+  "type": "road",
+  "level": 0,
+  "variant": 0,
+  "sourceScale": 24.010462516302425,
+  "originPixels": [
+    499.9992847442627,
+    303.01320284605026
+  ],
+  "tileTopOffset": 12,
+  "metresPerTile": 20,
+  "floorHeightMetres": 3.2,
+  "floors": 0,
+  "footprint": "road-avenue-10",
+  "sockets": {
+    "generator": {
+      "x": -7,
+      "y": 18
+    },
+    "tank": {
+      "x": 9,
+      "y": 14
+    },
+    "pump": {
+      "x": 10,
+      "y": 17
+    }
+  },
+  "windowMaterial": "glass",
+  "lighting": "northwest warm daylight / ambient sky",
+  "camera": {
+    "projection": "orthographic",
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

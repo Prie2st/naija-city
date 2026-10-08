@@ -1,0 +1,43 @@
+{
+  "id": "driveway-bridge-0",
+  "type": "prop",
+  "level": 0,
+  "variant": 0,
+  "sourceScale": 24.092767584521976,
+  "originPixels": [
+    82.49929189682007,
+    56.62055724859238
+  ],
+  "tileTopOffset": 0,
+  "metresPerTile": 20,
+  "floorHeightMetres": 3.2,
+  "floors": 0,
+  "footprint": "driveway-bridge-0",
+  "sockets": {
+    "generator": {
+      "x": -7,
+      "y": 18
+    },
+    "tank": {
+      "x": 9,
+      "y": 14
+    },
+    "pump": {
+      "x": 10,
+      "y": 17
+    }
+  },
+  "windowMaterial": "glass",
+  "lighting": "northwest warm daylight / ambient sky",
+  "camera": {
+    "projection": "orthographic",
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

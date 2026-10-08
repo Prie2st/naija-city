@@ -1,0 +1,36 @@
+{
+  "id": "keke-2",
+  "type": "vehicle",
+  "footprint": [
+    2.7,
+    1.4
+  ],
+  "floors": 0,
+  "heightMetres": 1.9199999570846558,
+  "sourceScale": 24.096268336881664,
+  "originPixels": [
+    69.49934548139572,
+    105.72528976202011
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      0.7
+    ],
+    "service": [
+      -1.35,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

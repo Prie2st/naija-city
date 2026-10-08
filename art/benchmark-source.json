@@ -1,0 +1,653 @@
+[
+  {
+    "id": "bungalow-modest",
+    "type": "residential",
+    "level": 1,
+    "variant": 0,
+    "footprint": "articulated bungalow",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": -8,
+        "y": 8
+      },
+      "tank": {
+        "x": 5,
+        "y": 10
+      },
+      "pump": {
+        "x": 8,
+        "y": 12
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "bungalow-lshape",
+    "type": "residential",
+    "level": 1,
+    "variant": 1,
+    "footprint": "L-shaped wings",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": -8,
+        "y": 7
+      },
+      "tank": {
+        "x": 1,
+        "y": 12
+      },
+      "pump": {
+        "x": 4,
+        "y": 13
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "compound-house",
+    "type": "residential",
+    "level": 1,
+    "variant": 2,
+    "footprint": "long veranda and courtyard",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": 8,
+        "y": 9
+      },
+      "tank": {
+        "x": -4,
+        "y": 11
+      },
+      "pump": {
+        "x": -1,
+        "y": 13
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "house-unfinished",
+    "type": "residential",
+    "level": 1,
+    "variant": 3,
+    "footprint": "roofed wing and unfinished extension",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": -9,
+        "y": 9
+      },
+      "tank": {
+        "x": 5,
+        "y": 11
+      },
+      "pump": {
+        "x": 8,
+        "y": 12
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "bungalow-modern",
+    "type": "residential",
+    "level": 1,
+    "variant": 4,
+    "footprint": "stepped flat and pitched wings",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": 10,
+        "y": 4
+      },
+      "tank": {
+        "x": -10,
+        "y": 9
+      },
+      "pump": {
+        "x": -7,
+        "y": 11
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "house-weathered",
+    "type": "residential",
+    "level": 1,
+    "variant": 5,
+    "footprint": "narrow veranda and lean-to",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": 10,
+        "y": 8
+      },
+      "tank": {
+        "x": -8,
+        "y": 10
+      },
+      "pump": {
+        "x": -5,
+        "y": 12
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "duplex",
+    "type": "residential",
+    "level": 2,
+    "variant": 0,
+    "footprint": "two-storey offset wings",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": -10,
+        "y": 8
+      },
+      "tank": {
+        "x": 5,
+        "y": 11
+      },
+      "pump": {
+        "x": 8,
+        "y": 13
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "bungalow-large",
+    "type": "residential",
+    "level": 2,
+    "variant": 1,
+    "footprint": "U-shaped courtyard",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": -9,
+        "y": 8
+      },
+      "tank": {
+        "x": 3,
+        "y": 11
+      },
+      "pump": {
+        "x": 6,
+        "y": 12
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "small-flats",
+    "type": "residential",
+    "level": 2,
+    "variant": 2,
+    "footprint": "access gallery and external stairs",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": -10,
+        "y": 8
+      },
+      "tank": {
+        "x": 6,
+        "y": 10
+      },
+      "pump": {
+        "x": 9,
+        "y": 12
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "provision-shop",
+    "type": "commercial",
+    "level": 1,
+    "variant": 0,
+    "footprint": "open merchandise frontage",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": 10,
+        "y": 7
+      },
+      "tank": {
+        "x": -9,
+        "y": 11
+      },
+      "pump": {
+        "x": -6,
+        "y": 13
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "barber-shop",
+    "type": "commercial",
+    "level": 1,
+    "variant": 1,
+    "footprint": "stepped parapet and glazed frontage",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": 10,
+        "y": 7
+      },
+      "tank": {
+        "x": -9,
+        "y": 11
+      },
+      "pump": {
+        "x": -6,
+        "y": 13
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "food-shop",
+    "type": "commercial",
+    "level": 1,
+    "variant": 2,
+    "footprint": "long open veranda",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": 10,
+        "y": 7
+      },
+      "tank": {
+        "x": -9,
+        "y": 11
+      },
+      "pump": {
+        "x": -6,
+        "y": 13
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "phone-shop",
+    "type": "commercial",
+    "level": 1,
+    "variant": 3,
+    "footprint": "offset shop and cantilever canopy",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": 10,
+        "y": 7
+      },
+      "tank": {
+        "x": -9,
+        "y": 11
+      },
+      "pump": {
+        "x": -6,
+        "y": 13
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "workshop-yard",
+    "type": "industrial",
+    "level": 1,
+    "variant": 0,
+    "footprint": "open workshop and service yard",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": -10,
+        "y": 10
+      },
+      "tank": {
+        "x": 10,
+        "y": 6
+      },
+      "pump": {
+        "x": 8,
+        "y": 8
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "warehouse-yard",
+    "type": "industrial",
+    "level": 1,
+    "variant": 1,
+    "footprint": "loading warehouse and yard",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": -10,
+        "y": 10
+      },
+      "tank": {
+        "x": 10,
+        "y": 6
+      },
+      "pump": {
+        "x": 8,
+        "y": 8
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "construction-foundation",
+    "type": "construction",
+    "level": 1,
+    "variant": 0,
+    "footprint": "L-shaped footings",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": -12,
+        "y": 18
+      },
+      "tank": {
+        "x": 12,
+        "y": 18
+      },
+      "pump": {
+        "x": 9,
+        "y": 20
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "construction-shell",
+    "type": "construction",
+    "level": 1,
+    "variant": 1,
+    "footprint": "block shell and partial roof",
+    "worldWidth": 44,
+    "sockets": {
+      "generator": {
+        "x": -12,
+        "y": 18
+      },
+      "tank": {
+        "x": 12,
+        "y": 18
+      },
+      "pump": {
+        "x": 9,
+        "y": 20
+      },
+      "driveway": {
+        "x": 2,
+        "y": 23
+      }
+    },
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "generator-open",
+    "type": "prop",
+    "level": 0,
+    "variant": 0,
+    "footprint": "portable equipment",
+    "worldWidth": 3,
+    "sockets": {},
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "generator-enclosed",
+    "type": "prop",
+    "level": 0,
+    "variant": 1,
+    "footprint": "sheltered equipment",
+    "worldWidth": 4.5,
+    "sockets": {},
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "tank-black",
+    "type": "prop",
+    "level": 0,
+    "variant": 0,
+    "footprint": "elevated tank stand",
+    "worldWidth": 3.8,
+    "sockets": {},
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "tank-blue",
+    "type": "prop",
+    "level": 0,
+    "variant": 1,
+    "footprint": "tank on plinth",
+    "worldWidth": 3.4,
+    "sockets": {},
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "borehole-pump",
+    "type": "prop",
+    "level": 0,
+    "variant": 0,
+    "footprint": "wellhead and pressure pump",
+    "worldWidth": 2.7,
+    "sockets": {},
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "driveway-bridge-0",
+    "type": "prop",
+    "level": 0,
+    "variant": 0,
+    "footprint": "concrete driveway culvert",
+    "worldWidth": 7,
+    "groundFront": 2.5,
+    "sockets": {},
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "driveway-bridge-1",
+    "type": "prop",
+    "level": 0,
+    "variant": 1,
+    "footprint": "concrete driveway culvert",
+    "worldWidth": 7,
+    "groundFront": 2.5,
+    "sockets": {},
+    "lod": [
+      2,
+      6,
+      9,
+      12
+    ]
+  }
+]

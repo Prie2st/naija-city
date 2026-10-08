@@ -1,0 +1,43 @@
+{
+  "id": "road-avenue-6",
+  "type": "road",
+  "level": 0,
+  "variant": 0,
+  "sourceScale": 24.010427393928666,
+  "originPixels": [
+    586.4370465278625,
+    255.00056236982346
+  ],
+  "tileTopOffset": 12,
+  "metresPerTile": 20,
+  "floorHeightMetres": 3.2,
+  "floors": 0,
+  "footprint": "road-avenue-6",
+  "sockets": {
+    "generator": {
+      "x": -7,
+      "y": 18
+    },
+    "tank": {
+      "x": 9,
+      "y": 14
+    },
+    "pump": {
+      "x": 10,
+      "y": 17
+    }
+  },
+  "windowMaterial": "glass",
+  "lighting": "northwest warm daylight / ambient sky",
+  "camera": {
+    "projection": "orthographic",
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

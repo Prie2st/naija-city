@@ -1,0 +1,36 @@
+{
+  "id": "l-block-8",
+  "type": "building",
+  "footprint": [
+    34,
+    34
+  ],
+  "floors": 8,
+  "heightMetres": 25.2,
+  "sourceScale": 24.00834245957758,
+  "originPixels": [
+    1237.4918221235275,
+    1463.1305786445737
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      17.0
+    ],
+    "service": [
+      -17.0,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "water-tower",
+  "type": "infrastructure",
+  "footprint": [
+    7,
+    7
+  ],
+  "floors": 0,
+  "heightMetres": 16.0,
+  "sourceScale": 24.001762704322303,
+  "originPixels": [
+    252.28054881095886,
+    644.5315028429031
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      3.5
+    ],
+    "service": [
+      -3.5,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

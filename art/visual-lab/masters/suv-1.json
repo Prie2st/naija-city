@@ -1,0 +1,36 @@
+{
+  "id": "suv-1",
+  "type": "vehicle",
+  "footprint": [
+    1.98,
+    4.8
+  ],
+  "floors": 0,
+  "heightMetres": 1.8200000524520874,
+  "sourceScale": 24.041329463256854,
+  "originPixels": [
+    107.99897003173828,
+    106.11752450466156
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      2.4
+    ],
+    "service": [
+      -0.99,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

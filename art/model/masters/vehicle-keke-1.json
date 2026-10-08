@@ -1,0 +1,43 @@
+{
+  "id": "vehicle-keke-1",
+  "type": "vehicle",
+  "level": 0,
+  "variant": 0,
+  "sourceScale": 24.077071817157528,
+  "originPixels": [
+    67.99929070472717,
+    90.90848159790039
+  ],
+  "tileTopOffset": 0,
+  "metresPerTile": 20,
+  "floorHeightMetres": 3.2,
+  "floors": 0,
+  "footprint": "vehicle-keke-1",
+  "sockets": {
+    "generator": {
+      "x": -7,
+      "y": 18
+    },
+    "tank": {
+      "x": 9,
+      "y": 14
+    },
+    "pump": {
+      "x": 10,
+      "y": 17
+    }
+  },
+  "windowMaterial": "glass",
+  "lighting": "northwest warm daylight / ambient sky",
+  "camera": {
+    "projection": "orthographic",
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

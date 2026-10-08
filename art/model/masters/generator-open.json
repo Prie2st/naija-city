@@ -1,0 +1,43 @@
+{
+  "id": "generator-open",
+  "type": "prop",
+  "level": 0,
+  "variant": 0,
+  "sourceScale": 24.010801868677685,
+  "originPixels": [
+    50.99929475784302,
+    72.64446067810059
+  ],
+  "tileTopOffset": 0,
+  "metresPerTile": 20,
+  "floorHeightMetres": 3.2,
+  "floors": 0,
+  "footprint": "generator-open",
+  "sockets": {
+    "generator": {
+      "x": -7,
+      "y": 18
+    },
+    "tank": {
+      "x": 9,
+      "y": 14
+    },
+    "pump": {
+      "x": 10,
+      "y": 17
+    }
+  },
+  "windowMaterial": "glass",
+  "lighting": "northwest warm daylight / ambient sky",
+  "camera": {
+    "projection": "orthographic",
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "id": "dense-urban-block",
+  "type": "demonstration",
+  "level": 0,
+  "variant": 0,
+  "sourceScale": 10.609887134884385,
+  "originPixels": [
+    1404.9996650218964,
+    704.8307406902313
+  ],
+  "tileTopOffset": 12,
+  "metresPerTile": 20,
+  "floorHeightMetres": 3.2,
+  "floors": 0,
+  "footprint": "dense-urban-block",
+  "sockets": {
+    "generator": {
+      "x": -7,
+      "y": 18
+    },
+    "tank": {
+      "x": 9,
+      "y": 14
+    },
+    "pump": {
+      "x": 10,
+      "y": 17
+    }
+  },
+  "windowMaterial": "glass",
+  "lighting": "northwest warm daylight / ambient sky",
+  "camera": {
+    "projection": "orthographic",
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

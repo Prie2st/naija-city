@@ -1,0 +1,36 @@
+{
+  "id": "okada-2",
+  "type": "vehicle",
+  "footprint": [
+    2.1,
+    0.8
+  ],
+  "floors": 0,
+  "heightMetres": 1.1673924922943115,
+  "sourceScale": 24.046106070965717,
+  "originPixels": [
+    40.787308037281036,
+    54.141428142786026
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      0.4
+    ],
+    "service": [
+      -1.05,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

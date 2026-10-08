@@ -1,0 +1,43 @@
+{
+  "id": "apartment-8",
+  "type": "residential",
+  "level": 4,
+  "variant": 0,
+  "sourceScale": 24.014260755167854,
+  "originPixels": [
+    586.4995105862617,
+    1143.406046077609
+  ],
+  "tileTopOffset": 12,
+  "metresPerTile": 20,
+  "floorHeightMetres": 3.2,
+  "floors": 8,
+  "footprint": "apartment-8",
+  "sockets": {
+    "generator": {
+      "x": -7,
+      "y": 18
+    },
+    "tank": {
+      "x": 9,
+      "y": 14
+    },
+    "pump": {
+      "x": 10,
+      "y": 17
+    }
+  },
+  "windowMaterial": "glass",
+  "lighting": "northwest warm daylight / ambient sky",
+  "camera": {
+    "projection": "orthographic",
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

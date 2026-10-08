@@ -1,0 +1,36 @@
+{
+  "id": "lamp",
+  "type": "prop",
+  "footprint": [
+    2,
+    1
+  ],
+  "floors": 0,
+  "heightMetres": 7.259999752044678,
+  "sourceScale": 24.030028233638923,
+  "originPixels": [
+    18.520600989460945,
+    258.7689069584012
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      0.5
+    ],
+    "service": [
+      -1.0,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

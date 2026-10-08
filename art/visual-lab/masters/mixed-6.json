@@ -1,0 +1,36 @@
+{
+  "id": "mixed-6",
+  "type": "building",
+  "footprint": [
+    34,
+    20
+  ],
+  "floors": 6,
+  "heightMetres": 18.9,
+  "sourceScale": 24.01244429624178,
+  "originPixels": [
+    686.1842557787895,
+    1039.5870849341154
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      10.0
+    ],
+    "service": [
+      -17.0,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "substation",
+  "type": "infrastructure",
+  "footprint": [
+    14,
+    9
+  ],
+  "floors": 0,
+  "heightMetres": 5.000000476837158,
+  "sourceScale": 24.000655366122427,
+  "originPixels": [
+    345.9989688396454,
+    354.68531423807144
+  ],
+  "camera": {
+    "azimuth": 45,
+    "elevation": 30
+  },
+  "sockets": {
+    "entrance": [
+      0,
+      4.5
+    ],
+    "service": [
+      -7.0,
+      0
+    ]
+  },
+  "lighting": "neutral warm northwest daylight",
+  "lod": [
+    2,
+    6,
+    9,
+    12
+  ]
+}
